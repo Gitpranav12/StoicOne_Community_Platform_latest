@@ -1,0 +1,59 @@
+/* ===== CollectivesAdmin.css ===== */
+
+/* Cards grid */
+@media (max-width: 1024px) {
+  .collectives-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .collectives-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* Card header: icon + title layout */
+@media (max-width: 640px) {
+  .collective-card-header {
+    flex-direction: column;
+    align-items: flex-start !important;
+    gap: 0.5rem;
+  }
+
+  .collective-card-header img {
+    width: 40px;
+    height: 40px;
+  }
+}
+
+/* Question/Answer stats box */
+@media (max-width: 640px) {
+  .qa-stats {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* Tags wrap better on mobile */
+@media (max-width: 640px) {
+  .collective-tags {
+    gap: 0.4rem;
+  }
+}
+
+/* Buttons full width on small screens */
+@media (max-width: 640px) {
+  .collective-actions {
+    flex-direction: column;
+  }
+  .collective-actions button {
+    width: 100%;
+  }
+}
+
+/* Chart container on mobile */
+@media (max-width: 640px) {
+  .recharts-responsive-container {
+    height: 250px !important;
+  }
+}

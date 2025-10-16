@@ -1,0 +1,141 @@
+/* .collective-header {
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+} */
+
+
+/* .collective-header .banner {
+  background-image: url('https://cdn.sstatic.net/Sites/stackoverflow/Img/subcommunities/aws-header.png?v=e5b6dcbd0a37');
+  background-size: cover;
+  background-position: center;
+  height: 150px;
+  border-radius: 8px;
+}
+
+.card:hover {
+  box-shadow: none !important;
+  transform: none !important;
+  cursor: default !important;
+} */
+
+.collective-header {
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 1rem;
+}
+
+/* Banner */
+.collective-header .banner {
+  background-size: cover;
+  background-position: center;
+  border-radius: 8px;
+  width: 100%;
+  height: 150px;
+  overflow: hidden;
+}
+
+.collective-header .banner img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+/* Header flex adjustments */
+.collective-header .d-flex {
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: center;
+}
+
+.collective-header img {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .collective-header .d-flex {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .collective-header button {
+    width: 100%;
+  }
+
+  .collective-header .text-muted {
+    font-size: 0.9rem;
+  }
+
+  .collective-header .banner {
+    height: 120px;
+  }
+}
+
+
+/* Add to CollectiveHeader.css or main CSS */
+@media (max-width: 768px) {
+  .question-card .d-flex {
+    flex-direction: column;
+  }
+
+  .question-card .me-4 {
+    margin-right: 0 !important;
+    margin-bottom: 1rem;
+  }
+
+  .question-card h5 {
+    font-size: 1rem;
+  }
+
+  .question-card p {
+    font-size: 0.9rem;
+  }
+
+  .question-card .d-flex.justify-content-end {
+    justify-content: flex-start !important;
+  }
+}
+
+
+/* === ADD THIS AT THE BOTTOM === */
+.question-card {
+  border-radius: 8px;
+  transition: box-shadow 0.2s ease;
+}
+
+.question-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.question-card .stats {
+  min-width: 70px;
+  font-size: 0.9rem;
+  color: #555;
+}
+
+@media (max-width: 768px) {
+  .question-card .stats {
+    display: flex;
+    justify-content: space-around;
+    min-width: auto;
+    margin-bottom: 0.5rem;
+  }
+
+  .question-card h5 {
+    font-size: 1rem;
+  }
+
+  .question-card p {
+    font-size: 0.875rem;
+  }
+
+  .question-card .badge {
+    font-size: 0.75rem;
+  }
+}

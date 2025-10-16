@@ -1,0 +1,179 @@
+/* --- Main Navbar Container --- */
+
+.navbar {
+    height: 60px;
+    padding: 0 20px;
+    background-color: #ffffff;
+    border-bottom: 1px solid #e0e0e0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    box-sizing: border-box;
+}
+
+
+/* --- Left & Right Sections --- */
+
+.leftSection,
+.rightSection {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.menuIcon {
+    display: none;
+    /* Hidden on desktop */
+    cursor: pointer;
+    font-size: 20px;
+}
+
+.logo {
+    font-weight: bold;
+    font-size: 20px;
+    text-decoration: none;
+    color: inherit;
+}
+
+.navLink {
+    text-decoration: none;
+    color: #555;
+    cursor: pointer;
+}
+
+
+/* --- Search Container --- */
+
+.searchContainer {
+    flex-grow: 1;
+    margin: 0 40px;
+    display: flex;
+}
+
+.searchContainer input {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+
+/* --- Icons and Buttons --- */
+
+.icon {
+    font-size: 20px;
+    color: #555;
+    display: flex;
+    align-items: center;
+}
+
+.logoutButton {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+
+/* --- Popover Styles --- */
+
+.productsPopover {
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    margin-top: 8px !important;
+}
+
+.popoverList {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.productLink {
+    display: block;
+    padding: 12px 16px;
+    text-decoration: none;
+    color: #333;
+    border-radius: 4px;
+}
+
+.productLink:hover {
+    background-color: #f8fffa;
+}
+
+.itemTitle {
+    display: block;
+    font-weight: 500;
+    color: #212529;
+}
+
+.itemDesc {
+    display: block;
+    font-size: 13px;
+    color: #6c757d;
+}
+
+
+/* --- Mobile & Tablet Responsive View --- */
+
+@media (max-width: 768px) {
+    .navbar {
+        justify-content: space-between;
+    }
+    .menuIcon {
+        display: block;
+    }
+    .navLink,
+    .searchContainer {
+        display: none;
+    }
+    .rightSection {
+        gap: 15px;
+    }
+    /* Hide the text in the logout button, leaving only the icon */
+    .logoutButton span {
+        display: none;
+    }
+    /* Make the logout button smaller */
+    .logoutButton {
+        padding: 8px 10px;
+    }
+}
+
+
+/* ... (keep all your existing styles above this line) ... */
+
+
+/* --- Mobile & Tablet Responsive View --- */
+
+@media (max-width: 768px) {
+    /* ... (keep existing mobile styles) ... */
+    .navbar {
+        justify-content: space-between;
+    }
+    .menuIcon {
+        display: block;
+    }
+    .navLink,
+    .searchContainer {
+        display: none;
+    }
+    .rightSection {
+        gap: 15px;
+    }
+    .logoutButton span {
+        display: none;
+    }
+    .logoutButton {
+        padding: 8px 10px;
+    }
+    /* --- ADD THIS NEW RULE --- */
+    .hideOnMobile {
+        display: none;
+    }
+}

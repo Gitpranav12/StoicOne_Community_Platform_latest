@@ -1,0 +1,195 @@
+/* Sidebar container */
+.sidebar {
+  width: 220px;
+  background-color: #F8F9FA; /* हलका ग्रे bg, StackOverflow सारखा */
+  height: calc(100vh - 56px); /* navbar खाली sidebar पूर्ण */
+  position: sticky;
+  top: 56px; /* navbar च्या खाली सुरू */
+  padding: 10px 0;
+  border-right: 1px solid #ddd;
+}
+/* Sidebar links */
+.sidebar-link {
+  display: flex;
+  align-items: center;
+  padding: 8px 16px;
+  color: #333;
+  text-decoration: none;
+  font-size: 14px;
+}
+.sidebar-link:hover {
+  background: #EAEAEA;
+}
+.sidebar-link.active {
+  font-weight: bold;
+  color: #000;
+  background: #ddd;
+}
+.sidebar-section {
+  margin-top: 20px;
+  font-size: 12px;
+  font-weight: bold;
+  padding: 0 16px;
+  color: #666;
+}
+.sidebar-sub {
+  margin-left: 8px;
+  font-size: 13px;
+}
+/* .sidebar {
+  background: #fff;
+  border-right: 1px solid #D6D9DC;
+  width: 230px;
+  position: fixed;
+  top: 56px;
+  bottom: 0;
+  padding: 10px 0;
+  font-size: 15px;
+  overflow-y: auto;
+} */
+/* Each link */
+.sidebar-link {
+  display: flex;
+  align-items: center;
+  padding: 10px 14px; /* height increased */
+  color: #3B4045;
+  text-decoration: none;
+  border-radius: 6px;
+  margin: 4px 8px;
+  transition: background 0.2s, color 0.2s;
+  font-size: 15px; /* text size */
+}
+.sidebar-link:hover {
+  background: #F1F2F3;
+  color: #0A95FF;
+  text-decoration: none;
+}
+/* Active link */
+.sidebar-link.active {
+  background: #E3E6E8;
+  /* font-weight: 600; */
+  color: #0A95FF;
+}
+/* Icon spacing + size */
+.sidebar-link .icon {
+  margin-right: 10px;
+  display: flex;
+  align-items: center;
+  color: inherit;
+  /* font-size: 18px; /* big icon */
+}
+/* Section heading */
+.sidebar-section {
+  /* font-size: 12px;
+  font-weight: bold; */
+  color: #6A737C;
+  margin: 18px 12px 8px;
+  text-transform: uppercase;
+}
+/* Sub-links */
+.sidebar-sub .sidebar-link.small {
+  /* font-size: 13px; */
+  padding-left: 32px;
+  color: #525960;
+}
+.sidebar-sub .sidebar-link.small:hover {
+  background: transparent;
+  color: #0A95FF;
+}
+/* .sidebar {
+  background: #fff;
+  border-right: 1px solid #d6d9dc;
+  width: 230px; 
+  position: fixed;
+  top: 56px;
+  bottom: 0;
+  padding: 10px 0;
+  font-size: 15px;  
+  overflow-y: auto;
+} */
+
+/* Each link */
+.sidebar-link {
+  display: flex;
+  align-items: center;
+  padding: 10px 14px; /* height increased */
+  color: #3b4045;
+  text-decoration: none;
+  border-radius: 6px;
+  margin: 4px 8px;
+  transition: background 0.2s, color 0.2s;
+  font-size: 15px; /* text size */
+}
+
+.sidebar-link:hover {
+  background: #f1f2f3;
+  color: #0a95ff;
+  text-decoration: none;
+}
+
+/* Active link */
+.sidebar-link.active {
+  background: #e3e6e8;
+  /* font-weight: 600; */
+  color: #0a95ff;
+}
+
+/* Icon spacing + size */
+.sidebar-link .icon {
+  margin-right: 10px;
+  display: flex;
+  align-items: center;
+  color: inherit;
+  /* font-size: 18px; /* big icon */
+}
+
+/* Section heading */
+.sidebar-section {
+  /* font-size: 12px;
+  font-weight: bold; */
+  color: #6a737c;
+  margin: 18px 12px 8px;
+  text-transform: uppercase;
+}
+
+/* Sub-links */
+.sidebar-sub .sidebar-link.small {
+  /* font-size: 13px; */
+  padding-left: 32px;
+  color: #525960;
+}
+.sidebar-sub .sidebar-link.small:hover {
+  background: transparent;
+  color: #0a95ff;
+}
+
+
+
+/* <----added this......... */
+
+
+/* Admin sub menu */
+.subMenu {
+  margin-left: 10px;
+  border-left: 2px solid #ddd;
+  padding-left: 8px;
+}
+
+.subLink {
+  font-size: 14px;
+  padding-left: 28px;
+}
+
+/* Admin Toggle */
+.adminToggle {
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.chevron {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+}

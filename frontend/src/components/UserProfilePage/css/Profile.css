@@ -1,0 +1,51 @@
+.card {
+  border-radius: 12px;
+  transition: transform 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-3px);
+}
+
+.progress {
+  background-color: #e9ecef;
+  border-radius: 10px;
+}
+
+.progress-bar {
+  border-radius: 10px;
+}
+
+
+button.btn-primary {
+  border-radius: 8px;
+  padding: 6px 16px;
+}
+
+.form-switch .form-check-input {
+  cursor: pointer;
+}
+
+
+/* Activity list item */
+.activity-item {
+  background: #f8f9fa;
+  border: 1px solid #eee;
+  transition: all 0.3s ease;
+}
+
+/* Load More button */
+.load-more-btn {
+  transition: all 0.3s ease;
+}
+
+.load-more-btn:hover {
+  background: #0d6efd;
+  color: #fff;
+  transform: scale(1.05);
+}
+
+/* Card hover */
+.hover-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}

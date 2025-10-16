@@ -1,0 +1,51 @@
+/* This is the main container for everything BELOW the fixed navbar */
+
+.pageContainer {
+    display: flex;
+    flex-direction: column;
+    /* Arrange children (main area and footer) vertically */
+    min-height: 100vh;
+    /* Make it at least the full height of the screen */
+    padding-top: 60px;
+    /* Add space for the fixed navbar */
+}
+
+
+/* This container holds the sidebar and content */
+
+.mainArea {
+    display: flex;
+    /* Arrange sidebar and content horizontally */
+    flex-grow: 1;
+    /* This is the key: it grows to push the footer down */
+}
+
+
+/* This is your page's content */
+
+.contentArea {
+    flex-grow: 1;
+    /* Take up all available horizontal space */
+    padding: 20px;
+}
+
+
+/* Mobile overlay styles remain the same */
+
+.overlay {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    .overlay {
+        display: block;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 1050;
+        cursor: pointer;
+    }
+}

@@ -1,0 +1,136 @@
+.products-btn {
+  font-weight: 600;
+  cursor: pointer;
+  color: #6B6969;
+  padding: 6px 14px;           /* :arrow_down_small: Smaller size */
+  font-size: 14px;             /* :arrow_down_small: Smaller text */
+  border-radius: 999px;        /* :repeat: Full oval */
+  background: transparent;
+  border: none;
+  transition: background 0.2s ease;
+}
+.products-btn:hover {
+  background: #F2F2F2;
+  color:#6b6969 ; /* Keep text color same as normal */
+}
+.products-btn.active {
+  background: #007BFF;
+  color: #fff !important;
+}
+/* Popover styles */
+.products-popover {
+  width: 250px;                /* Set exact width */
+  max-height: 500px;           /* Optional: add scroll if it overflows */
+  padding: 8px 0;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  background: #fff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+/* Popover arrow (centered) */
+.s-popover--arrow {
+  position: absolute;
+  top: -11px; /* Slightly up to fit border */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  /* Outer arrow (border) */
+  border-left: 11px solid transparent;
+  border-right: 11px solid transparent;
+  border-bottom: 11px solid #ddd;  /* Border color */
+  z-index: 1;
+}
+/* Inner arrow (white fill) - use a ::after pseudo-element */
+.s-popover--arrow::after {
+  content: "";
+  position: absolute;
+  top: 1px;
+  left: -10px;
+  width: 0;
+  height: 0;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-bottom: 10px solid #fff;  /* Background color of popover */
+  z-index: 2;
+}
+/* Remove numbers/bullets from popover list */
+.products-popover ol {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+/* Product link styles (buttons styled like links) */
+/* Main product list item (button styled like link) */
+.product-link {
+  display: block;
+  padding: 10px 16px;
+  text-decoration: none;
+  color: inherit;
+  background: none;
+  border: none;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  font-family: inherit;
+}
+.product-link:hover
+{
+  background:#eaeaeb;
+  /* Keep original text color */
+}
+.product-link:focus {
+  outline: none;
+}
+.item-title {
+  display: block;
+  font-size: 14px;
+  color: #000;
+}
+.item-desc {
+  display: block;
+  font-size: 12px;
+  color:rgb(100, 98, 98);
+}
+/* Bottom links (About the company) */
+.plain-link {
+  display: block;
+  padding: 4px 16px;
+  text-decoration: none;
+  color: #000;
+  background: none;
+  border: none;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  font-family: inherit;
+}
+.plain-link:hover {
+  /* No background color */
+  color: #000;
+  background: none;
+}
+.plain-link:focus {
+  outline: none;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

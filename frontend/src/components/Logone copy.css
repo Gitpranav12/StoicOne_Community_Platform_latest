@@ -1,0 +1,47 @@
+.logone-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    /* StoicOne आणि Community मध्येच gap */
+}
+
+.logone-text {
+    display: flex;
+    align-items: center;
+    font-size: 22px;
+    font-weight: 700;
+}
+
+.logone-text .blue {
+    color: #007BFF;
+}
+
+.logone-text .black {
+    color: #000000;
+}
+
+.logone-o {
+    height: 24px;
+    width: 24px;
+    object-fit: contain;
+    margin: 0 2px;
+    /* लहान margin, extra gap नाही */
+    position: relative;
+    top: -1px;
+}
+
+
+/* Hover effect */
+
+.logone-container:hover {
+    transform: scale(1.05);
+    transition: transform 0.3s ease;
+}
+
+.logone-container:hover .blue {
+    color: #0056B3;
+}
+
+.logone-container:hover .black {
+    color: #333;
+}

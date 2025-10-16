@@ -1,0 +1,190 @@
+.App {
+    text-align: center;
+}
+
+.App-logo {
+    height: 40vmin;
+    pointer-events: none;
+}
+
+.card:hover {
+    transform: none ;
+    box-shadow: none ;
+    cursor: default ;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    .App-logo {
+        animation: App-logo-spin infinite 20s linear;
+    }
+}
+
+.App-header {
+    background-color: #282c34;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: calc(10px + 2vmin);
+    color: white;
+}
+
+.App-link {
+    color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+
+/* font Text configurations */
+
+.heading-text {
+    font-size: 20px;
+    font-weight: 700;
+}
+
+.sub-heading-text {
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.normal-text {
+    font-size: 14px;
+    font-weight: 400;
+}
+
+.heading-text,
+.sub-heading-text,
+.normal-text {
+    font-family: Arial, sans-serif;
+}
+
+
+/* font Text configurations End */
+
+
+/* .............. */
+
+
+/* usercard hover */
+
+.user-card-hover {
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    cursor: pointer;
+    /* optional for better UX */
+}
+
+.user-card-hover:hover {
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+
+/* Make sure the users page can stretch edge-to-edge */
+
+.users-page {
+    width: 100%;
+}
+
+
+/* Optional: tighten container padding on very wide screens if you like */
+
+@media (min-width: 1400px) {
+    .users-page {
+        padding-left: 16px;
+        padding-right: 16px;
+    }
+}
+
+
+/* Keep the input full-width and remove blue glow (you already had this) */
+
+.no-focus-outline:focus {
+    box-shadow: none !important;
+    outline: none !important;
+}
+
+
+/* User Profile Page*/
+
+
+/* Light mode (default) */
+
+body {
+    background-color: #ffffff;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+
+/* Dark mode */
+
+body.dark-mode {
+    background-color: #121212;
+    color: #f1f1f1;
+}
+
+.card {
+    border-radius: 12px;
+}
+
+.nav-tabs .nav-link.active {
+    font-weight: 600;
+    border-bottom: 2px solid #000;
+}
+
+
+/* Background for boxes*/
+
+.background-theme {
+    background-color: #f3f3f5;
+}
+
+
+/* text color*/
+
+.text-grey {
+    color: #616e80 !important;
+}
+
+.text-dark-black {
+    color: #28313C;
+}
+
+.text-p-grey {
+    color: #ced4da;
+}
+
+
+/* Dashboard responsive layout */
+
+
+/* Make navbar buttons stack on small screens */
+
+@media (max-width: 768px) {
+    .navbar .d-flex {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .navbar .btn {
+        width: 100%;
+        margin-bottom: 5px;
+    }
+}
+
+
+/* Container padding for small screens */
+
+@media (max-width: 576px) {
+    .container-fluid {
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+}

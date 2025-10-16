@@ -1,0 +1,15 @@
+.headline-text{
+    font-size: 28px;
+    font-weight: bold;
+    font-family: sans-serif, Arial, sans-serif;
+}
+.d-sub-heading-text{
+  font-size:16px !important;
+  font-weight: 700 !important;
+
+} 
+
+/* reputation graph */
+.rep-graph {
+  max-width: 160px;
+}

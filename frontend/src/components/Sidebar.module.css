@@ -1,0 +1,125 @@
+/* Sidebar container */
+
+.sidebar {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    /* full height */
+    overflow: hidden;
+}
+
+.nav {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    /* scrollable menu area */
+    padding-bottom: 10px;
+}
+
+.collectives {
+    flex: 1 1 auto;
+    /* take remaining space */
+    overflow-y: auto;
+    /* scrollable collectives */
+    padding: 10px;
+    border-top: 1px solid #ddd;
+    background-color: #f9f9f9;
+}
+
+.joinedCollectives {
+    margin-top: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.sidebar {
+    background-color: #ffffff;
+    width: 240px;
+    flex-shrink: 0;
+    /* Prevents sidebar from shrinking */
+    border-right: 1px solid #e0e0e0;
+    padding: 20px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    /* --- KEY FIXES --- */
+    /* Set height to the full screen height minus the navbar's height */
+    height: calc(100vh - 60px);
+    /* Make the sidebar stick to the top as the page scrolls */
+    position: sticky;
+    top: 60px;
+    /* Start sticking 60px from the top (the height of the navbar) */
+}
+
+.nav {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+
+/* Style for each link */
+
+.navLink {
+    text-decoration: none;
+    color: #333;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 12px;
+    border-radius: 6px;
+    transition: background-color 0.2s ease-in-out;
+}
+
+.icon {
+    display: flex;
+    align-items: center;
+}
+
+.navLink:hover {
+    background-color: #f0f0f0;
+}
+
+.navLink.active {
+    background-color: #e6f2ff;
+    color: #007bff;
+    font-weight: 600;
+}
+
+
+/* Collectives section */
+
+.collectives {
+    margin-top: auto;
+    padding-top: 20px;
+    border-top: 1px solid #e0e0e0;
+}
+
+.collectives p {
+    text-transform: uppercase;
+    font-size: 12px;
+    color: #6c757d;
+    font-weight: bold;
+    margin-bottom: 10px;
+    padding: 0 12px;
+}
+
+
+/* Mobile view - remains the same */
+
+@media (max-width: 768px) {
+    .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100vh;
+        z-index: 1100;
+        transform: translateX(-100%);
+        transition: transform 0.3s ease-in-out;
+    }
+    .sidebar.open {
+        transform: translateX(0);
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+    }
+}
