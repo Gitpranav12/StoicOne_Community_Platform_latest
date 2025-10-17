@@ -359,17 +359,18 @@ export default function ContestPage() {
             Cancel
           </Button>
 
+          
           <Button
             onClick={handleStartContest}
             className="fw-semibold px-4 py-2 text-white border-0 d-flex align-items-center justify-content-center gap-2"
             size="lg"
             style={{
-              background: "linear-gradient(135deg, #007bff, #28a745)",
+              background: "linear-gradient(135deg, #007BFF, #28A745)",
               fontSize: "14px",
             }}
           >
             <i className="bi bi-play" style={{ fontSize: "14px" }}></i>
-            <Button onClick={handleStartContest}>Start Contest</Button>
+            Start Contest
           </Button>
         </div>
       </div>

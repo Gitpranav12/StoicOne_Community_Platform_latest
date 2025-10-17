@@ -34,8 +34,6 @@ export default function Quiz() {
   // Per-question UI states
   const [current, setCurrent] = useState(0); // currently displayed question
   const [answers, setAnswers] = useState({}); // user answers
-  const [timer, setTimer] = useState(0); // contest timer
-  const storageKey = `contest_end_time_${contestId}`;
 
   // User info for display/avatar
   const currentUserName = contextUser?.profile?.name || "Candidate";
@@ -43,6 +41,9 @@ export default function Quiz() {
   const currentUserPhotoUrl = currentUserId
     ? `http://localhost:8080/api/user/${currentUserId}/profile-photo`
     : "https://via.placeholder.com/80/fc5f7c/ffffff?text=U";
+
+  const [timer, setTimer] = useState(0); // contest timer
+  const storageKey = `contest_end_time_${contestId}_${currentUserId}`;
 
   // Fetch contest/quiz data
   useEffect(() => {
