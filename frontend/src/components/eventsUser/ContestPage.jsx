@@ -359,6 +359,7 @@ export default function ContestPage() {
             Cancel
           </Button>
 
+          
           <Button
             onClick={handleStartContest}
             className="fw-semibold px-4 py-2 text-white border-0 d-flex align-items-center justify-content-center gap-2"
@@ -369,7 +370,7 @@ export default function ContestPage() {
             }}
           >
             <i className="bi bi-play" style={{ fontSize: "14px" }}></i>
-            <Button onClick={handleStartContest}>Start Contest</Button>
+            Start Contest
           </Button>
         </div>
       </div>
