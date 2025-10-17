@@ -1,4 +1,4 @@
-import React, { useState, useRef, useContext,useEffect } from 'react';
+import React, { useState, useRef, useContext, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Overlay, Popover, Button } from 'react-bootstrap';
 import styles from './Navbar.module.css';
@@ -23,19 +23,19 @@ const Navbar = ({ toggleSidebar }) => {
 
   const id = user?.id || null;
 
-const profilePhotoUrl = id
-  ? `http://localhost:8080/api/user/${id}/profile-photo?${user?.photoUpdatedAt || Date.now()}`
-  : "https://i.pravatar.cc/112?img=1";
+  const profilePhotoUrl = id
+    ? `http://localhost:8080/api/user/${id}/profile-photo?${user?.photoUpdatedAt || Date.now()}`
+    : "https://i.pravatar.cc/112?img=1";
 
- const handleLogout = () => {
-  localStorage.removeItem("token");          // token clear
-  localStorage.removeItem("currentUser");    // currentUser clear
-  setUser(null);                              // context clear
-  window.location.href = "/login";           // login page redirect
-};
+  const handleLogout = () => {
+    localStorage.removeItem("token");          // token clear
+    localStorage.removeItem("currentUser");    // currentUser clear
+    setUser(null);                              // context clear
+    window.location.href = "/login";           // login page redirect
+  };
 
 
-    useEffect(() => {
+  useEffect(() => {
     if (query.trim() !== "") {
       const debounce = setTimeout(() => {
         fetch(`http://localhost:8080/api/search?q=${encodeURIComponent(query)}`)
@@ -84,7 +84,7 @@ const profilePhotoUrl = id
               <li>
                 <button
                   className="product-link"
-                    onClick={() => window.location.href = '/product'}
+                  onClick={() => window.location.href = '/product'}
                 >
                   <span className="item-title">Stoic CRM</span>
                   <span className="item-desc">
@@ -150,7 +150,7 @@ const profilePhotoUrl = id
       </div>
 
       {/* --- Search Container --- */}
-         {/* Search Container with Dropdown Suggestions */}
+      {/* Search Container with Dropdown Suggestions */}
       <div className={styles.searchContainer} style={{ position: 'relative' }}>
         <input
           type="text"
@@ -221,14 +221,17 @@ const profilePhotoUrl = id
               alt="Profile"
               className="rounded-circle"
               style={{ width: "40px", height: "40px", objectFit: "cover" }}
+              onError={(e) => {
+                e.target.src = "/images/default-avatar.png";
+              }}
             />
           ) : (
             <i className="bi bi-person-circle fs-4"></i>
           )}
         </Link>
-       <div className={styles.icon} onClick={handleLogout} title="Logout">
-  <i className="bi bi-box-arrow-in-right fs-3 text-danger"></i>
-</div>
+        <div className={styles.icon} onClick={handleLogout} title="Logout">
+          <i className="bi bi-box-arrow-in-right fs-3 text-danger"></i>
+        </div>
 
       </div>
 

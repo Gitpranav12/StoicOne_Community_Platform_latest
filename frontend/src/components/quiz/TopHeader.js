@@ -74,6 +74,9 @@ export default function TopHeader() {
               alt="Profile"
               className="rounded-circle"
               style={{ width: "40px", height: "40px", objectFit: "cover" }}
+              onError={(e) => {
+                e.target.src = "/images/default-avatar.png";
+              }}
             />
           ) : (
             <i className="bi bi-person-circle fs-4"></i>

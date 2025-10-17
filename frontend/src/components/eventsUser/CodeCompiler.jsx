@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Editor from "@monaco-editor/react";
 import "bootstrap/dist/css/bootstrap.min.css";
+import { UserContext } from "../UserProfilePage/context/UserContext";
 
 // ... (LANGUAGES आणि DUMMY_QUESTION_DATA अपरिवर्तित) ...
 const LANGUAGES = {
@@ -17,7 +18,8 @@ const LANGUAGES = {
 
 const CodeCompiler = () => {
   const navigate = useNavigate();
-
+  const { user: contextUser } = useContext(UserContext);
+  const currentUserId = contextUser?.profile?.id;
   // ✅ Get contestId & roundId from the URL
   // Example: /events/code/23/200 → contestId=23, roundId=200
   const { contestId, roundId } = useParams();
@@ -102,6 +104,44 @@ useEffect(() => {
   fetchCodingQuestion();
 }, [contestId, roundId]);
 
+// Timer
+  const [timer, setTimer] = useState(0);
+  const storageKey = `contest_end_time_${contestId}_${currentUserId}`;
+
+  useEffect(() => {
+    if (!questionData) return;
+
+    // Get round duration from API or default to 30 minutes
+    const durationInMinutes = questionData.duration || 30;
+    let endTime = localStorage.getItem(storageKey);
+
+    if (!endTime) {
+      endTime = Date.now() + durationInMinutes * 60 * 1000;
+      localStorage.setItem(storageKey, endTime);
+    } else {
+      endTime = parseInt(endTime, 10);
+    }
+
+    const interval = setInterval(() => {
+      const remaining = Math.floor((endTime - Date.now()) / 1000);
+      if (remaining <= 0) {
+        clearInterval(interval);
+        localStorage.removeItem(storageKey);
+        alert("Time is over!"); // or any custom behavior
+      } else {
+        setTimer(remaining);
+      }
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [questionData, storageKey]);
+
+  const formatTime = (sec) => {
+    const h = String(Math.floor(sec / 3600)).padStart(2, "0");
+    const m = String(Math.floor((sec % 3600) / 60)).padStart(2, "0");
+    const s = String(sec % 60).padStart(2, "0");
+    return `${h}:${m}:${s}`;
+  };
 
   // ✅ Extract first question (for now)
   const question = questionData?.questions?.[0] || null;
@@ -414,10 +454,13 @@ if (error) {
           className="col-lg-5 col-xl-4 border-end"
           style={{ maxHeight: "90vh", overflowY: "auto" }}
         >
-          <h4 className="fw-bold">
-            {questionData.title}
-          </h4>
-      
+            <div className="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                <h4 className="fw-bold">
+                  {questionData.title}
+                </h4>
+                <span style={{ color: "#cf2a17", fontWeight: 400 }}>
+                  <span style={{ fontSize: 18 }}>&#128337;</span>{formatTime(timer)}</span>
+            </div>
 
           <hr />
           <h4 className="fw-bold">

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import {
   Button,
   Card,
@@ -12,6 +12,7 @@ import {
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import Layout from "../../Layout/Layout";
+import { UserContext } from "../UserProfilePage/context/UserContext";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 
@@ -26,6 +27,8 @@ export default function ProgressPage() {
   const [loading, setLoading] = useState(true);
   const [timeLeft, setTimeLeft] = useState(null);
   const [showToast, setShowToast] = useState(false);
+  const { user: contextUser } = useContext(UserContext);
+  const currentUserId = contextUser?.profile?.id;
 
   // State to track completed rounds
   const [roundStatus, setRoundStatus] = useState([]);
@@ -55,7 +58,8 @@ export default function ProgressPage() {
         ); // ...rest unchanged...
 
         const durationInMinutes = location.state?.duration || 0;
-        const storageKey = `contest_end_time_${id}`;
+        const storageKey = `contest_end_time_${id}_${currentUserId}`;
+
         let endTime = localStorage.getItem(storageKey);
 
         if (!endTime) {
