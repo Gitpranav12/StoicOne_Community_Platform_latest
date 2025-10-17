@@ -154,41 +154,98 @@ setCurrentSectionIndex(firstIncomplete === -1 ? 0 : firstIncomplete);
   };
 
   // Section/state progression logic
-  const handleSubmitSection = () => {
-    const score = calculateSectionScore();
-    setSectionScores((prevScores) => {
-      const newScores = [...prevScores];
-      newScores[currentSectionIndex] = {
-        score,
-        total: totalQuestions,
-        completed: true,
-      };
-      return newScores;
+  // const handleSubmitSection = () => {
+  //   const score = calculateSectionScore();
+  //   setSectionScores((prevScores) => {
+  //     const newScores = [...prevScores];
+  //     newScores[currentSectionIndex] = {
+  //       score,
+  //       total: totalQuestions,
+  //       completed: true,
+  //     };
+  //     return newScores;
+  //   });
+  //   setRoundStatus((prev) => {
+  //     const arr = [...prev];
+  //     arr[currentSectionIndex] = true;
+  //     return arr;
+  //   });
+  //   // ----- ADD THIS BLOCK -----
+  // // Mark this section as completed in localStorage for ProgressPage
+  // let key = `contest_${contestId}_rounds_complete`;
+  // let completed = JSON.parse(localStorage.getItem(key) || "[]");
+  // if (!completed.includes(currentSectionIndex)) {
+  //   completed.push(currentSectionIndex);
+  //   localStorage.setItem(key, JSON.stringify(completed));
+  // }
+  // // ----- END BLOCK -----
+  //   if (!isLastSection) {
+  //     setShowSectionComplete(false);
+  //     setCurrentSectionIndex((prev) => prev + 1);
+  //     setCurrent(0);
+  //     setAnswers({});
+  //   } else {
+  //     setShowSectionComplete(false);
+  //     setShowOverallScore(true);
+  //   }
+  // };
+
+const handleSubmitSection = async () => {
+  const score = calculateSectionScore();
+  const roundId = currentSection.id; // assuming each section has its round_id
+  const userId = currentUserId;
+
+  // Save local progress
+  setSectionScores((prevScores) => {
+    const newScores = [...prevScores];
+    newScores[currentSectionIndex] = {
+      score,
+      total: totalQuestions,
+      completed: true,
+    };
+    return newScores;
+  });
+
+  setRoundStatus((prev) => {
+    const arr = [...prev];
+    arr[currentSectionIndex] = true;
+    return arr;
+  });
+
+  // ✅ Save to backend
+  try {
+    await axios.post("http://localhost:8080/api/contests/quiz_submissions", {
+      contest_id: contestId,
+      round_id: roundId,
+      user_id: userId,
+      answers,
+      score,
     });
-    setRoundStatus((prev) => {
-      const arr = [...prev];
-      arr[currentSectionIndex] = true;
-      return arr;
-    });
-    // ----- ADD THIS BLOCK -----
-  // Mark this section as completed in localStorage for ProgressPage
+    console.log("✅ Quiz section saved to DB successfully");
+  } catch (err) {
+    console.error("❌ Error saving quiz submission:", err);
+  }
+
+  // ✅ Mark section complete in localStorage for ProgressPage
   let key = `contest_${contestId}_rounds_complete`;
   let completed = JSON.parse(localStorage.getItem(key) || "[]");
   if (!completed.includes(currentSectionIndex)) {
     completed.push(currentSectionIndex);
     localStorage.setItem(key, JSON.stringify(completed));
   }
-  // ----- END BLOCK -----
-    if (!isLastSection) {
-      setShowSectionComplete(false);
-      setCurrentSectionIndex((prev) => prev + 1);
-      setCurrent(0);
-      setAnswers({});
-    } else {
-      setShowSectionComplete(false);
-      setShowOverallScore(true);
-    }
-  };
+
+  // ✅ Move to next section or show final score
+  if (!isLastSection) {
+    setShowSectionComplete(false);
+    setCurrentSectionIndex((prev) => prev + 1);
+    setCurrent(0);
+    setAnswers({});
+  } else {
+    setShowSectionComplete(false);
+    setShowOverallScore(true);
+  }
+};
+
 
   const handleNextSection = () => {
     setShowSectionComplete(false);

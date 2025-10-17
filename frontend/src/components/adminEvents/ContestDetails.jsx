@@ -358,7 +358,7 @@ export default function ContestDetails() {
                     </div>
                   </div>
 
-                  <div className="d-flex align-items-center mb-3">
+                  {/* <div className="d-flex align-items-center mb-3">
                     <div className="stats-icon bg-success bg-opacity-10 text-success rounded-3 me-3">
                       <BarChart3 size={24} />
                     </div>
@@ -368,7 +368,7 @@ export default function ContestDetails() {
                       </div>
                       <div className="small text-muted">Completed</div>
                     </div>
-                  </div>
+                  </div> */}
 
                   <div className="d-flex align-items-center mb-3">
                     <div className="stats-icon bg-warning bg-opacity-10 text-warning rounded-3 me-3">
@@ -388,7 +388,7 @@ export default function ContestDetails() {
 
                   <hr />
 
-                  <div className="small text-muted mb-2">Completion Rate</div>
+                  {/* <div className="small text-muted mb-2">Completion Rate</div>
                   <div className="progress mb-3" style={{ height: "8px" }}>
                     <div
                       className="progress-bar bg-success"
@@ -402,7 +402,8 @@ export default function ContestDetails() {
                       className="progress-bar bg-primary"
                       style={{ width: "85%" }}
                     ></div>
-                  </div>
+                  </div> */}
+                  
                 </div>
               </div>
 

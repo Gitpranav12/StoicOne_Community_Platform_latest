@@ -397,6 +397,97 @@ router.get('/:contestId/participants', async (req, res) => {
 });
 
 
+// POST /api/quiz_submissions
+router.post('/quiz_submissions', async (req, res) => {
+  const { contest_id, round_id, user_id, answers, score } = req.body;
+
+  if (!contest_id || !round_id || !user_id || !answers) {
+    return res.status(400).json({ message: "Missing required fields" });
+  }
+
+  try {
+    const [existing] = await db.query(
+      "SELECT id FROM quiz_submissions WHERE user_id = ? AND round_id = ?",
+      [user_id, round_id]
+    );
+
+    if (existing.length > 0) {
+      // Update existing record (if user re-submits)
+      await db.query(
+        `UPDATE quiz_submissions
+         SET answers = ?, score = ?, submitted_at = CURRENT_TIMESTAMP
+         WHERE user_id = ? AND round_id = ?`,
+        [JSON.stringify(answers), score, user_id, round_id]
+      );
+      return res.json({ message: "Submission updated successfully" });
+    } else {
+      // Insert new record
+      await db.query(
+        `INSERT INTO quiz_submissions (contest_id, round_id, user_id, answers, score)
+         VALUES (?, ?, ?, ?, ?)`,
+        [contest_id, round_id, user_id, JSON.stringify(answers), score]
+      );
+      return res.status(201).json({ message: "Submission saved successfully" });
+    }
+  } catch (err) {
+    console.error("Error saving quiz submission:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+
+
+// POST /api/coding_submissions
+router.post('/coding_submissions', async (req, res) => {
+  const {
+    contest_id,
+    round_id,
+    user_id,
+    question_id,
+    code,
+    language,
+    auto_score,
+  } = req.body;
+
+  if (!contest_id || !round_id || !user_id || !question_id || !code) {
+    return res.status(400).json({ message: "Missing required fields" });
+  }
+
+  try {
+    // prevent duplicate: update if exists
+    const [existing] = await db.query(
+      "SELECT id FROM coding_submissions WHERE user_id=? AND question_id=?",
+      [user_id, question_id]
+    );
+
+    if (existing.length > 0) {
+      await db.query(
+        `UPDATE coding_submissions
+         SET code=?, language=?, auto_score=?, manual_score=0, status='pending', submitted_at=CURRENT_TIMESTAMP
+         WHERE user_id=? AND question_id=?`,
+        [code, language, auto_score, user_id, question_id]
+      );
+      return res.json({ message: "Submission updated successfully" });
+    }
+
+    await db.query(
+      `INSERT INTO coding_submissions
+       (contest_id, round_id, user_id, question_id, code, language, auto_score, manual_score, status)
+       VALUES (?, ?, ?, ?, ?, ?, ?, 0, 'pending')`,
+      [contest_id, round_id, user_id, question_id, code, language, auto_score]
+    );
+
+    res.status(201).json({ message: "Submission saved successfully" });
+  } catch (err) {
+    console.error("Error saving coding submission:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+
+
+
+
 //.................api to get contest results......
 
 // GET: /api/contests/results/:contestId?type=quiz|coding|both

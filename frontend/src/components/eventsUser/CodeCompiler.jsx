@@ -22,7 +22,10 @@ const CodeCompiler = () => {
   const currentUserId = contextUser?.profile?.id;
   // ✅ Get contestId & roundId from the URL
   // Example: /events/code/23/200 → contestId=23, roundId=200
-  const { contestId, roundId } = useParams();
+  const { contestId } = useParams(); // ✅ CHANGE: removed roundId from here; we handle currentRoundIndex dynamically
+  const [rounds, setRounds] = useState([]); // ✅ CHANGE: store all rounds
+  const [currentRoundIndex, setCurrentRoundIndex] = useState(0); // ✅ CHANGE: track which round is active
+  const [roundId, setRoundId] = useState(null); // ✅ CHANGE: current roundId derived from rounds[currentRoundIndex]
 
   const [language, setLanguage] = useState("python");
   const [code, setCode] = useState(getDefaultCode("python"));
@@ -32,9 +35,9 @@ const CodeCompiler = () => {
 
   // ✅ Backend question data states
   const [questionData, setQuestionData] = useState(null);
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0); // ✅ CHANGE: track current question
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-
   const [evaluationResults, setEvaluationResults] = useState(null);
   const [overallStatus, setOverallStatus] = useState("");
 
@@ -64,47 +67,69 @@ const CodeCompiler = () => {
     }
   }
 
-  // ✅ Fetch coding question from backend
-// ✅ Fetch coding question from backend
-useEffect(() => {
-  const fetchCodingQuestion = async () => {
-    try {
-      setLoading(true);
-      setError("");
+  // ✅ CHANGE: Fetch all rounds first
+  useEffect(() => {
+    const fetchRounds = async () => {
+      try {
+        setLoading(true);
+        setError("");
 
-      const apiUrl = `http://localhost:8080/api/contests/${contestId}/round/${roundId}/coding`;
-      console.log("📡 Fetching:", apiUrl);
+        const res = await fetch(
+          `http://localhost:8080/api/contests/${contestId}`
+        );
+        if (!res.ok) throw new Error(`Server error: ${res.status}`);
+        const data = await res.json();
 
-      const res = await fetch(apiUrl);
+        if (!data || !data.rounds || data.rounds.length === 0) {
+          throw new Error("No rounds found for this contest");
+        }
 
-      // 🛠️ Handle non-200 responses
-      if (!res.ok) {
-        const errText = await res.text();
-        throw new Error(`Server error: ${res.status} - ${errText}`);
+        setRounds(data.rounds);
+        setCurrentRoundIndex(0); // start from first round
+        setRoundId(data.rounds[0].id); // ✅ CHANGE: set current roundId
+      } catch (err) {
+        console.error(err);
+        setError(err.message);
+      } finally {
+        setLoading(false);
       }
+    };
 
-      // ✅ Parse JSON safely
-      const data = await res.json();
+    fetchRounds();
+  }, [contestId]);
 
-      // ✅ Basic validation
-      if (!data || !data.questions || data.questions.length === 0) {
-        throw new Error("No questions found in response");
+  // ✅ CHANGE: Fetch questions whenever roundId changes
+  useEffect(() => {
+    if (!roundId) return;
+
+    const fetchCodingQuestion = async () => {
+      try {
+        setLoading(true);
+        setError("");
+
+        const apiUrl = `http://localhost:8080/api/contests/${contestId}/round/${roundId}/coding`;
+        const res = await fetch(apiUrl);
+        if (!res.ok) throw new Error(`Server error: ${res.status}`);
+        const data = await res.json();
+
+        if (!data || !data.questions || data.questions.length === 0) {
+          throw new Error("No questions found in this round");
+        }
+
+        setQuestionData(data);
+        setCurrentQuestionIndex(0); // ✅ CHANGE: start from first question in round
+      } catch (err) {
+        console.error(err);
+        setError(err.message);
+      } finally {
+        setLoading(false);
       }
+    };
 
-      console.log("✅ Coding question loaded:", data);
-      setQuestionData(data);
-    } catch (err) {
-      console.error("❌ Fetch Error:", err);
-      setError(err.message || "Something went wrong while fetching the question.");
-    } finally {
-      setLoading(false);
-    }
-  };
+    fetchCodingQuestion();
+  }, [contestId, roundId]);
 
-  fetchCodingQuestion();
-}, [contestId, roundId]);
-
-// Timer
+  // Timer
   const [timer, setTimer] = useState(0);
   const storageKey = `contest_end_time_${contestId}_${currentUserId}`;
 
@@ -143,8 +168,8 @@ useEffect(() => {
     return `${h}:${m}:${s}`;
   };
 
-  // ✅ Extract first question (for now)
-  const question = questionData?.questions?.[0] || null;
+  // ✅ CHANGE: current question derived dynamically
+  const question = questionData?.questions?.[currentQuestionIndex] || null;
 
   const handleEditorChange = (value) => {
     setCode(value);
@@ -273,23 +298,23 @@ useEffect(() => {
 
     // 3. जर Custom Input नसेल, तर Sample Test Cases रन करा (/submit-code ला कॉल).
     // हीच तुमची मुख्य मागणी आहे.
-   // Construct a test case array safely
-  const testCases = question
-    ? [
-        {
-          id: 1,
-          input: question.sampleInput || "",
-          expectedOutput: question.sampleOutput || "",
-        },
-      ]
-    : [];
+    // Construct a test case array safely
+    const testCases = question
+      ? [
+          {
+            id: 1,
+            input: question.sampleInput || "",
+            expectedOutput: question.sampleOutput || "",
+          },
+        ]
+      : [];
 
-  if (testCases.length === 0) {
-    setOutput("No sample test cases available.");
-    return;
-  }
+    if (testCases.length === 0) {
+      setOutput("No sample test cases available.");
+      return;
+    }
 
-  runEvaluation(testCases, false);
+    runEvaluation(testCases, false);
   };
 
   // ✅ Submit Code बटण (संपूर्ण टेस्ट केसेससाठी)
@@ -412,6 +437,74 @@ useEffect(() => {
     );
   };
 
+  // ✅ CHANGE: Save & Submit → move to next question or round
+  const handleSaveAndSubmit = async () => {
+    if (!question || !evaluationResults) {
+      alert("⚠️ Please run or submit your code first to get results!");
+      return;
+    }
+
+    const passedCount = evaluationResults.filter(
+      (t) => t.status === "Passed"
+    ).length;
+    const totalCount = evaluationResults.length || 1;
+    const autoScore = (passedCount / totalCount) * 100;
+
+    try {
+      await fetch("http://localhost:8080/api/contests/coding_submissions", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          contest_id: contestId,
+          round_id: roundId,
+          user_id: currentUserId,
+          question_id: question.id,
+          code,
+          language,
+          auto_score: autoScore,
+        }),
+      });
+
+      console.log("✅ Coding submission saved successfully.");
+
+      // ✅ Mark current round as completed in localStorage
+      const key = `contest_${contestId}_rounds_complete`;
+      let completedRounds = JSON.parse(localStorage.getItem(key) || "[]");
+
+      const roundIndex = rounds.findIndex(
+        (r) => String(r.id) === String(roundId)
+      );
+      if (roundIndex !== -1 && !completedRounds.includes(roundIndex)) {
+        completedRounds.push(roundIndex);
+        localStorage.setItem(key, JSON.stringify(completedRounds));
+        console.log(`✅ Round ${roundId} marked as complete.`);
+      }
+
+      // ✅ CHANGE: Move to next question in same round
+      if (currentQuestionIndex + 1 < questionData.questions.length) {
+        setCurrentQuestionIndex(currentQuestionIndex + 1);
+        setCode(getDefaultCode(language));
+        setEvaluationResults(null);
+        setOutput("");
+      } else if (currentRoundIndex + 1 < rounds.length) {
+        // ✅ CHANGE: Move to next round
+        const nextRound = rounds[currentRoundIndex + 1];
+        setCurrentRoundIndex(currentRoundIndex + 1);
+        setRoundId(nextRound.id);
+        setCode(getDefaultCode(language));
+        setEvaluationResults(null);
+        setOutput("");
+      } else {
+        // ✅ CHANGE: Contest finished
+        alert("🎉 You have completed the contest!");
+        navigate(`/events/progress/${contestId}`);
+      }
+    } catch (err) {
+      console.error("❌ Error saving submission:", err);
+      alert("Error saving your submission. Please try again.");
+    }
+  };
+
   // ✅ SAFE RENDERING: prevent crash while loading
   if (loading) {
     return (
@@ -421,21 +514,20 @@ useEffect(() => {
     );
   }
 
-if (error) {
-  return (
-    <div className="p-5 text-center text-danger">
-      <h5>❌ Failed to load coding question</h5>
-      <p style={{ whiteSpace: "pre-wrap" }}>{error}</p>
-      <button
-        className="btn btn-outline-secondary mt-3"
-        onClick={() => window.location.reload()}
-      >
-        🔄 Retry
-      </button>
-    </div>
-  );
-}
-
+  if (error) {
+    return (
+      <div className="p-5 text-center text-danger">
+        <h5>❌ Failed to load coding question</h5>
+        <p style={{ whiteSpace: "pre-wrap" }}>{error}</p>
+        <button
+          className="btn btn-outline-secondary mt-3"
+          onClick={() => window.location.reload()}
+        >
+          🔄 Retry
+        </button>
+      </div>
+    );
+  }
 
   if (!question) {
     return (
@@ -454,13 +546,13 @@ if (error) {
           className="col-lg-5 col-xl-4 border-end"
           style={{ maxHeight: "90vh", overflowY: "auto" }}
         >
-            <div className="d-flex justify-content-between align-items-center flex-wrap gap-2">
-                <h4 className="fw-bold">
-                  {questionData.title}
-                </h4>
-                <span style={{ color: "#cf2a17", fontWeight: 400 }}>
-                  <span style={{ fontSize: 18 }}>&#128337;</span>{formatTime(timer)}</span>
-            </div>
+          <div className="d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <h4 className="fw-bold">{questionData.title}</h4>
+            <span style={{ color: "#cf2a17", fontWeight: 400 }}>
+              <span style={{ fontSize: 18 }}>&#128337;</span>
+              {formatTime(timer)}
+            </span>
+          </div>
 
           <hr />
           <h4 className="fw-bold">
@@ -522,6 +614,16 @@ if (error) {
                 }
               >
                 Submit Code (All Tests)
+              </button>
+
+              <button
+                className="btn btn-warning ms-2"
+                onClick={handleSaveAndSubmit}
+                disabled={
+                  isRunning || language === "html" || language === "css"
+                }
+              >
+                Save & Submit
               </button>
             </div>
           </div>
