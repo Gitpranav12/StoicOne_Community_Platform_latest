@@ -2,11 +2,22 @@
 
 import React from "react";
 import { Card, Button, Badge } from "react-bootstrap";
-import { Calendar, Clock, Users, HelpCircle, Play } from "lucide-react";
+import { Calendar, Clock, Users, HelpCircle, Play, BarChart2, } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 export default function ContestCard({ contest }) {
   const navigate = useNavigate();
+
+  const handleViewResults = () => {
+    let typeParam = contest.type.toLowerCase();
+
+    // ✅ Map "quiz + coding" → "both"
+    if (typeParam.includes("quiz") && typeParam.includes("coding")) {
+      typeParam = "both";
+    }
+
+    navigate(`/events/result?contest=${contest.id}&type=${typeParam}`);
+  };
 
   const getStatusBadge = () => {
     switch (contest.status) {
@@ -57,7 +68,7 @@ export default function ContestCard({ contest }) {
             <Button
               variant="primary"
               className="w-100 d-flex align-items-center justify-content-center gap-2"
-              onClick={() => navigate(`/contests/${contest.id}`)} // Example dynamic navigation
+              onClick={() => navigate(`/events/contest/${contest.id}`)} // Example dynamic navigation
             >
               <Play size={16} /> Join Contest
             </Button>
@@ -67,8 +78,10 @@ export default function ContestCard({ contest }) {
               Starts Soon
             </Button>
           )}
-           {contest.status === "Past" && (
-            <Button variant="outline-secondary" className="w-100" disabled>
+          {(contest.status === "Past" || contest.status === "Completed") && (
+            <Button variant="outline-success"
+              className="w-100 d-flex align-items-center justify-content-center gap-2"
+              onClick={handleViewResults} >
               View Results
             </Button>
           )}

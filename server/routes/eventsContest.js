@@ -397,7 +397,110 @@ router.get('/:contestId/participants', async (req, res) => {
 });
 
 
+//.................api to get contest results......
 
+// GET: /api/contests/results/:contestId?type=quiz|coding|both
+// router.get("/results/:contestId", async (req, res) => {
+//   const { contestId } = req.params;
+//   const type = req.query.type || "quiz"; // fallback
+
+//   try {
+//     // 1️⃣ Get contest info
+//     const [contestRows] = await db.query(
+//       "SELECT * FROM contests WHERE id = ?",
+//       [contestId]
+//     );
+
+//     if (!contestRows.length) {
+//       return res.status(404).json({ message: "Contest not found" });
+//     }
+
+//     const contest = contestRows[0];
+
+//     // 2️⃣ Get participants
+//     const [participants] = await db.query(
+//       `SELECT u.id, u.name, u.email, u.profile_photo
+//        FROM participants p
+//        JOIN users u ON p.user_id = u.id
+//        WHERE p.contest_id = ?`,
+//       [contestId]
+//     );
+
+//     const results = [];
+
+//     for (const user of participants) {
+//       let quizPercentage = null;
+//       let codingPercentage = null;
+//       let finalScore = 0;
+
+//       // Fetch quiz score
+//       const [quizRes] = await db.query(
+//         `SELECT AVG(score) AS quiz_percentage
+//          FROM quiz_submissions
+//          WHERE contest_id=? AND user_id=?`,
+//         [contestId, user.id]
+//       );
+//       quizPercentage = quizRes[0]?.quiz_percentage || 0;
+
+//       // Fetch coding score
+//       const [codeRes] = await db.query(
+//         `SELECT AVG(COALESCE(manual_score, auto_score)) AS coding_percentage
+//          FROM coding_submissions
+//          WHERE contest_id=? AND user_id=?`,
+//         [contestId, user.id]
+//       );
+//       codingPercentage = codeRes[0]?.coding_percentage || 0;
+
+//       // Calculate final score based on contest type
+//       if (type === "quiz") {
+//         finalScore = quizPercentage;
+//       } else if (type === "coding") {
+//         finalScore = codingPercentage;
+//       } else if (type === "both") {
+//         // ✅ Equal weightage (50% quiz, 50% coding)
+//         finalScore = (quizPercentage + codingPercentage) / 2;
+//       }
+
+//       results.push({
+//         id: user.id,
+//         name: user.name,
+//         email: user.email,
+//         avatar: user.profile_photo
+//           ? `data:image/jpeg;base64,${user.profile_photo.toString("base64")}`
+//           : null,
+//         quizPercentage: quizPercentage.toFixed(2),
+//         codingPercentage: codingPercentage.toFixed(2),
+//         score: parseFloat(finalScore.toFixed(2)),
+//         submittedAt: new Date(),
+//         totalMarks: 100,
+//         time: "-",
+//       });
+//     }
+
+//     // Sort & rank
+//     results.sort((a, b) => b.score - a.score);
+
+//     // Prepare meta info for header
+//     const meta = {
+//       title: contest.title,
+//       stats: {
+//         participants: participants.length,
+//         submissions: results.filter((r) => r.score > 0).length,
+//         status: contest.status,
+//         problems: "-", // optional, you can query total questions here
+//       },
+//     };
+
+//     res.json({
+//       type,
+//       meta,
+//       leaders: results,
+//     });
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).json({ message: "Server error", error: err.message });
+//   }
+// });
 
 
 
