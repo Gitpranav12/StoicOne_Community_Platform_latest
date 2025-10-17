@@ -1,4 +1,5 @@
 import { Briefcase, Users, Calendar, BarChart3, Award, Clock, CheckCircle, ArrowRight } from 'lucide-react';
+import HrmImage from '../../components/Images/HRMS2.jpg';
 import React from 'react';
 
 export function HRMPage({ onNavigate }) {
@@ -93,7 +94,7 @@ export function HRMPage({ onNavigate }) {
   return (
     <div className="bg-white">
       {/* Hero Section */}
-      <section className="py-5  bg-custom-lightblue-HRM text-white">
+      <section className="py-5  bg-custom-lightgreen-HRM text-white">
         <div className="container py-5 my-5">
           <div className="row align-items-center">
             <div className="col-lg-6">
@@ -150,7 +151,7 @@ export function HRMPage({ onNavigate }) {
             </div>
             <div className="col-lg-6">
               <img
-                src="https://images.unsplash.com/photo-1620221905485-86b2e9e1b594?w=800"
+                src={HrmImage}
                 alt="HRM Dashboard"
                 className="img-fluid rounded shadow-lg"
               />
