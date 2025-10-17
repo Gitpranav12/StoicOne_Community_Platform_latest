@@ -38,7 +38,7 @@ export default function AdminEvents({
       <div className="d-flex flex-column flex-md-row justify-content-md-between align-items-center text-center text-md-start mb-4">
         <div className="mb-3 mb-md-0">
           <h1 className="display-6 fw-bold text-primary mb-1">
-            Events Dashboard
+            Contests Dashboard
           </h1>
           <p className="text-muted mb-0">
             Manage contests and monitor platform activity

@@ -40,7 +40,7 @@ const adminItems = [
   { to: "/admin/answers", label: "Answers", icon: <MessageSquare size={18} /> },
   { to: "/admin/tags", label: "Tags", icon: <Tag size={18} /> },
   { to: "/admin/collectives", label: "Collectives", icon: <UserCog size={18} /> },
-   { to: "/admin/events", label: "Events", icon: <Trophy size={18} /> },
+   { to: "/admin/events", label: "Contests", icon: <Trophy size={18} /> },
 
 ];  //<----added this.........
 
