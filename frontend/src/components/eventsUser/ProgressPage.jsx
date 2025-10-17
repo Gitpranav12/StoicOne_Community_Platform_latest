@@ -1,5 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { Button, Card, Col, Row, ProgressBar, Spinner, Toast, ToastContainer } from "react-bootstrap";
+import {
+  Button,
+  Card,
+  Col,
+  Row,
+  ProgressBar,
+  Spinner,
+  Toast,
+  ToastContainer,
+} from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import Layout from "../../Layout/Layout";
@@ -10,66 +19,87 @@ export default function ProgressPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const { id } = useParams(); // contest id
+
+  // States for contest data and UI behavior
   const [contest, setContest] = useState(null);
   const [activeCategory, setActiveCategory] = useState("All");
   const [loading, setLoading] = useState(true);
   const [timeLeft, setTimeLeft] = useState(null);
   const [showToast, setShowToast] = useState(false);
 
+  // State to track completed rounds
+  const [roundStatus, setRoundStatus] = useState([]);
 
+  // Utility to check if a round is completed
+  const isRoundCompleted = (index) => roundStatus && roundStatus[index];
+
+  // ===== Progress bar aur Rounds completed calculation (NEW - yaha add kiya) =====
+  const totalRounds = contest?.rounds?.length || 0; // कुल rounds
+  const completedRounds = roundStatus.filter(Boolean).length; // पूरे हो चुके rounds
+  const progressPercent =
+    totalRounds === 0 ? 0 : Math.round((completedRounds / totalRounds) * 100); // Progress %
+
+  // Fetch contest details from API
   useEffect(() => {
     const fetchContest = async () => {
       try {
         const response = await axios.get(
           `http://localhost:8080/api/contests/${id}`
         );
-        setContest(response.data);
+        setContest(response.data); // Persistent round completion via localStorage
 
-        // 👇 Timer
+        let key = `contest_${id}_rounds_complete`;
+        let completed = JSON.parse(localStorage.getItem(key) || "[]");
+        setRoundStatus(
+          response.data.rounds.map((_, idx) => completed.includes(idx))
+        ); // ...rest unchanged...
+
         const durationInMinutes = location.state?.duration || 0;
         const storageKey = `contest_end_time_${id}`;
-
         let endTime = localStorage.getItem(storageKey);
 
-        // 👇 If first time loading this contest
         if (!endTime) {
-          endTime = Date.now() + durationInMinutes * 60 * 1000; // current time + duration
+          endTime = Date.now() + durationInMinutes * 60 * 1000;
           localStorage.setItem(storageKey, endTime);
         }
-
-        updateTimeLeft(endTime, storageKey);
+        startTimer(endTime, storageKey);
       } catch (error) {
         console.error("Error fetching contest:", error);
       } finally {
         setLoading(false);
       }
     };
-
     fetchContest();
-  }, [id, location.state]);
+  }, [id, location.state, navigate]);
 
-  // add when handle submit quiz
-    //   localStorage.removeItem(`contest_end_time_${id}`);
-    //   navigate("/events");
-
-  // ---------- Countdown Timer ----------
-  const updateTimeLeft = (endTime, storageKey) => {
-    const timer = setInterval(() => {
-      const remaining = Math.floor((endTime - Date.now()) / 1000);
-      if (remaining <= 0) {
-        clearInterval(timer);
+  // Timer management
+  const startTimer = (endTime, storageKey) => {
+    const timerId = setInterval(() => {
+      const remainingSeconds = Math.floor((endTime - Date.now()) / 1000);
+      if (remainingSeconds <= 0) {
+        clearInterval(timerId);
         localStorage.removeItem(storageKey);
         setShowToast(true);
         setTimeout(() => navigate("/events"), 3000);
       } else {
-        setTimeLeft(remaining);
+        setTimeLeft(remainingSeconds);
       }
     }, 1000);
 
-    return () => clearInterval(timer);
+    // Clear interval on unmount or id change
+    return () => clearInterval(timerId);
   };
 
-  // ---------- Format time ----------
+  // Function to mark a round as complete externally if desired
+  const setComplete = (index) => {
+    setRoundStatus((prev) => {
+      const updated = [...prev];
+      updated[index] = true;
+      return updated;
+    });
+  };
+
+  // Format remaining time for display
   const formatTime = (seconds) => {
     const h = Math.floor(seconds / 3600);
     const m = Math.floor((seconds % 3600) / 60);
@@ -79,6 +109,7 @@ export default function ProgressPage() {
       .padStart(2, "0")}:${s.toString().padStart(2, "0")}`;
   };
 
+  // Loading state view
   if (loading) {
     return (
       <Layout>
@@ -92,6 +123,7 @@ export default function ProgressPage() {
     );
   }
 
+  // Error state view
   if (!contest) {
     return (
       <Layout>
@@ -102,7 +134,7 @@ export default function ProgressPage() {
     );
   }
 
-  // Extract categories dynamically
+  // Dynamically determine categories from rounds
   const categories = Array.from(
     new Set(
       contest.rounds.map((r) => (r.type === "quiz" ? "Aptitude" : "Coding"))
@@ -112,20 +144,19 @@ export default function ProgressPage() {
     icon: type === "Aptitude" ? "bi-lightbulb" : "bi-code-slash",
   }));
 
-  // Filter rounds by category
+  // Filter rounds based on active category
   const filteredRounds =
     activeCategory === "All"
       ? contest.rounds
       : contest.rounds.filter((r) =>
-        activeCategory === "Aptitude"
-          ? r.type === "quiz"
-          : r.type === "coding"
-      );
-
+          activeCategory === "Aptitude"
+            ? r.type === "quiz"
+            : r.type === "coding"
+        );
 
   return (
     <Layout>
-      {/* ---------- Header ---------- */}
+      {/* Header Section */}
       <div className="d-flex justify-content-between align-items-center mb-4 flex-wrap">
         <div>
           <div className="d-flex align-items-center mb-1">
@@ -146,7 +177,6 @@ export default function ProgressPage() {
           </div>
           <p className="text-muted small mb-0">{contest.description}</p>
         </div>
-
         <div className="d-flex align-items-center gap-2 mt-3 mt-md-0">
           <Button
             size="sm"
@@ -157,11 +187,10 @@ export default function ProgressPage() {
               fontWeight: "500",
             }}
           >
-            <i className="bi bi-clock me-1"></i> {" "}
+            <i className="bi bi-clock me-1"></i>{" "}
             {timeLeft !== null ? formatTime(timeLeft) : "Loading..."}
           </Button>
-
-          <Button
+          <Button ////// Round Completion Button (NEW - yaha add kiya)
             size="sm"
             style={{
               backgroundColor: "white",
@@ -170,9 +199,8 @@ export default function ProgressPage() {
               fontWeight: "500",
             }}
           >
-            {contest.rounds.length} Rounds
+            {completedRounds} / {totalRounds} Rounds Complete
           </Button>
-
           <Button
             size="sm"
             style={{
@@ -188,28 +216,31 @@ export default function ProgressPage() {
         </div>
       </div>
 
-      {/* ---------- Progress Section ---------- */}
+      {/* Progress Section */}
       <div className="mb-4">
         <div className="d-flex justify-content-between align-items-center mb-2">
           <h6 className="fw-semibold mb-0">Progress</h6>
-          <span className="text-muted small">0% Complete</span>
+          {/* ==== Progress % above bar (UPDATED) ==== */}
+          <span className="text-muted small">{progressPercent}% Complete</span>
         </div>
-        <ProgressBar now={0} style={{ height: "8px", borderRadius: "10px" }} />
+        {/* ==== Real progress bar ==== */}
+        <ProgressBar
+          now={progressPercent}
+          style={{ height: "8px", borderRadius: "10px" }}
+        />
       </div>
 
-      {/* ---------- Rounds Section ---------- */}
+      {/* Categories and Rounds Section */}
       <Row className="justify-content-center">
         <Col md={12}>
           <Row className="g-0">
-            {/* Categories Section */}
+            {/* Categories List */}
             <Col md={3} className="border-end">
               <div className="p-3 border-bottom bg-light">
                 <h6 className="fw-semibold mb-0">Categories</h6>
               </div>
-
               <div className="p-3">
                 <div className="d-flex flex-column gap-2">
-                  {/* All Option */}
                   <div
                     className="category-btn d-flex align-items-center justify-content-center py-2 px-3"
                     style={{
@@ -234,7 +265,6 @@ export default function ProgressPage() {
                     ></i>
                     All Rounds
                   </div>
-
                   {categories.map((category, index) => (
                     <div
                       key={index}
@@ -274,8 +304,7 @@ export default function ProgressPage() {
                 </div>
               </div>
             </Col>
-
-            {/* Rounds Section */}
+            {/* Rounds List */}
             <Col md={9}>
               <div className="p-3 border-bottom bg-light">
                 <h6 className="fw-semibold mb-0">
@@ -284,13 +313,15 @@ export default function ProgressPage() {
                     : `${activeCategory} Rounds`}
                 </h6>
               </div>
-
               <div className="p-3">
                 {filteredRounds.length === 0 ? (
                   <p className="text-muted">No rounds found.</p>
                 ) : (
-                  filteredRounds.map((round) => (
-                    <Card key={round.id} className="mb-3 border-0 shadow-sm">
+                  filteredRounds.map((round, index) => (
+                    <Card
+                      key={round.id || round._id}
+                      className="mb-3 border-0 shadow-sm"
+                    >
                       <Card.Body>
                         <Row className="align-items-center">
                           <Col md={8}>
@@ -305,17 +336,27 @@ export default function ProgressPage() {
                           </Col>
                           <Col md={4} className="text-end">
                             <Button
-                              variant="primary"
-                              size="sm"
-                              onClick={() =>
-                                navigate(
-                                  round.type === "quiz"
-                                    ? `/events/quiz/${contest.id}/${round.id}`
-                                    : `/events/code/${contest.id}/${round.id}`
-                                )
+                              variant={
+                                isRoundCompleted(index) ? "success" : "primary"
                               }
+                              size="sm"
+                              disabled={
+                                (index > 0 && !isRoundCompleted(index - 1)) ||
+                                isRoundCompleted(index)
+                              }
+                              onClick={() => {
+                                if (!isRoundCompleted(index)) {
+                                  navigate(
+                                    round.type === "quiz"
+                                      ? `/events/quiz/${contest.id}/${round.id}`
+                                      : `/events/code/${contest.id}/${round.id}`
+                                  );
+                                }
+                              }}
                             >
-                              Start Round
+                              {isRoundCompleted(index)
+                                ? "Complete"
+                                : "Start Round"}
                             </Button>
                           </Col>
                         </Row>
@@ -328,7 +369,8 @@ export default function ProgressPage() {
           </Row>
         </Col>
       </Row>
-      {/* ---------- Toast ---------- */}
+
+      {/* Toast Notification */}
       <ToastContainer position="top-center" className="mt-4">
         <Toast
           bg="warning"
@@ -338,7 +380,7 @@ export default function ProgressPage() {
           autohide
         >
           <Toast.Body className="text-dark fw-semibold">
-            <i class="bi bi-alarm-fill"></i> Contest time is over!
+            <i className="bi bi-alarm-fill"></i> Contest time is over!
           </Toast.Body>
         </Toast>
       </ToastContainer>

@@ -1,7 +1,5 @@
 import React, { useEffect, useState, useContext } from "react";
 import { Card, Button, Row, Col, Spinner } from "react-bootstrap";
-import "bootstrap/dist/css/bootstrap.min.css";
-import "bootstrap-icons/font/bootstrap-icons.css";
 import Layout from "../../Layout/Layout";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
@@ -9,30 +7,24 @@ import { UserContext } from "../UserProfilePage/context/UserContext";
 
 export default function ContestPage() {
   const navigate = useNavigate();
-  const { id } = useParams(); // 👈 Get contest id from URL
+  const { id } = useParams();
   const [contest, setContest] = useState(null);
   const [loading, setLoading] = useState(true);
-
   const { user: contextUser } = useContext(UserContext);
   const currentUserId = contextUser?.profile?.id;
 
-
   const handleStartContest = async () => {
     try {
-      // ✅ Save participant
       await axios.post(
         `http://localhost:8080/api/contests/${contest.id}/join`,
-        {
-          userId: currentUserId,
-        }
+        { userId: currentUserId }
       );
       const totalDuration = contest.rounds.reduce(
         (sum, r) => sum + parseInt(r.duration || 0),
         0
       );
-      // Navigate to progress page
       navigate(`/events/progress/${contest.id}`, {
-        state: { duration: totalDuration }, // pass time (in minutes)
+        state: { duration: totalDuration },
       });
     } catch (err) {
       console.error(err);
@@ -62,7 +54,6 @@ export default function ContestPage() {
         </div>
       </Layout>
     );
-
   if (!contest)
     return (
       <Layout>
@@ -148,7 +139,7 @@ export default function ContestPage() {
                                 )}
                             </td>
                           </tr>
-                          {/* <tr>
+                          <tr>
                             <td className="text-muted pb-1">Total Points:</td>
                             <td>
                               {contest.rounds
@@ -159,7 +150,7 @@ export default function ContestPage() {
                                   0
                                 )}
                             </td>
-                          </tr> */}
+                          </tr>
                           <tr>
                             <td className="text-muted">Duration:</td>
                             <td>
@@ -231,10 +222,10 @@ export default function ContestPage() {
                                 )}
                             </td>
                           </tr>
-                          {/* <tr>
+                          <tr>
                             <td className="text-muted pb-1">Languages:</td>
                             <td>Multi-language</td>
-                          </tr> */}
+                          </tr>
                           <tr>
                             <td className="text-muted">Duration:</td>
                             <td>
@@ -378,7 +369,7 @@ export default function ContestPage() {
             }}
           >
             <i className="bi bi-play" style={{ fontSize: "14px" }}></i>
-            Start Contest
+            <Button onClick={handleStartContest}>Start Contest</Button>
           </Button>
         </div>
       </div>

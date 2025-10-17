@@ -9,7 +9,7 @@ export default function QuestionSection({ question, idx, selected, onAnswer }) {
     fontSize: "1.2rem",
     fontWeight: 600,
     color: "#18191F",
-    marginBottom: 10
+    marginBottom: 10,
   };
 
   const outerCard = {
@@ -17,7 +17,7 @@ export default function QuestionSection({ question, idx, selected, onAnswer }) {
     borderRadius: 18,
     boxShadow: "0 2px 8px rgb(0 0 0 / 7%)",
     padding: "22px 32px",
-    marginBottom: 24
+    marginBottom: 24,
   };
 
   const option = (isActive) => ({
@@ -35,7 +35,7 @@ export default function QuestionSection({ question, idx, selected, onAnswer }) {
     outline: isActive ? "2px solid #191A1F" : "1px solid #E8E8E8",
     boxShadow: isActive ? "0 0 0 2px #191A1F inset" : "",
     transition: "outline-color 0.2s",
-    cursor: "pointer"
+    cursor: "pointer",
   });
 
   const radioOuter = (isActive) => ({
@@ -47,7 +47,7 @@ export default function QuestionSection({ question, idx, selected, onAnswer }) {
     alignItems: "center",
     justifyContent: "center",
     marginRight: 14,
-    background: "#fff"
+    background: "#fff",
   });
 
   const radioDot = (isActive) => ({
@@ -55,13 +55,20 @@ export default function QuestionSection({ question, idx, selected, onAnswer }) {
     height: 10,
     borderRadius: "50%",
     background: isActive ? "#191A1F" : "transparent",
-    display: "inline-block"
+    display: "inline-block",
   });
 
   return (
     <div style={outerCard}>
       <div style={fontMain}>
-        Q{idx + 1}: <span style={{ fontWeight: 700 }}>{question.question}</span>
+        Q{idx + 1}:{" "}
+        <span style={{ fontWeight: 700 }}>
+          {question.title ||
+            question.question ||
+            question.text ||
+            question.statement ||
+            ""}
+        </span>
       </div>
       {question.options.map((optionText, i) => {
         const isActive = selected === i;
@@ -73,13 +80,18 @@ export default function QuestionSection({ question, idx, selected, onAnswer }) {
             aria-pressed={isActive}
             style={option(isActive)}
             onClick={() => onAnswer(i)}
-            onKeyPress={e => (e.key === "Enter" ? onAnswer(i) : null)}
+            onKeyPress={(e) => (e.key === "Enter" ? onAnswer(i) : null)}
           >
             <span style={radioOuter(isActive)}>
               <span style={radioDot(isActive)} />
             </span>
-            <span style={{ fontWeight: isActive ? 600 : 500, letterSpacing: 0.5 }}>
-              <span style={{ fontWeight: 600, marginRight: 12 }}> {String.fromCharCode(65 + i)}. </span>
+            <span
+              style={{ fontWeight: isActive ? 600 : 500, letterSpacing: 0.5 }}
+            >
+              <span style={{ fontWeight: 600, marginRight: 12 }}>
+                {" "}
+                {String.fromCharCode(65 + i)}.{" "}
+              </span>
               {optionText}
             </span>
           </div>

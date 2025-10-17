@@ -1,4 +1,7 @@
 import React, { useState, useEffect, useMemo, useContext } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import axios from "axios";
+import { Toast, ToastContainer } from "react-bootstrap";
 import QuizHeader from "./QuizHeader";
 import ProgressBar from "./ProgressBar";
 import QuestionSection from "./QuestionSection";
@@ -8,83 +11,88 @@ import SubmitPopup from "./SubmitPopup";
 import TopHeader from "./TopHeader";
 import OverallScorePopup from "./OverallScorePopup";
 import { UserContext } from "../UserProfilePage/context/UserContext";
-import { useParams, useNavigate } from "react-router-dom";
-import axios from "axios";
-import { Toast, ToastContainer } from "react-bootstrap";
-
-
 
 export default function Quiz() {
+  // User/context info
   const { user: contextUser } = useContext(UserContext);
-  const { contestId, roundId } = useParams();
+  const { contestId } = useParams();
   const navigate = useNavigate();
-  const [showToast, setShowToast] = useState(false);
 
+  // General UI states
+  const [loading, setLoading] = useState(true);
+  const [showToast, setShowToast] = useState(false);
+  const [showSectionComplete, setShowSectionComplete] = useState(false);
+  const [showOverallScore, setShowOverallScore] = useState(false);
+  const [showExit, setShowExit] = useState(false);
+
+  // Quiz/sectioning states
+  const [quizSections, setQuizSections] = useState([]);
+  const [currentSectionIndex, setCurrentSectionIndex] = useState(0);
+  const [sectionScores, setSectionScores] = useState([]);
+  const [roundStatus, setRoundStatus] = useState([]);
+
+  // Per-question UI states
+  const [current, setCurrent] = useState(0); // currently displayed question
+  const [answers, setAnswers] = useState({}); // user answers
+  const [timer, setTimer] = useState(0); // contest timer
+  const storageKey = `contest_end_time_${contestId}`;
+
+  // User info for display/avatar
   const currentUserName = contextUser?.profile?.name || "Candidate";
   const currentUserId = contextUser?.profile?.id;
   const currentUserPhotoUrl = currentUserId
     ? `http://localhost:8080/api/user/${currentUserId}/profile-photo`
     : "https://via.placeholder.com/80/fc5f7c/ffffff?text=U";
 
-  // --- STATE FOR QUIZ DATA ---
-  const [quizSections, setQuizSections] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  // --- STATE FOR MULTI-SECTION LOGIC ---
-  const [currentSectionIndex, setCurrentSectionIndex] = useState(0);
-  const [sectionScores, setSectionScores] = useState([]);
-  const [showSectionComplete, setShowSectionComplete] = useState(false);
-  const [showOverallScore, setShowOverallScore] = useState(false);
-
-  // --- QUESTION TRACKING ---
-  const [current, setCurrent] = useState(0);
-  const [answers, setAnswers] = useState({});
-  const [showExit, setShowExit] = useState(false);
-
-  // --- TIMER STATE ---
-  const [timer, setTimer] = useState(0);
-  const storageKey = `contest_end_time_${contestId}`;
-
-  // --- FETCH QUIZ QUESTIONS ---
+  // Fetch contest/quiz data
   useEffect(() => {
-    const fetchQuiz = async () => {
+    async function fetchQuiz() {
       try {
         const response = await axios.get(
-          `http://localhost:8080/api/contests/${contestId}/round/${roundId}/quiz`
+          `http://localhost:8080/api/contests/${contestId}`
         );
+        const allQuizSections = (response.data.rounds || []).filter(
+          (r) => r.type === "quiz"
+        );
+        setQuizSections(allQuizSections);
 
-        const section = {
-          title: response.data.title || "Quiz Section",
-          questions: response.data.questions || [],
-        };
+let key = `contest_${contestId}_rounds_complete`;
+let completedArr = JSON.parse(localStorage.getItem(key) || "[]");
 
-        setQuizSections([section]);
-        setSectionScores([{ score: 0, total: section.questions.length, completed: false }]);
+// sectionScores reflects completed status from storage
+let scoresFromStorage = allQuizSections.map((section, idx) => ({
+  score: 0,
+  total: section.questions.length,
+  completed: completedArr.includes(idx),
+}));
+
+setSectionScores(scoresFromStorage);
+setRoundStatus(allQuizSections.map((_, idx) => completedArr.includes(idx)));
+
+// find the first incomplete section, or zero if all are complete
+const firstIncomplete = scoresFromStorage.findIndex(s => !s.completed);
+setCurrentSectionIndex(firstIncomplete === -1 ? 0 : firstIncomplete);
 
       } catch (err) {
         console.error("Error fetching quiz:", err);
       } finally {
         setLoading(false);
       }
-    };
-
+    }
     fetchQuiz();
-  }, [contestId, roundId]);
+  }, [contestId]);
 
-  // --- TIMER LOGIC (persistent across pages) ---
+  // Timer logic (per section; persistent)
   useEffect(() => {
     if (!quizSections.length) return;
-
-    const durationInMinutes = quizSections[0].duration || 30;
+    const durationInMinutes = quizSections[currentSectionIndex]?.duration || 30;
     let endTime = localStorage.getItem(storageKey);
-
     if (!endTime) {
       endTime = Date.now() + durationInMinutes * 60 * 1000;
       localStorage.setItem(storageKey, endTime);
     } else {
       endTime = parseInt(endTime, 10);
     }
-
     const interval = setInterval(() => {
       const remaining = Math.floor((endTime - Date.now()) / 1000);
       if (remaining <= 0) {
@@ -96,27 +104,29 @@ export default function Quiz() {
         setTimer(remaining);
       }
     }, 1000);
-
     return () => clearInterval(interval);
-  }, [quizSections, storageKey]);
+  }, [quizSections, storageKey, currentSectionIndex, navigate]);
 
-  // --- DERIVED VARIABLES ---
+  // Derived/semantic helpers
   const totalSections = quizSections.length;
-  const currentSection = quizSections[currentSectionIndex] || { title: "", questions: [] };
+  const currentSection = quizSections[currentSectionIndex] || {
+    title: "",
+    questions: [],
+  };
   const totalQuestions = currentSection.questions.length;
   const isLastSection = currentSectionIndex === totalSections - 1;
 
+  // Score helpers
   const overallScoreTotal = useMemo(
     () => sectionScores.reduce((acc, s) => acc + s.score, 0),
     [sectionScores]
   );
-
   const overallTotalQuestions = useMemo(
     () => sectionScores.reduce((acc, s) => acc + s.total, 0),
     [sectionScores]
   );
 
-  // --- FORMAT TIMER ---
+  // Time formatting
   const formatTime = (sec) => {
     const h = String(Math.floor(sec / 3600)).padStart(2, "0");
     const m = String(Math.floor((sec % 3600) / 60)).padStart(2, "0");
@@ -124,82 +134,112 @@ export default function Quiz() {
     return `${h}:${m}:${s}`;
   };
 
-  // --- HANDLERS ---
-  const handleAnswer = (optionIdx) => setAnswers({ ...answers, [current]: optionIdx });
-  const handleNext = () => current < totalQuestions - 1 && setCurrent(current + 1);
+  // Per-question selection controls
+  const handleAnswer = (optionIdx) =>
+    setAnswers({ ...answers, [current]: optionIdx });
+  const handleNext = () =>
+    current < totalQuestions - 1 && setCurrent(current + 1);
   const handlePrev = () => current > 0 && setCurrent(current - 1);
   const handlePaginate = (idx) => setCurrent(idx);
   const handleExit = () => setShowExit(true);
 
+  // Section scoring
   const calculateSectionScore = () => {
     let score = 0;
     currentSection.questions.forEach((q, qIndex) => {
-      if (answers[qIndex] === q.correctAnswerIndex) score += 1;
+      if (Number(answers[qIndex]) === Number(q.correctIndex)) score += 1;
     });
     return score;
   };
 
+  // Section/state progression logic
   const handleSubmitSection = () => {
     const score = calculateSectionScore();
-    setSectionScores(prevScores => {
+    setSectionScores((prevScores) => {
       const newScores = [...prevScores];
-      newScores[currentSectionIndex] = { score, total: totalQuestions, completed: true };
+      newScores[currentSectionIndex] = {
+        score,
+        total: totalQuestions,
+        completed: true,
+      };
       return newScores;
     });
-
-    if (isLastSection) setShowOverallScore(true);
-    else setShowSectionComplete(true);
+    setRoundStatus((prev) => {
+      const arr = [...prev];
+      arr[currentSectionIndex] = true;
+      return arr;
+    });
+    // ----- ADD THIS BLOCK -----
+  // Mark this section as completed in localStorage for ProgressPage
+  let key = `contest_${contestId}_rounds_complete`;
+  let completed = JSON.parse(localStorage.getItem(key) || "[]");
+  if (!completed.includes(currentSectionIndex)) {
+    completed.push(currentSectionIndex);
+    localStorage.setItem(key, JSON.stringify(completed));
+  }
+  // ----- END BLOCK -----
+    if (!isLastSection) {
+      setShowSectionComplete(false);
+      setCurrentSectionIndex((prev) => prev + 1);
+      setCurrent(0);
+      setAnswers({});
+    } else {
+      setShowSectionComplete(false);
+      setShowOverallScore(true);
+    }
   };
 
   const handleNextSection = () => {
     setShowSectionComplete(false);
-    setCurrentSectionIndex(prev => prev + 1);
+    setCurrentSectionIndex((prev) => prev + 1);
     setCurrent(0);
     setAnswers({});
   };
 
+  // Completion/finalization handlers
   const handleFinalSubmit = () => {
-    console.log("Final Scores:", sectionScores);
     setShowOverallScore(false);
-    navigate("/events"); // navigate after final submit
+    navigate("/events");
   };
 
   const handleReview = () => setShowSectionComplete(false);
 
-  // --- RENDER ---
+  // Render logic
   if (loading) return <div className="text-center my-5">Loading quiz...</div>;
-  if (totalQuestions === 0) return <div className="text-center my-5">No quiz questions found.</div>;
+  if (totalQuestions === 0)
+    return <div className="text-center my-5">No quiz questions found.</div>;
 
   return (
     <>
       <TopHeader />
-      <div className="container my-4 px-2" style={{ maxWidth: "900px", fontFamily: "Arial, sans-serif" }}>
+      <div
+        className="container my-4 px-2"
+        style={{ maxWidth: "900px", fontFamily: "Arial, sans-serif" }}
+      >
         <QuizHeader
-          title={`${currentSection.title} (Section ${currentSectionIndex + 1} of ${totalSections})`}
+          title={`${
+            currentSection.round_name || currentSection.title || "Quiz Section"
+          } (Section ${currentSectionIndex + 1} of ${totalSections})`}
           timer={formatTime(timer)}
           answered={Object.keys(answers).length}
           total={totalQuestions}
           onExit={handleExit}
         />
-
         <ProgressBar current={current} total={totalQuestions} />
-
         <QuestionSection
           question={currentSection.questions[current]}
           idx={current}
           selected={answers[current]}
           onAnswer={handleAnswer}
         />
-
         <Pagination
           current={current}
           total={totalQuestions}
-          answeredArr={Object.keys(answers).map(n => Number(n))}
+          answeredArr={Object.keys(answers).map((n) => Number(n))}
           onPaginate={handlePaginate}
           onNext={handleNext}
           onPrev={handlePrev}
         />
-
         {current === totalQuestions - 1 && (
           <div className="d-flex justify-content-end mt-3">
             <button
@@ -211,9 +251,7 @@ export default function Quiz() {
             </button>
           </div>
         )}
-
         <ExitPopup show={showExit} onCancel={() => setShowExit(false)} />
-
         <SubmitPopup
           show={showSectionComplete}
           total={totalQuestions}
@@ -222,7 +260,6 @@ export default function Quiz() {
           onReview={handleReview}
           onSubmit={handleNextSection}
         />
-
         <OverallScorePopup
           show={showOverallScore}
           sectionScores={sectionScores}
@@ -232,10 +269,9 @@ export default function Quiz() {
           userName={currentUserName}
           userPhotoUrl={currentUserPhotoUrl}
           contestId={contestId}
+          quizSections={quizSections}
         />
       </div>
-
-      {/* ---------- Toast ---------- */}
       <ToastContainer position="top-center" className="mt-4">
         <Toast
           bg="warning"
@@ -245,7 +281,7 @@ export default function Quiz() {
           autohide
         >
           <Toast.Body className="text-dark fw-semibold">
-            <i class="bi bi-alarm-fill"></i> Contest time is over!
+            <i className="bi bi-alarm-fill"></i> Contest time is over!
           </Toast.Body>
         </Toast>
       </ToastContainer>
