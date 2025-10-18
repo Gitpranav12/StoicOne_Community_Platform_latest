@@ -15,6 +15,7 @@ import Layout from "../../Layout/Layout";
 import { UserContext } from "../UserProfilePage/context/UserContext";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
+import toast from "react-hot-toast";
 
 export default function ProgressPage() {
   const navigate = useNavigate();
@@ -113,32 +114,33 @@ export default function ProgressPage() {
       .padStart(2, "0")}:${s.toString().padStart(2, "0")}`;
   };
 
+  const handleSubmitAndExit = async () => {
+    // Check if all rounds are completed
+    const allRoundsCompleted = roundStatus.every(Boolean);
 
-const handleSubmitAndExit = async () => {
-  // Check if all rounds are completed
-  const allRoundsCompleted = roundStatus.every(Boolean);
-
-  if (allRoundsCompleted) {
-    try {
-      await axios.post('http://localhost:8080/api/contests/participants/complete', {
-        contestId: contest.id,
-        userId: currentUserId,
-      });
-      console.log("Contest marked as completed!");
-    } catch (error) {
-      console.error("Error marking contest completed:", error);
+    if (allRoundsCompleted) {
+      try {
+        await axios.post(
+          "http://localhost:8080/api/contests/participants/complete",
+          {
+            contestId: contest.id,
+            userId: currentUserId,
+          }
+        );
+        console.log("Contest marked as completed!");
+        toast.success("Contest marked as completed!");
+      } catch (error) {
+        console.error("Error marking contest completed:", error);
+      }
     }
-  }
 
-  // Clear any contest-specific localStorage if needed
-  localStorage.removeItem(`contest_${id}_rounds_complete`);
-  localStorage.removeItem(`contest_end_time_${id}_${currentUserId}`);
+    // Clear any contest-specific localStorage if needed
+    localStorage.removeItem(`contest_${id}_rounds_complete`);
+    localStorage.removeItem(`contest_end_time_${id}_${currentUserId}`);
 
-  // Navigate to events page
-  navigate("/events");
-};
-
-
+    // Navigate to events page
+    navigate("/events");
+  };
 
   // Loading state view
   if (loading) {
@@ -234,13 +236,21 @@ const handleSubmitAndExit = async () => {
           </Button>
           <Button
             size="sm"
+            title={
+              roundStatus.every(Boolean)
+                ? "Submit your contest"
+                : "Complete all rounds to submit"
+            }
             style={{
               backgroundColor: "white",
               color: "black",
               border: "1px solid grey",
               fontWeight: "500",
+              opacity: roundStatus.every(Boolean) ? 1 : 0.6, // 👈 visual cue when disabled
+              cursor: roundStatus.every(Boolean) ? "pointer" : "not-allowed",
             }}
-           onClick={handleSubmitAndExit}
+            onClick={handleSubmitAndExit}
+            disabled={!roundStatus.every(Boolean)} // 👈 disables until all completed
           >
             Submit & Exit Contest
           </Button>

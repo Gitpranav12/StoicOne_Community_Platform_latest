@@ -13,6 +13,7 @@ import Layout from "../../Layout/Layout";
 import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import { Badge, Button, Card, Spinner } from "react-bootstrap";
+import toast from "react-hot-toast";
 
 export default function SubmissionDetail() {
   const navigate = useNavigate();
@@ -104,12 +105,16 @@ export default function SubmissionDetail() {
         setCurrentIndex(nextIndex);
         setManualScore(updated[nextIndex].manual_score || 0);
         setFeedback(updated[nextIndex].feedback || "");
+        toast.success("Next Submission Data Loaded.");
       } else {
-        alert("✅ All submissions reviewed!");
+        toast.success("✅ All submissions reviewed!");
+        setTimeout(() => {
+          navigate("/admin/events");
+        }, 1500);
       }
     } catch (err) {
       console.error("Save failed:", err);
-      alert("❌ Failed to save feedback.");
+      toast.error("❌ Failed to save feedback.");
     } finally {
       setIsSaving(false);
     }

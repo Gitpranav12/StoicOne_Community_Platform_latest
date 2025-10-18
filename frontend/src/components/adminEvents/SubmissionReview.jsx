@@ -222,20 +222,22 @@ const statsSubmissions = submissions;
             >
               <table className="table table-hover mb-0">
                 <thead className="table-light">
-                  <tr>
+                  <tr
+                  
+                  >
                     <th scope="col">Participant</th>
                     <th scope="col">Contest</th>
-                    <th scope="col" className="text-center">
+                    <th scope="col" className="text-center" style={{ whiteSpace: "nowrap" }}>
                       Coding Score
                     </th>
-                    <th scope="col" className="text-center">
+                    <th scope="col" className="text-center" style={{ whiteSpace: "nowrap" }}>
                       Quiz Score
                     </th>
                     <th scope="col" className="text-center">
                       Status
                     </th>
                     <th scope="col">Submitted</th>
-                    <th scope="col" className="text-center">
+                    <th scope="col" className="text-center" style={{ whiteSpace: "nowrap" }}>
                       Time Spent
                     </th>
                     <th scope="col" className="text-center">
@@ -332,7 +334,7 @@ const statsSubmissions = submissions;
           {filteredSubmissions.length === 0 && (
             <div className="text-center py-5">
               <div className="text-muted">
-                <Filter size={48} className="mb-3 opacity-50" />
+                <Filter size={48} className="mb-3 opacity-50 d-block mx-auto" />
                 <h5>No submissions found</h5>
                 <p>Try adjusting your search criteria or filters.</p>
               </div>
