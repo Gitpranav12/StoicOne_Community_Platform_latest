@@ -113,6 +113,33 @@ export default function ProgressPage() {
       .padStart(2, "0")}:${s.toString().padStart(2, "0")}`;
   };
 
+
+const handleSubmitAndExit = async () => {
+  // Check if all rounds are completed
+  const allRoundsCompleted = roundStatus.every(Boolean);
+
+  if (allRoundsCompleted) {
+    try {
+      await axios.post('http://localhost:8080/api/contests/participants/complete', {
+        contestId: contest.id,
+        userId: currentUserId,
+      });
+      console.log("Contest marked as completed!");
+    } catch (error) {
+      console.error("Error marking contest completed:", error);
+    }
+  }
+
+  // Clear any contest-specific localStorage if needed
+  localStorage.removeItem(`contest_${id}_rounds_complete`);
+  localStorage.removeItem(`contest_end_time_${id}_${currentUserId}`);
+
+  // Navigate to events page
+  navigate("/events");
+};
+
+
+
   // Loading state view
   if (loading) {
     return (
@@ -213,9 +240,9 @@ export default function ProgressPage() {
               border: "1px solid grey",
               fontWeight: "500",
             }}
-            onClick={() => navigate("/events")}
+           onClick={handleSubmitAndExit}
           >
-            Exit Contest
+            Submit & Exit Contest
           </Button>
         </div>
       </div>

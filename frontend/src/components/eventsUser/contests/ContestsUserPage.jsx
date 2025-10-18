@@ -1,17 +1,22 @@
 // src/components/Contests/ContestsUserPage.js
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { Row, Col, Card, Button, Spinner } from "react-bootstrap";
 import ContestCard from "./ContestCard";
+import { UserContext } from "../../UserProfilePage/context/UserContext";
 
 export default function ContestsUserPage() {
   const [activeTab, setActiveTab] = useState("Ongoing");
   const [contests, setContests] = useState([]);
   const [isLoading, setIsLoading] = useState(true); // Add loading state
+  // User/context info
+  const { user: contextUser } = useContext(UserContext);
+
+  const currentUserId = contextUser?.profile?.id;
 
   const transformContests = (apiContests) => {
     // ... (your transformContests function remains unchanged)
-     return apiContests.map((contest) => {
+    return apiContests.map((contest) => {
       const start = new Date(contest.start_date);
       const end = new Date(contest.end_date);
 
@@ -20,7 +25,7 @@ export default function ContestsUserPage() {
         hour: "2-digit",
         minute: "2-digit",
       });
-      
+
       const now = new Date();
       let durationText = "";
       if (now >= start && now <= end) {
@@ -29,7 +34,7 @@ export default function ContestsUserPage() {
         const minutes = Math.floor((diffMs % 3600000) / 60000);
         durationText = `Ends in ${hours}h ${minutes}m`;
       } else if (now < start) {
-         durationText = `Starts in ${Math.ceil((start - now) / 86400000)} days`;
+        durationText = `Starts in ${Math.ceil((start - now) / 86400000)} days`;
       } else {
         durationText = "Completed";
       }
@@ -47,7 +52,10 @@ export default function ContestsUserPage() {
       let status = "Upcoming";
       if (now < start) status = "Upcoming";
       else if (now >= start && now <= end) status = "Ongoing";
-      else status = "Past";
+      else status = "Past"; // always keep time-based status
+
+      // user_status comes from API (from participants table)
+      const user_status = contest.user_status || null;
 
       return {
         id: contest.id,
@@ -61,13 +69,18 @@ export default function ContestsUserPage() {
         questions,
         status,
         type: type.charAt(0).toUpperCase() + type.slice(1),
+        user_status: contest.user_status, // keep for filtering
       };
     });
   };
 
   const fetchContests = async () => {
     try {
-      const res = await fetch("http://localhost:8080/api/contests");
+      // const res = await fetch("http://localhost:8080/api/contests");
+      // ✅ Pass userId to backend to get participation info
+      const res = await fetch(
+        `http://localhost:8080/api/contests?userId=${currentUserId}`
+      );
       const data = await res.json();
       const visibleContests = data.filter(
         (contest) => contest.status?.toLowerCase() !== "draft"
@@ -86,22 +99,47 @@ export default function ContestsUserPage() {
     return () => clearInterval(interval);
   }, []);
 
-  const filteredContests = contests.filter((c) => c.status === activeTab);
+  // const filteredContests = contests.filter((c) => c.status === activeTab);
 
-  const stats = {
-    total: contests.length,
-    Ongoing: contests.filter((c) => c.status === "Ongoing").length,
-    upcoming: contests.filter((c) => c.status === "Upcoming").length,
-    completed: contests.filter((c) => c.status === "Past").length,
-  };
-  
+const filteredContests = contests.filter((c) => {
+  if (activeTab === "Ongoing") {
+    // show ongoing contests where user has NOT completed
+    return c.status === "Ongoing" && c.user_status !== "completed";
+  }
+  if (activeTab === "Upcoming") {
+    return c.status === "Upcoming";
+  }
+  if (activeTab === "Past" || activeTab === "Completed") {
+    // show either time-based completed or user-based completed
+    return c.status === "Past" || c.user_status === "completed";
+  }
+  return false;
+});
+
+
+
+const stats = {
+  total: contests.length,
+  Ongoing: contests.filter(
+    (c) => c.status === "Ongoing" && c.user_status !== "completed"
+  ).length,
+  upcoming: contests.filter((c) => c.status === "Upcoming").length,
+  completed: contests.filter(
+    (c) => c.status === "Past" || c.user_status === "completed"
+  ).length,
+};
+
+
   if (isLoading) {
     return (
-        <div className="d-flex justify-content-center align-items-center" style={{ minHeight: "50vh" }}>
-            <Spinner animation="border" role="status">
-                <span className="visually-hidden">Loading...</span>
-            </Spinner>
-        </div>
+      <div
+        className="d-flex justify-content-center align-items-center"
+        style={{ minHeight: "50vh" }}
+      >
+        <Spinner animation="border" role="status">
+          <span className="visually-hidden">Loading...</span>
+        </Spinner>
+      </div>
     );
   }
 

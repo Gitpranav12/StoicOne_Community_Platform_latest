@@ -113,17 +113,19 @@ router.get('/:id', async (req, res) => {
 
 // Get all contests with rounds (optional: include questions if needed)
 router.get('/', async (req, res) => {
+   const userId = req.query.userId; // Pass logged-in user's id from frontend
   try {
     // Include participant count in the main query
     const [contestRows] = await db.query(`
       SELECT 
         c.*, 
-        COUNT(p.id) AS participants
+        COUNT(p.id) AS participants,
+        MAX(CASE WHEN p.user_id = ? THEN p.status ELSE NULL END) AS user_status
       FROM contests c
       LEFT JOIN participants p ON c.id = p.contest_id
       GROUP BY c.id
       ORDER BY c.start_date DESC
-    `);
+    `, [userId || 0]); // if no userId, just use 0
 
     const contests = [];
 
@@ -481,6 +483,215 @@ router.post('/coding_submissions', async (req, res) => {
   } catch (err) {
     console.error("Error saving coding submission:", err);
     res.status(500).json({ message: "Server error" });
+  }
+});
+
+
+// ✅ Get all coding submissions (for admin review)
+router.get('/coding_submissions/all', async (req, res) => {
+  try {
+    const [rows] = await db.query(`
+      SELECT 
+        MAX(cs.id) AS id,
+        cs.contest_id,
+        cs.user_id,
+        u.name AS username,
+        c.title AS contestTitle,
+        MAX(cs.submitted_at) AS latestSubmission,
+        p.joined_at,
+        TIMESTAMPDIFF(MINUTE, p.joined_at, MAX(cs.submitted_at)) AS timeSpent,
+        COUNT(DISTINCT cs.question_id) AS totalQuestionsSubmitted,
+        GROUP_CONCAT(DISTINCT cs.language) AS languagesUsed,
+        AVG(cs.auto_score) AS avgAutoScore,
+        AVG(cs.manual_score) AS avgManualScore,
+        MAX(cs.status) AS latestStatus,
+        -- ✅ Average quiz score across all rounds in the same contest
+        IFNULL(ROUND(AVG(qs.score), 2), 0) AS quiz_score,
+        p.status AS participantStatus,
+        p.review_status AS reviewStatus
+      FROM coding_submissions cs
+      JOIN users u ON cs.user_id = u.id
+      JOIN contests c ON cs.contest_id = c.id
+      JOIN participants p ON p.user_id = cs.user_id AND p.contest_id = cs.contest_id
+      AND p.status = 'completed'  -- ✅ only completed participants
+      LEFT JOIN quiz_submissions qs 
+        ON qs.user_id = cs.user_id AND qs.contest_id = cs.contest_id
+      GROUP BY cs.user_id, cs.contest_id
+      ORDER BY latestSubmission DESC
+    `);
+
+    res.json(rows);
+  } catch (err) {
+    console.error("Error fetching coding submissions:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+
+// ✅ Get coding submissions of a user for a contest (with user & contest info)
+router.get('/coding_submissions/byUserAndContest', async (req, res) => {
+  const { contestId, userId } = req.query;
+
+  if (!contestId || !userId) {
+    return res.status(400).json({ message: "Missing contestId or userId" });
+  }
+
+  try {
+    // 1️⃣ Fetch user details
+    // const [userRows] = await db.query(
+    //   "SELECT id, name, email, profile_photo FROM users WHERE id = ?",
+    //   [userId]
+    // );
+    const [userRows] = await db.query(
+      "SELECT id, name, email, profile_photo FROM users WHERE id = ?",
+      [userId]
+    );
+    if (!userRows.length) return res.status(404).json({ message: "User not found" });
+    const user = userRows[0];
+
+    let avatar = null;
+    if (user.profile_photo) {
+      if (Buffer.isBuffer(user.profile_photo)) {
+        avatar = `data:image/jpeg;base64,${user.profile_photo.toString("base64")}`;
+      } else if (typeof user.profile_photo === "string" && user.profile_photo.startsWith("http")) {
+        avatar = user.profile_photo;
+      }
+    }
+    user.avatar = avatar; // 👈 use same property name as other API
+    delete user.profile_photo;
+
+
+    // 2️⃣ Fetch contest info
+    const [contestRows] = await db.query(
+      "SELECT id, title, description, start_date AS start_time, end_date AS end_time FROM contests WHERE id = ?",
+      [contestId]
+    );
+    if (!contestRows.length) return res.status(404).json({ message: "Contest not found" });
+    const contest = contestRows[0];
+
+    // 3️⃣ Fetch all coding submissions for that user & contest
+    const [submissions] = await db.query(
+      `SELECT 
+        cs.id,
+        cs.contest_id,
+        cs.round_id,
+        cs.question_id,
+        cq.title AS question_title,
+        cq.description AS problem_statement,
+        cq.sample_input,
+        cq.sample_output,
+        cs.code,
+        cs.language,
+        cs.auto_score,
+        cs.manual_score,
+        cs.feedback,
+        cs.submitted_at
+       FROM coding_submissions cs
+       JOIN coding_questions cq ON cs.question_id = cq.id
+       WHERE cs.contest_id = ? AND cs.user_id = ?
+       ORDER BY cs.submitted_at ASC`,
+      [contestId, userId]
+    );
+
+    // 4️⃣ Parse JSON test_results if stored as string
+    const formattedSubs = submissions.map((s) => ({
+      ...s,
+      test_results:
+        typeof s.test_results === "string" && s.test_results.trim() !== ""
+          ? JSON.parse(s.test_results)
+          : [],
+    }));
+
+    res.json({
+      user,
+      contest,
+      submissions: formattedSubs,
+    });
+  } catch (err) {
+    console.error("Error fetching submission details:", err);
+    res.status(500).json({ message: "Server error", error: err.message });
+  }
+});
+
+
+// ✅ Update manual score & feedback for coding submission
+router.put("/coding_submissions/:id", async (req, res) => {
+  const { id } = req.params;
+  let { manual_score, feedback } = req.body;
+
+  try {
+    // Convert manual_score safely
+    if (manual_score === "" || manual_score === null || manual_score === undefined) {
+      manual_score = null;
+    } else {
+      manual_score = parseFloat(manual_score);
+    }
+
+    await db.query(
+      `UPDATE coding_submissions 
+       SET manual_score = ?, feedback = ?, status = 'reviewed' 
+       WHERE id = ?`,
+      [manual_score, feedback, id]
+    );
+
+    // 2️⃣ Find contest_id and user_id of this submission
+    const [[submission]] = await db.query(
+      `SELECT contest_id, user_id FROM coding_submissions WHERE id = ?`,
+      [id]
+    );
+    const { contest_id, user_id } = submission;
+
+    // 3️⃣ Check if all submissions for this user & contest are reviewed
+    const [pending] = await db.query(
+      `SELECT COUNT(*) AS pendingCount 
+       FROM coding_submissions 
+       WHERE contest_id = ? AND user_id = ? AND status  != 'reviewed'`,
+      [contest_id, user_id]
+    );
+
+    if (pending[0].pendingCount === 0) {
+      // ✅ All submissions reviewed, mark participant as completed
+      await db.query(
+        `UPDATE participants 
+         SET review_status  = 'reviewed' 
+         WHERE contest_id = ? AND user_id = ?`,
+        [contest_id, user_id]
+      );
+    }
+
+
+    res.json({ message: "Submission updated successfully" });
+  } catch (err) {
+    console.error("Error updating submission:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+
+
+// Mark contest as completed for a user
+router.post('/participants/complete', async (req, res) => {
+  const { contestId, userId } = req.body;
+
+  if (!contestId || !userId) {
+    return res.status(400).json({ message: 'Missing contestId or userId' });
+  }
+
+  try {
+    const [result] = await db.execute(
+      `UPDATE participants SET status = 'completed' 
+       WHERE contest_id = ? AND user_id = ?`,
+      [contestId, userId]
+    );
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: 'Participant not found' });
+    }
+
+    res.json({ message: 'Contest marked as completed!' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Server error' });
   }
 });
 

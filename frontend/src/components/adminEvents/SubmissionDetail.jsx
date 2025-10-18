@@ -1,7 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   ArrowLeft,
-  User,
   Calendar,
   Clock,
   Code,
@@ -11,589 +10,310 @@ import {
   MessageSquare,
 } from "lucide-react";
 import Layout from "../../Layout/Layout";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
+import axios from "axios";
+import { Badge, Button, Card, Spinner } from "react-bootstrap";
 
-export default function SubmissionDetail({ submission, contest }) {
-  // ✅ Dummy fallback data
-  submission = submission || {
-    id: "sub_001",
-    contestId: "contest_001",
-    username: "John Doe",
-    score: 85,
-    feedback: "Good work!",
-    timeSpent: 45,
-    submittedAt: new Date().toISOString(),
-    status: "completed",
-    code: `function twoSum(nums, target) {
-  for (let i = 0; i < nums.length; i++) {
-    for (let j = i + 1; j < nums.length; j++) {
-      if (nums[i] + nums[j] === target) return [i, j];
-    }
-  }
-}`,
-    answers: [1, 0, 2],
-  };
+export default function SubmissionDetail() {
+  const navigate = useNavigate();
+  const location = useLocation();
 
-  contest = contest || {
-    id: "contest_001",
-    title: "JavaScript Coding Challenge",
-    description: "Test your problem-solving and JS fundamentals.",
-    type: "coding", // try 'quiz' also
-    duration: 60,
-    problemStatement: `Given an array of integers, return indices of the two numbers such that they add up to a specific target.`,
-    questions: [
-      {
-        id: 1,
-        question: "Which keyword is used to declare a constant in JavaScript?",
-        options: ["var", "let", "const", "define"],
-        correctAnswer: 2,
-      },
-      {
-        id: 2,
-        question: "What is the output of typeof null?",
-        options: ["object", "null", "undefined", "number"],
-        correctAnswer: 0,
-      },
-      {
-        id: 3,
-        question: "Which of these is NOT a JavaScript framework?",
-        options: ["React", "Vue", "Django", "Angular"],
-        correctAnswer: 2,
-      },
-    ],
-  };
+  const { contestId, userId } = location.state || {};
 
-  const [manualScore, setManualScore] = useState(submission?.score ?? 0);
-  const [feedback, setFeedback] = useState(submission?.feedback ?? "");
+  const [loading, setLoading] = useState(true);
+  const [contest, setContest] = useState(null);
+  const [user, setUser] = useState(null);
+  const [submissions, setSubmissions] = useState([]);
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  const [manualScore, setManualScore] = useState("");
+  const [feedback, setFeedback] = useState("");
   const [isSaving, setIsSaving] = useState(false);
 
-  const navigate = useNavigate();
+  // 🧩 Fetch data
+  useEffect(() => {
+    if (!contestId || !userId) return;
 
-  if (!submission || !contest) {
-    return (
-      <div className="text-center py-5">
-        <div className="spinner-border text-primary" role="status"></div>
-        <p className="mt-3 text-muted">Loading submission details...</p>
-      </div>
-    );
-  }
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const res = await axios.get(
+          `http://localhost:8080/api/contests/coding_submissions/byUserAndContest?contestId=${contestId}&userId=${userId}`
+        );
+        const data = res.data;
+        setContest(data.contest);
+        setUser(data.user);
+        setSubmissions(data.submissions || []);
+        if (data.submissions?.length > 0) {
+          const first = data.submissions[0];
+          setManualScore(first.manual_score || 0);
+          setFeedback(first.feedback || "");
+        }
+      } catch (err) {
+        console.error("Error loading submission:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  const handleBack = () => navigate(-1);
+    fetchData();
+  }, [contestId, userId]);
 
-  const handleSave = () => {
-    setIsSaving(true);
-    // Simulate save delay
-    setTimeout(() => {
-      setIsSaving(false);
-    }, 500);
-  };
+  // 🧮 Helpers
+  const currentSub = submissions[currentIndex];
 
-  const formatDate = (date) => {
-    return new Date(date).toLocaleDateString("en-US", {
+  const formatDate = (date) =>
+    new Date(date).toLocaleString("en-IN", {
       year: "numeric",
-      month: "long",
+      month: "short",
       day: "numeric",
       hour: "2-digit",
       minute: "2-digit",
     });
-  };
 
   const getScoreColor = (score) => {
-    if (score >= 80) return "text-success";
-    if (score >= 60) return "text-warning";
+    const num = parseFloat(score);
+    if (num >= 80) return "text-success";
+    if (num >= 60) return "text-warning";
     return "text-danger";
   };
 
+  // 💾 Save feedback + score and go to next
+  const handleSave = async () => {
+    if (!currentSub) return;
+
+    try {
+      setIsSaving(true);
+      await axios.put(
+        `http://localhost:8080/api/contests/coding_submissions/${currentSub.id}`,
+        {
+          manual_score: Number(manualScore), // ✅ convert to number
+          feedback,
+        }
+      );
+
+      // ✅ Update local array
+      const updated = [...submissions];
+      updated[currentIndex].manual_score = manualScore;
+      updated[currentIndex].feedback = feedback;
+      setSubmissions(updated);
+
+      // 🧭 Move to next question automatically
+      if (currentIndex + 1 < submissions.length) {
+        const nextIndex = currentIndex + 1;
+        setCurrentIndex(nextIndex);
+        setManualScore(updated[nextIndex].manual_score || 0);
+        setFeedback(updated[nextIndex].feedback || "");
+      } else {
+        alert("✅ All submissions reviewed!");
+      }
+    } catch (err) {
+      console.error("Save failed:", err);
+      alert("❌ Failed to save feedback.");
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <Layout>
+        <div className="text-center py-5">
+          <div className="spinner-border text-primary" role="status"></div>
+          <p className="mt-3 text-muted">Loading submission details...</p>
+        </div>
+      </Layout>
+    );
+  }
+
+  if (!currentSub) {
+    return (
+      <Layout>
+        <div className="text-center py-5 text-muted">
+          No submissions found for this user.
+        </div>
+      </Layout>
+    );
+  }
+
   return (
     <Layout>
-      <div className="submission-detail">
-        <div
-          className="px-3 mx-auto"
-          style={{
-            maxWidth: "100%", // default full width for web
-          }}
-        >
-          {/* Use a media query to limit width only on small screens */}
-        <style>
-  {`
-    @media (max-width: 768px) {
-      .submission-detail {
-        padding-left: 0;
-        padding-right: 0;
-        display: flex;
-        justify-content: center;  /* centers horizontally */
-      }
+      <div className="px-3 mx-auto" style={{ maxWidth: "100%" }}>
+        {/* Mobile responsiveness */}
+        <style>{`
+          @media (max-width: 768px) {
+            .mobile-narrow {
+              max-width: 285px;
+              margin: 0 auto;
+            }
+          }
+        `}</style>
 
-      .submission-detail .mobile-narrow {
-        max-width: 285px;         /* narrow width */
-        width: 100%;              /* allows full stretch within parent */
-        margin: 0 auto;           /* centers element */
-      }
+        <div className="mobile-narrow">
+          {/* Header */}
+          <div className="d-flex justify-content-between mb-4 flex-wrap gap-2">
+            <button
+              className="btn btn-outline-secondary d-flex align-items-center"
+              onClick={() => navigate(-1)}
+            >
+              <ArrowLeft size={18} className="me-2" /> Back
+            </button>
 
-      .submission-detail .card {
-        margin-left: 0 !important;
-        margin-right: 0 !important;
-        width: 100%;              /* makes cards stretch within 285px container */
-      }
-    }
-  `}
-</style>
+            <button
+              className="btn btn-primary d-flex align-items-center"
+              onClick={handleSave}
+              disabled={isSaving}
+            >
+              <Save size={18} className="me-2" />
+              {isSaving ? "Saving..." : "Save & Next"}
+            </button>
+          </div>
 
+          {/* User & Contest Info */}
+          <Card className="mb-4 shadow-sm">
+            <Card.Body className="d-flex flex-column flex-md-row align-items-center gap-3">
+              {/* 👤 Profile photo */}
+              <img
+                src={user?.avatar || "/images/default-avatar.png"} // fallback if no image
+                alt={user?.name || "Participant"}
+                className="rounded-circle"
+                style={{
+                  width: 80,
+                  height: 80,
+                  objectFit: "cover",
+                  border: "2px solid #ddd",
+                }}
+                onError={(e) => {
+                  // fallback if image URL fails
+                  e.target.src = "/images/default-avatar.png";
+                }}
+              />
 
-          <div className="mobile-narrow">
-            {/* Header */}
-            <div className="mb-4">
-              {/* Buttons row */}
-              <div className="d-flex flex-column flex-md-row justify-content-between gap-2 mb-2">
-                <button
-                  className="btn btn-outline-secondary d-flex align-items-center"
-                  type="button"
-                  onClick={handleBack}
-                >
-                  <ArrowLeft size={18} className="me-2" />
-                  Back
-                </button>
-
-                <button
-                  className="btn btn-primary d-flex align-items-center"
-                  onClick={handleSave}
-                  disabled={isSaving}
-                >
-                  <Save size={18} className="me-2" />
-                  {isSaving ? "Saving..." : "Save Changes"}
-                </button>
-              </div>
-
-              {/* Title and description below buttons */}
               <div>
-                <h2 className="mb-1">Submission Review</h2>
-                <p className="text-muted mb-0">
-                  Review and score participant submission
-                </p>
+                <h5 className="mb-2 d-flex align-items-center">
+                  <CheckCircle className="me-2 text-success" /> Participant
+                </h5>
+                <p className="mb-1 fw-semibold">User ID : {user?.id}</p>
+                <p className="mb-1 fw-semibold">Name : {user?.name}</p>
+                <p className="text-muted mb-0">Email : {user?.email}</p>
               </div>
-            </div>
+            </Card.Body>
 
-            <div className="row g-4">
-              {/* Main Content */}
-              <div className="col-12 col-lg-8">
-                {/* Participant & Contest Info */}
-                <div className="card border-0 shadow-sm mb-4">
-                  <div className="card-body">
-                    <div className="row g-4">
-                      <div className="col-md-6">
-                        <div className="d-flex align-items-center">
-                          <div
-                            className="bg-primary bg-opacity-10 text-primary rounded-circle d-flex align-items-center justify-content-center me-3"
-                            style={{
-                              width: "60px",
-                              height: "60px",
-                              fontSize: "24px",
-                            }}
-                          >
-                            {submission.username.charAt(0).toUpperCase()}
-                          </div>
-                          <div>
-                            <div className="small text-muted">Participant</div>
-                            <div className="h5 mb-0">{submission.username}</div>
-                          </div>
-                        </div>
-                      </div>
+            <hr />
 
-                      <div className="col-md-6">
-                        <div className="d-flex align-items-start">
-                          <Calendar
-                            className="text-muted me-3 mt-1"
-                            size={20}
-                          />
-                          <div>
-                            <div className="small text-muted">Submitted</div>
-                            <div className="fw-semibold">
-                              {formatDate(submission.submittedAt)}
-                            </div>
-                          </div>
-                        </div>
-                      </div>
+            <Card.Body>
+              <h5 className="mb-3 d-flex align-items-center">
+                <Calendar className="me-2 text-primary" /> Contest -{" "}
+                {contest?.id}
+              </h5>
+              <p className="fw-semibold mb-1">{contest?.title}</p>
+              <p className="text-muted">{contest?.description}</p>
+              <small className="text-secondary d-flex align-items-center gap-1">
+                <Clock className="me-1" />
+                <span>{formatDate(contest.start_time)}</span>
+                <span>–</span>
+                <span>{formatDate(contest.end_time)}</span>
+              </small>
+            </Card.Body>
+          </Card>
 
-                      <div className="col-md-6">
-                        <div className="d-flex align-items-start">
-                          <Clock className="text-muted me-3 mt-1" size={20} />
-                          <div>
-                            <div className="small text-muted">Time Spent</div>
-                            <div className="fw-semibold">
-                              {submission.timeSpent} minutes
-                            </div>
-                          </div>
-                        </div>
-                      </div>
+          {/* Coding Submission */}
+          <Card className="mb-4 shadow-sm">
+            <Card.Header className="bg-white d-flex align-items-center">
+              <Code className="me-2" />
+              <h5 className="mb-0">
+                Q{currentIndex + 1} : {currentSub.question_title}
+              </h5>
+              <Badge
+                bg={getScoreColor(currentSub.manual_score || 0)}
+                className="ms-auto"
+              >
+                Score: {currentSub.manual_score || 0}
+              </Badge>
+            </Card.Header>
+            <Card.Body>
+              <p className="text-muted mb-2">
+                <strong>Problem :</strong> {currentSub.problem_statement}
+              </p>
+              <p>
+                <strong>Sample Input :</strong>{" "}
+                <Badge bg="secondary">{currentSub.sample_input}</Badge>
+              </p>
+              <p>
+                <strong>Sample Output :</strong>{" "}
+                <Badge bg="secondary">{currentSub.sample_output}</Badge>
+              </p>
 
-                      <div className="col-md-6">
-                        <div className="d-flex align-items-start">
-                          {submission.status === "completed" ? (
-                            <CheckCircle
-                              className="text-success me-3 mt-1"
-                              size={20}
-                            />
-                          ) : (
-                            <Clock
-                              className="text-warning me-3 mt-1"
-                              size={20}
-                            />
-                          )}
-                          <div>
-                            <div className="small text-muted">Status</div>
-                            <div className="fw-semibold text-capitalize">
-                              {submission.status}
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Contest Information */}
-                <div className="card border-0 shadow-sm mb-4">
-                  <div className="card-header bg-white">
-                    <h5 className="card-title mb-0">Contest Information</h5>
-                  </div>
-                  <div className="card-body">
-                    <h6 className="mb-3">{contest.title}</h6>
-                    <p className="text-muted mb-3">{contest.description}</p>
-                    <div className="d-flex gap-3">
-                      <span
-                        className={`badge ${
-                          contest.type === "quiz" ? "bg-info" : "bg-primary"
-                        }`}
-                      >
-                        {contest.type === "quiz"
-                          ? "Quiz Contest"
-                          : "Coding Contest"}
-                      </span>
-                      <span className="badge bg-secondary">
-                        Duration: {contest.duration} min
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Coding Submission */}
-                {contest.type === "coding" && submission.code && (
-                  <>
-                    <div className="card border-0 shadow-sm mb-4">
-                      <div className="card-header bg-white">
-                        <h5 className="card-title mb-0">Problem Statement</h5>
-                      </div>
-                      <div className="card-body">
-                        <pre
-                          className="mb-0"
-                          style={{
-                            whiteSpace: "pre-wrap",
-                            fontFamily: "monospace",
-                          }}
-                        >
-                          {contest.problemStatement}
-                        </pre>
-                      </div>
-                    </div>
-
-                    <div className="card border-0 shadow-sm mb-4">
-                      <div className="card-header bg-white d-flex align-items-center">
-                        <Code size={20} className="me-2" />
-                        <h5 className="card-title mb-0">Submitted Code</h5>
-                      </div>
-                      <div className="card-body p-0">
-                        <div className="position-relative">
-                          <pre
-                            className="bg-dark text-light p-4 mb-0 rounded-bottom"
-                            style={{ maxHeight: "500px", overflow: "auto" }}
-                          >
-                            <code>{submission.code}</code>
-                          </pre>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Test Cases Results */}
-                    <div className="card border-0 shadow-sm mb-4">
-                      <div className="card-header bg-white">
-                        <h5 className="card-title mb-0">Test Cases</h5>
-                      </div>
-                      <div className="card-body">
-                        <div className="list-group list-group-flush">
-                          <div className="list-group-item d-flex justify-content-between align-items-center px-0">
-                            <div>
-                              <div className="fw-semibold">
-                                Test Case 1: Basic Input
-                              </div>
-                              <div className="small text-muted">
-                                Input: [2, 7, 11, 15], target = 9
-                              </div>
-                              <div className="small text-muted">
-                                Expected: [0, 1]
-                              </div>
-                            </div>
-                            <CheckCircle className="text-success" size={24} />
-                          </div>
-
-                          <div className="list-group-item d-flex justify-content-between align-items-center px-0">
-                            <div>
-                              <div className="fw-semibold">
-                                Test Case 2: Negative Numbers
-                              </div>
-                              <div className="small text-muted">
-                                Input: [-1, -2, -3, -4], target = -6
-                              </div>
-                              <div className="small text-muted">
-                                Expected: [1, 3]
-                              </div>
-                            </div>
-                            <CheckCircle className="text-success" size={24} />
-                          </div>
-
-                          <div className="list-group-item d-flex justify-content-between align-items-center px-0">
-                            <div>
-                              <div className="fw-semibold">
-                                Test Case 3: Large Numbers
-                              </div>
-                              <div className="small text-muted">
-                                Input: [1000, 2000, 3000], target = 4000
-                              </div>
-                              <div className="small text-muted">
-                                Expected: [0, 2]
-                              </div>
-                            </div>
-                            <XCircle className="text-danger" size={24} />
-                          </div>
-                        </div>
-
-                        <div className="mt-3 p-3 bg-light rounded">
-                          <div className="d-flex justify-content-between align-items-center">
-                            <span className="fw-semibold">
-                              Test Cases Passed:
-                            </span>
-                            <span className="badge bg-success">2 / 3</span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </>
-                )}
-
-                {/* Quiz Submission */}
-                {contest.type === "quiz" &&
-                  submission.answers &&
-                  contest.questions && (
-                    <div className="card border-0 shadow-sm mb-4">
-                      <div className="card-header bg-white">
-                        <h5 className="card-title mb-0">Quiz Answers Review</h5>
-                      </div>
-                      <div className="card-body">
-                        {contest.questions.map((question, index) => {
-                          const userAnswer = submission.answers[index];
-                          const isCorrect =
-                            userAnswer === question.correctAnswer;
-
-                          return (
-                            <div
-                              key={question.id}
-                              className={`border rounded-3 p-4 mb-3 ${
-                                isCorrect
-                                  ? "border-success bg-success bg-opacity-10"
-                                  : "border-danger bg-danger bg-opacity-10"
-                              }`}
-                            >
-                              <div className="d-flex justify-content-between align-items-start mb-3">
-                                <h6 className="mb-0">
-                                  Q{index + 1}: {question.question}
-                                </h6>
-                                {isCorrect ? (
-                                  <CheckCircle
-                                    className="text-success"
-                                    size={20}
-                                  />
-                                ) : (
-                                  <XCircle className="text-danger" size={20} />
-                                )}
-                              </div>
-
-                              <div className="row g-2">
-                                {question.options.map((option, optIndex) => {
-                                  const isUserAnswer = optIndex === userAnswer;
-                                  const isCorrectAnswer =
-                                    optIndex === question.correctAnswer;
-
-                                  let badgeClass = "bg-light text-dark";
-                                  let badges = [];
-
-                                  if (isCorrectAnswer) {
-                                    badgeClass = "bg-success text-white";
-                                    badges.push(
-                                      <span
-                                        key="correct"
-                                        className="badge bg-white text-success ms-2"
-                                      >
-                                        Correct Answer
-                                      </span>
-                                    );
-                                  }
-
-                                  if (isUserAnswer && !isCorrectAnswer) {
-                                    badgeClass =
-                                      "bg-danger bg-opacity-25 border border-danger";
-                                    badges.push(
-                                      <span
-                                        key="user"
-                                        className="badge bg-danger ms-2"
-                                      >
-                                        User's Answer
-                                      </span>
-                                    );
-                                  } else if (isUserAnswer && isCorrectAnswer) {
-                                    badges.push(
-                                      <span
-                                        key="user-correct"
-                                        className="badge bg-white text-success ms-2"
-                                      >
-                                        User's Answer ✓
-                                      </span>
-                                    );
-                                  }
-
-                                  return (
-                                    <div key={optIndex} className="col-12">
-                                      <div
-                                        className={`p-3 rounded d-flex align-items-center justify-content-between ${badgeClass}`}
-                                      >
-                                        <div>
-                                          <span className="me-2 fw-bold">
-                                            {String.fromCharCode(65 + optIndex)}
-                                            .
-                                          </span>
-                                          {option}
-                                        </div>
-                                        <div>{badges}</div>
-                                      </div>
-                                    </div>
-                                  );
-                                })}
-                              </div>
-                            </div>
-                          );
-                        })}
-
-                        <div className="mt-4 p-3 bg-light rounded">
-                          <div className="d-flex justify-content-between align-items-center">
-                            <span className="fw-semibold">
-                              Questions Answered Correctly:
-                            </span>
-                            <span className="badge bg-primary">
-                              {
-                                submission.answers.filter(
-                                  (ans, idx) =>
-                                    ans === contest.questions[idx].correctAnswer
-                                ).length
-                              }{" "}
-                              / {contest.questions.length}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-
-                {/* Admin Feedback */}
-                <div className="card border-0 shadow-sm mb-4">
-                  <div className="card-header bg-white d-flex align-items-center">
-                    <MessageSquare size={20} className="me-2" />
-                    <h5 className="card-title mb-0">Admin Feedback</h5>
-                  </div>
-                  <div className="card-body">
-                    <textarea
-                      className="form-control"
-                      rows="4"
-                      placeholder="Add feedback or comments for the participant..."
-                      value={feedback}
-                      onChange={(e) => setFeedback(e.target.value)}
-                    />
-                    <div className="small text-muted mt-2">
-                      This feedback will be visible to the participant
-                    </div>
-                  </div>
-                </div>
+              <hr />
+              <div className="d-flex justify-content-between align-items-center mb-2">
+                <h6>Submitted Code:</h6>
+                <h6>Language Used: {currentSub.language}</h6>
               </div>
 
-              {/* Sidebar */}
-              <div className="col-12 col-lg-4">
-                {/* Score Card */}
-                <div
-                  className="card border-0 shadow-sm mb-4 sticky-top"
-                  style={{ top: "20px" }}
-                >
-                  <div className="card-header bg-white">
-                    <h5 className="card-title mb-0">Score Management</h5>
-                  </div>
-                  <div className="card-body">
-                    {/* Current Score */}
-                    <div className="text-center mb-4">
-                      <div className="small text-muted mb-2">Current Score</div>
-                      <div
-                        className={`display-4 ${getScoreColor(
-                          submission.score
-                        )}`}
-                      >
-                        {submission.score}%
-                      </div>
-                    </div>
+              <pre
+                className="bg-dark text-light p-3 rounded"
+                style={{ maxHeight: 400, overflowY: "auto" }}
+              >
+                <code>{currentSub.code}</code>
+              </pre>
+            </Card.Body>
+          </Card>
 
-                    <hr />
-
-                    {/* Manual Score Override */}
-                    <div className="mb-4">
-                      <label className="form-label fw-semibold">
-                        Manual Score Override
-                      </label>
-                      <div className="input-group">
-                        <input
-                          type="number"
-                          className="form-control"
-                          min="0"
-                          max="100"
-                          value={manualScore}
-                          onChange={(e) =>
-                            setManualScore(Number(e.target.value))
-                          }
-                        />
-                        <span className="input-group-text">%</span>
-                      </div>
-                      <div className="small text-muted mt-2">
-                        Adjust the score manually if needed
-                      </div>
-                    </div>
-
-                    {/* Quick Actions */}
-                    <div className="d-grid gap-2">
-                      <button
-                        className="btn btn-success"
-                        onClick={() => {
-                          setManualScore(100);
-                        }}
-                      >
-                        Mark as Perfect
-                      </button>
-                      <button
-                        className="btn btn-outline-secondary"
-                        onClick={() => {
-                          setManualScore(submission.score);
-                          setFeedback("");
-                        }}
-                      >
-                        Reset Changes
-                      </button>
-                    </div>
-                  </div>
-                </div>
+          {/* Feedback + Score */}
+          <Card className="mb-4 shadow-sm">
+            <Card.Header className="bg-white d-flex align-items-center">
+              <MessageSquare size={20} className="me-2" />
+              <h5 className="mb-0">Admin Feedback</h5>
+            </Card.Header>
+            <Card.Body>
+              <div className="mb-3">
+                <label className="form-label fw-semibold">
+                  Manual Score (0–100)
+                </label>
+                <input
+                  type="number"
+                  className="form-control"
+                  min="0"
+                  max="100"
+                  value={manualScore}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    // ✅ Only allow numbers between 0 and 100
+                    if (val === "") {
+                      setManualScore("");
+                    } else if (!isNaN(val) && val >= 0 && val <= 100) {
+                      setManualScore(val);
+                    }
+                  }}
+                  onBlur={() => {
+                    // ✅ Clamp value if user types outside range and leaves field
+                    if (manualScore === "") return;
+                    let num = Number(manualScore);
+                    if (num < 0) num = 0;
+                    if (num > 100) num = 100;
+                    setManualScore(num);
+                  }}
+                />
+                <small className="text-muted">
+                  Enter a score between 0 and 100.
+                </small>
               </div>
-            </div>
+              <textarea
+                className="form-control mb-2"
+                rows="4"
+                placeholder="Write feedback for this submission..."
+                value={feedback}
+                onChange={(e) => setFeedback(e.target.value)}
+              />
+              <small className="text-muted">
+                Feedback will be visible to the participant.
+              </small>
+            </Card.Body>
+          </Card>
+
+          {/* Progress footer */}
+          <div className="text-center text-muted mb-4">
+            {currentIndex + 1} / {submissions.length} submissions reviewed
           </div>
         </div>
       </div>

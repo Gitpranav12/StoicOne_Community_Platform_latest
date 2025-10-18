@@ -63,29 +63,40 @@ export default function ContestCard({ contest }) {
         </div>
 
         {/* Button section - mt-auto pushes this to the bottom */}
+        {/* Button section - mt-auto pushes this to the bottom */}
         <div className="mt-auto pt-3">
-          {contest.status === "Ongoing" && (
+          {/* ✅ If user completed contest */}
+          {contest.user_status === "completed" ? (
+            <Button
+              variant="success"
+              className="w-100 d-flex align-items-center justify-content-center gap-2"
+              disabled
+            >
+              ✅ Completed
+            </Button>
+          ) : contest.status === "Ongoing" ? (
             <Button
               variant="primary"
               className="w-100 d-flex align-items-center justify-content-center gap-2"
-              onClick={() => navigate(`/events/contest/${contest.id}`)} // Example dynamic navigation
+              onClick={() => navigate(`/events/contest/${contest.id}`)}
             >
               <Play size={16} /> Join Contest
             </Button>
-          )}
-          {contest.status === "Upcoming" && (
+          ) : contest.status === "Upcoming" ? (
             <Button variant="outline-secondary" className="w-100" disabled>
               Starts Soon
             </Button>
-          )}
-          {(contest.status === "Past" || contest.status === "Completed") && (
-            <Button variant="outline-success"
+          ) : (
+            <Button
+              variant="outline-success"
               className="w-100 d-flex align-items-center justify-content-center gap-2"
-              onClick={handleViewResults} >
+              onClick={handleViewResults}
+            >
               View Results
             </Button>
           )}
         </div>
+
       </Card.Body>
     </Card>
   );

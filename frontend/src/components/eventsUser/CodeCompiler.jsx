@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import Editor from "@monaco-editor/react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { UserContext } from "../UserProfilePage/context/UserContext";
+import toast from "react-hot-toast";
 
 // ... (LANGUAGES आणि DUMMY_QUESTION_DATA अपरिवर्तित) ...
 const LANGUAGES = {
@@ -440,7 +441,7 @@ const CodeCompiler = () => {
   // ✅ CHANGE: Save & Submit → move to next question or round
   const handleSaveAndSubmit = async () => {
     if (!question || !evaluationResults) {
-      alert("⚠️ Please run or submit your code first to get results!");
+      toast.error("⚠️ Please run or submit your code first to get results!");
       return;
     }
 
@@ -486,6 +487,7 @@ const CodeCompiler = () => {
         setCode(getDefaultCode(language));
         setEvaluationResults(null);
         setOutput("");
+        toast.success("Next Question Loaded.")
       } else if (currentRoundIndex + 1 < rounds.length) {
         // ✅ CHANGE: Move to next round
         const nextRound = rounds[currentRoundIndex + 1];
@@ -494,14 +496,15 @@ const CodeCompiler = () => {
         setCode(getDefaultCode(language));
         setEvaluationResults(null);
         setOutput("");
+        toast.success("Next Round Started.")
       } else {
         // ✅ CHANGE: Contest finished
-        alert("🎉 You have completed the contest!");
+        toast.success("🎉 You have completed the contest!");
         navigate(`/events/progress/${contestId}`);
       }
     } catch (err) {
       console.error("❌ Error saving submission:", err);
-      alert("Error saving your submission. Please try again.");
+      toast.error("Error saving your submission. Please try again.");
     }
   };
 

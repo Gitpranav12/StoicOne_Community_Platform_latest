@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Eye,
   Download,
@@ -9,71 +9,55 @@ import {
   Clock,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-
+import axios from "axios";
 
 export default function SubmissionReview({ contests }) {
   const [selectedContest, setSelectedContest] = useState("all");
   const [filterStatus, setFilterStatus] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
- const navigate = useNavigate(); // ✅ Use navigation hook
-  // Mock submission data
-  const mockSubmissions = [
-    {
-      id: "1",
-      contestId: "1",
-      contestTitle: "JavaScript Fundamentals Quiz",
-      username: "john_doe",
-      score: 85,
-      status: "completed",
-      submittedAt: new Date("2024-12-01T14:30:00Z"),
-      timeSpent: 25,
-      answers: [0, 1, 2],
-    },
-    {
-      id: "2",
-      contestId: "2",
-      contestTitle: "Algorithm Challenge: Two Sum",
-      username: "jane_smith",
-      score: 92,
-      status: "completed",
-      submittedAt: new Date("2024-12-01T15:45:00Z"),
-      timeSpent: 45,
-      code: "function twoSum(nums, target) {\n  const map = new Map();\n  for (let i = 0; i < nums.length; i++) {\n    const complement = target - nums[i];\n    if (map.has(complement)) {\n      return [map.get(complement), i];\n    }\n    map.set(nums[i], i);\n  }\n}",
-    },
-    {
-      id: "3",
-      contestId: "1",
-      contestTitle: "JavaScript Fundamentals Quiz",
-      username: "alex_wilson",
-      score: 73,
-      status: "completed",
-      submittedAt: new Date("2024-12-01T16:20:00Z"),
-      timeSpent: 30,
-      answers: [0, 2, 1],
-    },
-    {
-      id: "4",
-      contestId: "4",
-      contestTitle: "Data Structures: Binary Tree",
-      username: "sarah_jones",
-      score: 0,
-      status: "pending",
-      submittedAt: new Date("2024-12-01T17:10:00Z"),
-      timeSpent: 120,
-      code: "class TreeNode {\n  constructor(val) {\n    this.val = val;\n    this.left = null;\n    this.right = null;\n  }\n}\n\n// Incomplete solution...",
-    },
-  ];
+  const navigate = useNavigate(); // ✅ Use navigation hook
 
-  const filteredSubmissions = mockSubmissions.filter((submission) => {
+  const [submissions, setSubmissions] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchSubmissions = async () => {
+      try {
+        const res = await axios.get(
+          "http://localhost:8080/api/contests/coding_submissions/all"
+        );
+        setSubmissions(res.data);
+      } catch (err) {
+        console.error("Error fetching submissions:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchSubmissions();
+  }, []);
+
+
+  // ✅ All submissions for stats
+const statsSubmissions = submissions;
+
+
+  const filteredSubmissions = submissions.filter((submission) => {
     const matchesContest =
-      selectedContest === "all" || submission.contestId === selectedContest;
+      selectedContest === "all" ||
+      submission.contest_id.toString() === selectedContest;
     const matchesStatus =
       filterStatus === "all" || submission.status === filterStatus;
     const matchesSearch =
-      submission.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      submission.contestTitle.toLowerCase().includes(searchTerm.toLowerCase());
+      submission.username?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      submission.contestTitle?.toLowerCase().includes(searchTerm.toLowerCase());
 
-    return matchesContest && matchesStatus && matchesSearch;
+    // ✅ Hide if participant is completed AND already reviewed
+    const isVisible = !(
+      submission.participantStatus === "completed" &&
+      submission.reviewStatus === "reviewed"
+    );
+
+    return matchesContest && matchesStatus && matchesSearch && isVisible;
   });
 
   const formatDate = (date) => {
@@ -104,9 +88,6 @@ export default function SubmissionReview({ contests }) {
     return "text-danger";
   };
 
-    const handleSelectViewDetails = (contest) => {
-    navigate("/admin/events/contestDetails", { state: { contest } });
-  };
 
   return (
     <div className="submission-review">
@@ -124,14 +105,13 @@ export default function SubmissionReview({ contests }) {
         </button> */}
       </div>
 
-
-        {/* Summary Stats */}
+      {/* Summary Stats */}
       <div className="row g-4 mt-4">
         <div className="col-md-3">
           <div className="card border shadow-sm text-center">
             <div className="card-body">
               <div className="fw-bold h4 text-primary">
-                {mockSubmissions.length}
+                {statsSubmissions.length}
               </div>
               <div className="small text-muted">Total Submissions</div>
             </div>
@@ -142,7 +122,10 @@ export default function SubmissionReview({ contests }) {
           <div className="card border shadow-sm text-center">
             <div className="card-body">
               <div className="fw-bold h4 text-success">
-                {mockSubmissions.filter((s) => s.status === "completed").length}
+                {
+                  statsSubmissions.filter((s) => s.latestStatus === "reviewed")
+                    .length
+                }
               </div>
               <div className="small text-muted">Completed</div>
             </div>
@@ -153,7 +136,7 @@ export default function SubmissionReview({ contests }) {
           <div className="card border shadow-sm text-center">
             <div className="card-body">
               <div className="fw-bold h4 text-warning">
-                {mockSubmissions.filter((s) => s.status === "pending").length}
+                {statsSubmissions.filter((s) => s.latestStatus === "pending").length}
               </div>
               <div className="small text-muted">Pending Review</div>
             </div>
@@ -165,8 +148,8 @@ export default function SubmissionReview({ contests }) {
             <div className="card-body">
               <div className="fw-bold h4 text-info">
                 {Math.round(
-                  mockSubmissions.reduce((sum, s) => sum + s.score, 0) /
-                    mockSubmissions.length
+                  statsSubmissions.reduce((sum, s) => sum + s.avgManualScore, 0) /
+                    statsSubmissions.length
                 ) || 0}
                 %
               </div>
@@ -222,8 +205,6 @@ export default function SubmissionReview({ contests }) {
                 <option value="failed">Failed</option>
               </select>
             </div> */}
-
-            
           </div>
         </div>
       </div>
@@ -245,7 +226,10 @@ export default function SubmissionReview({ contests }) {
                     <th scope="col">Participant</th>
                     <th scope="col">Contest</th>
                     <th scope="col" className="text-center">
-                      Score
+                      Coding Score
+                    </th>
+                    <th scope="col" className="text-center">
+                      Quiz Score
                     </th>
                     <th scope="col" className="text-center">
                       Status
@@ -284,30 +268,39 @@ export default function SubmissionReview({ contests }) {
                             {submission.contestTitle}
                           </div>
                           <div className="small text-muted">
-                            Contest ID: {submission.contestId}
+                            Contest ID: {submission.contest_id}
                           </div>
                         </div>
                       </td>
                       <td className="text-center">
                         <div
                           className={`fw-bold ${getScoreColor(
-                            submission.score
+                            submission.avgManualScore
                           )}`}
                         >
-                          {submission.score}%
+                          {submission.avgManualScore}%
+                        </div>
+                      </td>
+                      <td className="text-center">
+                        <div
+                          className={`fw-bold ${getScoreColor(
+                            submission.quiz_score
+                          )}`}
+                        >
+                          {submission.quiz_score}
                         </div>
                       </td>
                       <td className="text-center">
                         <div className="d-flex align-items-center justify-content-center">
-                          {getStatusIcon(submission.status)}
+                          {getStatusIcon(submission.latestStatus)}
                           <span className="ms-2 small text-capitalize">
-                            {submission.status}
+                            {submission.latestStatus}
                           </span>
                         </div>
                       </td>
                       <td>
                         <div className="small">
-                          {formatDate(submission.submittedAt)}
+                          {formatDate(submission.latestSubmission)}
                         </div>
                       </td>
                       <td className="text-center">
@@ -318,7 +311,12 @@ export default function SubmissionReview({ contests }) {
                           className="btn btn-outline-primary btn-sm"
                           title="View Submission Details"
                           onClick={() => {
-                             navigate("/admin/events/submissionDetails")
+                            navigate("/admin/events/submissionDetails", {
+                              state: {
+                                contestId: submission.contest_id,
+                                userId: submission.user_id,
+                              },
+                            });
                           }}
                         >
                           <Eye size={16} />
@@ -342,8 +340,6 @@ export default function SubmissionReview({ contests }) {
           )}
         </div>
       </div>
-
-    
     </div>
   );
 }

@@ -30,6 +30,7 @@ const Navbar = ({ toggleSidebar }) => {
   const handleLogout = () => {
     localStorage.removeItem("token");          // token clear
     localStorage.removeItem("currentUser");    // currentUser clear
+    localStorage.clear();  // Clear all localStorage data
     setUser(null);                              // context clear
     window.location.href = "/login";           // login page redirect
   };
