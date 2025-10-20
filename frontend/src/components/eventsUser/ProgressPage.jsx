@@ -35,11 +35,15 @@ export default function ProgressPage() {
   const [roundStatus, setRoundStatus] = useState([]);
 
   // Utility to check if a round is completed
-  const isRoundCompleted = (index) => roundStatus && roundStatus[index];
+  // const isRoundCompleted = (index) => roundStatus && roundStatus[index];
+  // ✅ NEW
+  const isRoundCompleted = (roundId) =>
+    roundStatus && roundStatus.includes(roundId);
 
   // ===== Progress bar aur Rounds completed calculation (NEW - yaha add kiya) =====
   const totalRounds = contest?.rounds?.length || 0; // कुल rounds
-  const completedRounds = roundStatus.filter(Boolean).length; // पूरे हो चुके rounds
+  // const completedRounds = roundStatus.filter(Boolean).length; // पूरे हो चुके rounds
+  const completedRounds = roundStatus.length;
   const progressPercent =
     totalRounds === 0 ? 0 : Math.round((completedRounds / totalRounds) * 100); // Progress %
 
@@ -54,9 +58,15 @@ export default function ProgressPage() {
 
         let key = `contest_${id}_rounds_complete`;
         let completed = JSON.parse(localStorage.getItem(key) || "[]");
-        setRoundStatus(
-          response.data.rounds.map((_, idx) => completed.includes(idx))
-        ); // ...rest unchanged...
+        // setRoundStatus(
+        //   response.data.rounds.map((_, idx) => completed.includes(idx))
+        // ); // ...rest unchanged...
+
+        // setRoundStatus(
+        //   response.data.rounds.map((r) => completed.includes(r.id))
+        // );
+
+        setRoundStatus(completed); // instead of mapping to booleans
 
         const durationInMinutes = location.state?.duration || 0;
         const storageKey = `contest_end_time_${id}_${currentUserId}`;
@@ -237,7 +247,7 @@ export default function ProgressPage() {
           <Button
             size="sm"
             title={
-              roundStatus.every(Boolean)
+              roundStatus.length === totalRounds
                 ? "Submit your contest"
                 : "Complete all rounds to submit"
             }
@@ -246,11 +256,12 @@ export default function ProgressPage() {
               color: "black",
               border: "1px solid grey",
               fontWeight: "500",
-              opacity: roundStatus.every(Boolean) ? 1 : 0.6, // 👈 visual cue when disabled
-              cursor: roundStatus.every(Boolean) ? "pointer" : "not-allowed",
+              opacity: roundStatus.length === totalRounds ? 1 : 0.6, // visible but faded if incomplete
+              cursor:
+                roundStatus.length === totalRounds ? "pointer" : "not-allowed",
             }}
             onClick={handleSubmitAndExit}
-            disabled={!roundStatus.every(Boolean)} // 👈 disables until all completed
+            disabled={roundStatus.length !== totalRounds} // ✅ disabled until all rounds complete
           >
             Submit & Exit Contest
           </Button>
@@ -378,15 +389,20 @@ export default function ProgressPage() {
                           <Col md={4} className="text-end">
                             <Button
                               variant={
-                                isRoundCompleted(index) ? "success" : "primary"
+                                isRoundCompleted(round.id)
+                                  ? "success"
+                                  : "primary"
                               }
                               size="sm"
                               disabled={
-                                (index > 0 && !isRoundCompleted(index - 1)) ||
-                                isRoundCompleted(index)
+                                (index > 0 &&
+                                  !isRoundCompleted(
+                                    contest.rounds[index - 1].id
+                                  )) ||
+                                isRoundCompleted(round.id)
                               }
                               onClick={() => {
-                                if (!isRoundCompleted(index)) {
+                                if (!isRoundCompleted(round.id)) {
                                   navigate(
                                     round.type === "quiz"
                                       ? `/events/quiz/${contest.id}/${round.id}`
@@ -395,7 +411,7 @@ export default function ProgressPage() {
                                 }
                               }}
                             >
-                              {isRoundCompleted(index)
+                              {isRoundCompleted(round.id)
                                 ? "Complete"
                                 : "Start Round"}
                             </Button>

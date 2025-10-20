@@ -23,7 +23,7 @@ const CodeCompiler = () => {
   const currentUserId = contextUser?.profile?.id;
   // ✅ Get contestId & roundId from the URL
   // Example: /events/code/23/200 → contestId=23, roundId=200
-  const { contestId } = useParams(); // ✅ CHANGE: removed roundId from here; we handle currentRoundIndex dynamically
+  const { contestId, roundId: roundIdFromUrl } = useParams(); // ✅ CHANGE: removed roundId from here; we handle currentRoundIndex dynamically
   const [rounds, setRounds] = useState([]); // ✅ CHANGE: store all rounds
   const [currentRoundIndex, setCurrentRoundIndex] = useState(0); // ✅ CHANGE: track which round is active
   const [roundId, setRoundId] = useState(null); // ✅ CHANGE: current roundId derived from rounds[currentRoundIndex]
@@ -85,9 +85,24 @@ const CodeCompiler = () => {
           throw new Error("No rounds found for this contest");
         }
 
-        setRounds(data.rounds);
-        setCurrentRoundIndex(0); // start from first round
-        setRoundId(data.rounds[0].id); // ✅ CHANGE: set current roundId
+        // ✅ Filter only coding rounds
+        const codingRounds = data.rounds.filter((r) => r.type === "coding");
+
+        if (codingRounds.length === 0) {
+          throw new Error("No coding rounds found for this contest");
+        }
+
+        setRounds(codingRounds);
+        // ✅ Determine which round to start from
+        let selectedIndex = codingRounds.findIndex(
+          (r) => String(r.id) === String(roundIdFromUrl)
+        );
+        if (selectedIndex === -1) selectedIndex = 0; // fallback if invalid roundId
+
+        setCurrentRoundIndex(selectedIndex);
+        setRoundId(codingRounds[selectedIndex].id);
+
+        console.log("✅ Coding rounds:", codingRounds);
       } catch (err) {
         console.error(err);
         setError(err.message);
@@ -475,8 +490,8 @@ const CodeCompiler = () => {
       const roundIndex = rounds.findIndex(
         (r) => String(r.id) === String(roundId)
       );
-      if (roundIndex !== -1 && !completedRounds.includes(roundIndex)) {
-        completedRounds.push(roundIndex);
+      if (roundIndex !== -1 && !completedRounds.includes(roundId)) {
+        completedRounds.push(roundId);
         localStorage.setItem(key, JSON.stringify(completedRounds));
         console.log(`✅ Round ${roundId} marked as complete.`);
       }
@@ -487,20 +502,30 @@ const CodeCompiler = () => {
         setCode(getDefaultCode(language));
         setEvaluationResults(null);
         setOutput("");
-        toast.success("Next Question Loaded.")
-      } else if (currentRoundIndex + 1 < rounds.length) {
-        // ✅ CHANGE: Move to next round
-        const nextRound = rounds[currentRoundIndex + 1];
-        setCurrentRoundIndex(currentRoundIndex + 1);
-        setRoundId(nextRound.id);
-        setCode(getDefaultCode(language));
-        setEvaluationResults(null);
-        setOutput("");
-        toast.success("Next Round Started.")
+        toast.success("Next Question Loaded.");
       } else {
-        // ✅ CHANGE: Contest finished
-        toast.success("🎉 You have completed the contest!");
-        navigate(`/events/progress/${contestId}`);
+        // ✅ Find next *incomplete* coding round (even if earlier ones are pending)
+        const key = `contest_${contestId}_rounds_complete`;
+        const completedRounds = JSON.parse(localStorage.getItem(key) || "[]");
+
+        const nextIncompleteIndex = rounds.findIndex(
+          (r) => !completedRounds.includes(r.id)
+        );
+
+        if (nextIncompleteIndex !== -1) {
+          const nextRound = rounds[nextIncompleteIndex];
+          setCurrentRoundIndex(nextIncompleteIndex);
+          setRoundId(nextRound.id);
+          setCode(getDefaultCode(language));
+          setEvaluationResults(null);
+          setOutput("");
+          toast.success("Next Incomplete Round Started.");
+          navigate(`/events/code/${contestId}/${nextRound.id}`); // ✅ update URL too
+        } else {
+          // ✅ All coding rounds completed
+          toast.success("🎉 You have completed all Coding Rounds!");
+          navigate(`/events/progress/${contestId}`);
+        }
       }
     } catch (err) {
       console.error("❌ Error saving submission:", err);

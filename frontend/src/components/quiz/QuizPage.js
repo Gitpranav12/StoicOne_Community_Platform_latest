@@ -15,7 +15,7 @@ import { UserContext } from "../UserProfilePage/context/UserContext";
 export default function Quiz() {
   // User/context info
   const { user: contextUser } = useContext(UserContext);
-  const { contestId } = useParams();
+  const { contestId, roundId } = useParams();
   const navigate = useNavigate();
 
   // General UI states
@@ -57,22 +57,31 @@ export default function Quiz() {
         );
         setQuizSections(allQuizSections);
 
-let key = `contest_${contestId}_rounds_complete`;
-let completedArr = JSON.parse(localStorage.getItem(key) || "[]");
+        let key = `contest_${contestId}_rounds_complete`;
+        let completedArr = JSON.parse(localStorage.getItem(key) || "[]");
 
-// sectionScores reflects completed status from storage
-let scoresFromStorage = allQuizSections.map((section, idx) => ({
-  score: 0,
-  total: section.questions.length,
-  completed: completedArr.includes(idx),
-}));
+        // sectionScores reflects completed status from storage
+        let scoresFromStorage = allQuizSections.map((section) => ({
+          score: 0,
+          total: section.questions.length,
+          completed: completedArr.includes(section.id),
+        }));
 
-setSectionScores(scoresFromStorage);
-setRoundStatus(allQuizSections.map((_, idx) => completedArr.includes(idx)));
+        setSectionScores(scoresFromStorage);
+        setRoundStatus(allQuizSections.map((s) => completedArr.includes(s.id)));
+        // find the first incomplete section, or zero if all are complete
+        // ✅ If roundId exists in URL, use that to find the section
+        const selectedIndex = allQuizSections.findIndex(
+          (r) => String(r.id) === String(roundId)
+        );
 
-// find the first incomplete section, or zero if all are complete
-const firstIncomplete = scoresFromStorage.findIndex(s => !s.completed);
-setCurrentSectionIndex(firstIncomplete === -1 ? 0 : firstIncomplete);
+        if (selectedIndex !== -1) {
+          setCurrentSectionIndex(selectedIndex);
+        } else {
+          // fallback to first incomplete
+          const firstIncomplete = scoresFromStorage.findIndex((s) => !s.completed);
+          setCurrentSectionIndex(firstIncomplete === -1 ? 0 : firstIncomplete);
+        }
 
       } catch (err) {
         console.error("Error fetching quiz:", err);
@@ -81,7 +90,7 @@ setCurrentSectionIndex(firstIncomplete === -1 ? 0 : firstIncomplete);
       }
     }
     fetchQuiz();
-  }, [contestId]);
+  }, [contestId, roundId]);
 
   // Timer logic (per section; persistent)
   useEffect(() => {
@@ -190,61 +199,69 @@ setCurrentSectionIndex(firstIncomplete === -1 ? 0 : firstIncomplete);
   //   }
   // };
 
-const handleSubmitSection = async () => {
-  const score = calculateSectionScore();
-  const roundId = currentSection.id; // assuming each section has its round_id
-  const userId = currentUserId;
+  const handleSubmitSection = async () => {
+    const score = calculateSectionScore();
+    const roundId = currentSection.id; // assuming each section has its round_id
+    const userId = currentUserId;
 
-  // Save local progress
-  setSectionScores((prevScores) => {
-    const newScores = [...prevScores];
-    newScores[currentSectionIndex] = {
-      score,
-      total: totalQuestions,
-      completed: true,
-    };
-    return newScores;
-  });
-
-  setRoundStatus((prev) => {
-    const arr = [...prev];
-    arr[currentSectionIndex] = true;
-    return arr;
-  });
-
-  // ✅ Save to backend
-  try {
-    await axios.post("http://localhost:8080/api/contests/quiz_submissions", {
-      contest_id: contestId,
-      round_id: roundId,
-      user_id: userId,
-      answers,
-      score,
+    // Save local progress
+    setSectionScores((prevScores) => {
+      const newScores = [...prevScores];
+      newScores[currentSectionIndex] = {
+        score,
+        total: totalQuestions,
+        completed: true,
+      };
+      return newScores;
     });
-    console.log("✅ Quiz section saved to DB successfully");
-  } catch (err) {
-    console.error("❌ Error saving quiz submission:", err);
-  }
 
-  // ✅ Mark section complete in localStorage for ProgressPage
-  let key = `contest_${contestId}_rounds_complete`;
-  let completed = JSON.parse(localStorage.getItem(key) || "[]");
-  if (!completed.includes(currentSectionIndex)) {
-    completed.push(currentSectionIndex);
-    localStorage.setItem(key, JSON.stringify(completed));
-  }
+    setRoundStatus((prev) => {
+      const arr = [...prev];
+      arr[currentSectionIndex] = true;
+      return arr;
+    });
 
-  // ✅ Move to next section or show final score
-  if (!isLastSection) {
+    // ✅ Save to backend
+    try {
+      await axios.post("http://localhost:8080/api/contests/quiz_submissions", {
+        contest_id: contestId,
+        round_id: roundId,
+        user_id: userId,
+        answers,
+        score,
+      });
+      console.log("✅ Quiz section saved to DB successfully");
+    } catch (err) {
+      console.error("❌ Error saving quiz submission:", err);
+    }
+
+    // ✅ Mark section complete in localStorage for ProgressPage
+    let key = `contest_${contestId}_rounds_complete`;
+    let completed = JSON.parse(localStorage.getItem(key) || "[]");
+    if (!completed.includes(roundId)) {
+      completed.push(roundId);
+      localStorage.setItem(key, JSON.stringify(completed));
+    }
+
+
+    // ✅ Move to next *incomplete* section if any
     setShowSectionComplete(false);
-    setCurrentSectionIndex((prev) => prev + 1);
-    setCurrent(0);
-    setAnswers({});
-  } else {
-    setShowSectionComplete(false);
-    setShowOverallScore(true);
-  }
-};
+
+    // find next incomplete round (even if it’s before current)
+    const nextIncompleteIndex = quizSections.findIndex(
+      (s) => !completed.includes(s.id)
+    );
+
+    if (nextIncompleteIndex !== -1) {
+      setCurrentSectionIndex(nextIncompleteIndex);
+      setCurrent(0);
+      setAnswers({});
+    } else {
+      // all done!
+      setShowOverallScore(true);
+    }
+
+  };
 
 
   const handleNextSection = () => {
@@ -275,9 +292,8 @@ const handleSubmitSection = async () => {
         style={{ maxWidth: "900px", fontFamily: "Arial, sans-serif" }}
       >
         <QuizHeader
-          title={`${
-            currentSection.round_name || currentSection.title || "Quiz Section"
-          } (Section ${currentSectionIndex + 1} of ${totalSections})`}
+          title={`${currentSection.round_name || currentSection.title || "Quiz Section"
+            } (Section ${currentSectionIndex + 1} of ${totalSections})`}
           timer={formatTime(timer)}
           answered={Object.keys(answers).length}
           total={totalQuestions}
