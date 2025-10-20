@@ -7,8 +7,10 @@ import {
   Calendar,
   Clock,
   Trophy,
+  BarChart2,
 } from "lucide-react";
 import { useCustomAlert } from "../customAlert/useCustomAlert";
+import { useNavigate } from "react-router-dom";
 
 export default function ContestTable({
   contests,
@@ -19,6 +21,8 @@ export default function ContestTable({
   const [sortField, setSortField] = useState("startDate");
   const [sortDirection, setSortDirection] = useState("desc");
   const [showAlert, AlertComponent] = useCustomAlert();
+
+  const navigate = useNavigate();
 
   const handleSort = (field) => {
     if (sortField === field) {
@@ -71,6 +75,22 @@ export default function ContestTable({
       hour: "2-digit",
       minute: "2-digit",
     });
+  };
+
+  const handleViewResults = (contest) => {
+    const derivedType = contest.rounds?.every((r) => r.type === "quiz")
+      ? "quiz"
+      : contest.rounds?.every((r) => r.type === "coding")
+      ? "coding"
+      : "both";
+
+    let typeParam =  derivedType.toLowerCase();
+
+    if (typeParam.includes("quiz") && typeParam.includes("coding")) {
+      typeParam = "both";
+    }
+
+    navigate(`/events/result?contest=${contest.id}&type=${typeParam}`);
   };
 
   return (
@@ -297,6 +317,17 @@ export default function ContestTable({
                               >
                                 <Eye size={16} />
                               </button>
+
+                              {/* ✅ View Results Button (visible only when contest has ended) */}
+                              {end < now && (
+                                <button
+                                  className="btn btn-outline-success btn-sm"
+                                  onClick={() => handleViewResults(contest)}
+                                  title="View Results"
+                                >
+                                  <BarChart2 size={16} />
+                                </button>
+                              )}
 
                               {/* Edit & Delete (hidden when Active or Completed) */}
                               {isEditable && (

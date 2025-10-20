@@ -157,6 +157,42 @@ export default function ContestDetails() {
                     <span className="d-none d-sm-inline">Back</span>
                   </button>
 
+                  {/* ✅ View Results Button (only visible when contest has ended) */}
+                  {(() => {
+                    const end = new Date(contest.endDate || contest.end_date);
+                    const now = new Date();
+
+                    if (end < now) {
+                      const derivedType = contest.rounds?.every(
+                        (r) => r.type === "quiz"
+                      )
+                        ? "quiz"
+                        : contest.rounds?.every((r) => r.type === "coding")
+                        ? "coding"
+                        : "both";
+
+                      return (
+                        <button
+                          className="btn btn-outline-success d-flex align-items-center flex-grow-1 flex-md-grow-0 justify-content-center"
+                          style={{ minWidth: 0 }}
+                          onClick={() =>
+                            navigate(
+                              `/events/result?contest=${
+                                contest.id
+                              }&type=${derivedType.toLowerCase()}`
+                            )
+                          }
+                        >
+                          <BarChart3 size={16} className="me-1" />
+                          <span className="d-none d-sm-inline">
+                            View Results
+                          </span>
+                        </button>
+                      );
+                    }
+                    return null;
+                  })()}
+
                   {/* Edit & Delete (only visible for upcoming/draft) */}
                   {isEditable && (
                     <>
@@ -403,7 +439,6 @@ export default function ContestDetails() {
                       style={{ width: "85%" }}
                     ></div>
                   </div> */}
-                  
                 </div>
               </div>
 
@@ -434,25 +469,44 @@ export default function ContestDetails() {
                             <img
                               src={p.avatar}
                               alt={p.name || "User"}
-                              className="rounded-circle me-2 border"
+                              title={
+                                p.submitted_at
+                                  ? "Submitted"
+                                  : "Not submitted yet"
+                              }
+                              className="rounded-circle me-2"
                               style={{
                                 width: 32,
                                 height: 32,
                                 objectFit: "cover",
+                                border: "2px solid",
+                                borderColor: p.submitted_at
+                                  ? "#0bf10bff"
+                                  : "#f90b0bff",
                               }}
                             />
                           ) : (
                             <div
                               className="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center me-2"
+                              title={
+                                p.submitted_at
+                                  ? "Submitted"
+                                  : "Not submitted yet"
+                              }
                               style={{
                                 width: 32,
                                 height: 32,
                                 fontSize: "0.9rem",
+                                border: "2px solid",
+                                borderColor: p.submitted_at
+                                  ? "#0bf10bff"
+                                  : "#f90b0bff",
                               }}
                             >
                               {p.name ? p.name[0].toUpperCase() : "U"}
                             </div>
                           )}
+
                           <div>
                             <div className="fw-semibold">
                               {p.name || "Unknown User"}
@@ -462,10 +516,11 @@ export default function ContestDetails() {
                             </div>
                           </div>
                         </div>
-
                         <div className="text-muted small">
-                          {p.joined_at
-                            ? `joined ${new Date(p.joined_at)
+                          {p.submitted_at ? (
+                            <div>
+                              Submitted{" "}
+                              {new Date(p.submitted_at)
                                 .toLocaleString("en-GB", {
                                   day: "2-digit",
                                   month: "short",
@@ -474,8 +529,25 @@ export default function ContestDetails() {
                                   minute: "2-digit",
                                   hour12: true,
                                 })
-                                .replace(",", ", at")}`
-                            : ""}
+                                .replace(",", ", at")}
+                            </div>
+                          ) : p.joined_at ? (
+                            <div>
+                              Joined{" "}
+                              {new Date(p.joined_at)
+                                .toLocaleString("en-GB", {
+                                  day: "2-digit",
+                                  month: "short",
+                                  year: "2-digit",
+                                  hour: "numeric",
+                                  minute: "2-digit",
+                                  hour12: true,
+                                })
+                                .replace(",", ", at")}
+                            </div>
+                          ) : (
+                            <div>-</div>
+                          )}
                         </div>
                       </div>
                     ))

@@ -33,12 +33,13 @@ export default function ContestHeader({ title, stats, type, onBack }) {
           <p className="text-muted mb-0">Submissions</p>
         </Col>
         <Col xs={6} md={3} className="mb-3">
-          <h5 className="text-info fw-bold">{stats.status}</h5>
+          <h5 className="text-info fw-bold">Completed</h5>
           <p className="text-muted mb-0">Status</p>
         </Col>
         <Col xs={6} md={3} className="mb-3">
-          <h5 className="text-warning fw-bold">{stats.problems}</h5>
-          <p className="text-muted mb-0">Questions</p>
+          {/* <h5 className="text-warning fw-bold">{stats.problems}</h5> */}
+          <Badge bg="primary" className="fs-6 py-2 px-3">{typeTextMap[type]}</Badge>
+          <p className="text-muted mb-0">Type</p>
         </Col>
       </Row>
     </Card>
