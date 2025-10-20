@@ -70,6 +70,9 @@ export default function ContestsUserPage() {
         status,
         type: type.charAt(0).toUpperCase() + type.slice(1),
         user_status: contest.user_status, // keep for filtering
+        all_completed_and_reviewed: contest.all_completed_and_reviewed === 1,
+        start_date: contest.start_date, // add this
+        end_date: contest.end_date, // add this
       };
     });
   };
@@ -101,34 +104,31 @@ export default function ContestsUserPage() {
 
   // const filteredContests = contests.filter((c) => c.status === activeTab);
 
-const filteredContests = contests.filter((c) => {
-  if (activeTab === "Ongoing") {
-    // show ongoing contests where user has NOT completed
-    return c.status === "Ongoing" && c.user_status !== "completed";
-  }
-  if (activeTab === "Upcoming") {
-    return c.status === "Upcoming";
-  }
-  if (activeTab === "Past" || activeTab === "Completed") {
-    // show either time-based completed or user-based completed
-    return c.status === "Past" || c.user_status === "completed";
-  }
-  return false;
-});
+  const filteredContests = contests.filter((c) => {
+    if (activeTab === "Ongoing") {
+      // show ongoing contests where user has NOT completed
+      return c.status === "Ongoing" && c.user_status !== "completed";
+    }
+    if (activeTab === "Upcoming") {
+      return c.status === "Upcoming";
+    }
+    if (activeTab === "Past" || activeTab === "Completed") {
+      // show either time-based completed or user-based completed
+      return c.status === "Past" || c.user_status === "completed";
+    }
+    return false;
+  });
 
-
-
-const stats = {
-  total: contests.length,
-  Ongoing: contests.filter(
-    (c) => c.status === "Ongoing" && c.user_status !== "completed"
-  ).length,
-  upcoming: contests.filter((c) => c.status === "Upcoming").length,
-  completed: contests.filter(
-    (c) => c.status === "Past" || c.user_status === "completed"
-  ).length,
-};
-
+  const stats = {
+    total: contests.length,
+    Ongoing: contests.filter(
+      (c) => c.status === "Ongoing" && c.user_status !== "completed"
+    ).length,
+    upcoming: contests.filter((c) => c.status === "Upcoming").length,
+    completed: contests.filter(
+      (c) => c.status === "Past" || c.user_status === "completed"
+    ).length,
+  };
 
   if (isLoading) {
     return (

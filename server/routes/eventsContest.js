@@ -120,10 +120,12 @@ router.get('/', async (req, res) => {
       SELECT 
         c.*, 
         COUNT(p.id) AS participants,
-        MAX(CASE WHEN p.user_id = ? THEN p.status ELSE NULL END) AS user_status
+        u.status AS user_status,
+        MIN(CASE WHEN p.status='completed' AND p.review_status='reviewed' THEN 1 ELSE 0 END) AS all_completed_and_reviewed
       FROM contests c
       LEFT JOIN participants p ON c.id = p.contest_id
-      GROUP BY c.id
+      LEFT JOIN participants u ON c.id = u.contest_id AND u.user_id = ?
+      GROUP BY c.id, u.status
       ORDER BY c.start_date DESC
     `, [userId || 0]); // if no userId, just use 0
 

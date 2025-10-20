@@ -19,6 +19,20 @@ export default function ContestCard({ contest }) {
     navigate(`/events/result?contest=${contest.id}&type=${typeParam}`);
   };
 
+ const isContestEnded = new Date(contest.end_date) < new Date();
+
+  const canViewResults =
+    contest.user_status === "completed" &&
+    Number(contest.all_completed_and_reviewed) === 1 &&
+    isContestEnded;
+
+      // 🔹 Debug log
+  console.log(`Contest: ${contest.title}`);
+  console.log('user_status:', contest.user_status);
+  console.log('all_completed_and_reviewed:', contest.all_completed_and_reviewed);
+  console.log('end_date:', contest.end_date, 'isContestEnded:', isContestEnded);
+  console.log('canViewResults:', canViewResults);
+
   const getStatusBadge = () => {
     switch (contest.status) {
       case "Ongoing":
@@ -63,36 +77,37 @@ export default function ContestCard({ contest }) {
         </div>
 
         {/* Button section - mt-auto pushes this to the bottom */}
-        {/* Button section - mt-auto pushes this to the bottom */}
-        <div className="mt-auto pt-3">
-          {/* ✅ If user completed contest */}
-          {contest.user_status === "completed" ? (
-            <Button
-              variant="success"
-              className="w-100 d-flex align-items-center justify-content-center gap-2"
-              disabled
-            >
+          <div className="mt-auto pt-3 d-flex flex-column gap-2">
+          {/* Completed button */}
+          {contest.user_status === "completed" && (
+            <Button variant="success" className="w-100" disabled>
               ✅ Completed
             </Button>
-          ) : contest.status === "Ongoing" ? (
+          )}
+
+          {/* View Results button */}
+          <Button
+            variant="outline-success"
+            className="w-100"
+            disabled={!canViewResults}
+            onClick={handleViewResults}
+          >
+            View Results
+          </Button>
+
+          {/* Join/Upcoming button fallback */}
+          {contest.user_status !== "completed" && contest.status === "Ongoing" && (
             <Button
               variant="primary"
-              className="w-100 d-flex align-items-center justify-content-center gap-2"
+              className="w-100"
               onClick={() => navigate(`/events/contest/${contest.id}`)}
             >
               <Play size={16} /> Join Contest
             </Button>
-          ) : contest.status === "Upcoming" ? (
+          )}
+          {contest.user_status !== "completed" && contest.status === "Upcoming" && (
             <Button variant="outline-secondary" className="w-100" disabled>
               Starts Soon
-            </Button>
-          ) : (
-            <Button
-              variant="outline-success"
-              className="w-100 d-flex align-items-center justify-content-center gap-2"
-              onClick={handleViewResults}
-            >
-              View Results
             </Button>
           )}
         </div>
