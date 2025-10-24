@@ -4,7 +4,7 @@ import {
   Download,
 } from "lucide-react";
 
-export default function ContestHeader({ title, stats, type, onBack }) {
+export default function ContestHeader({ title, stats, type, onBack, onExport }) {
   const typeTextMap = {
     quiz: "Quiz",
     coding: "Coding",
@@ -17,7 +17,9 @@ export default function ContestHeader({ title, stats, type, onBack }) {
         <button className="btn btn-outline-primary" onClick={onBack}>← Back</button>
         <h4 className="fw-bold m-0">{title}</h4>
         {/* <Badge bg="secondary" className="fs-6 py-2 px-3">{typeTextMap[type]} Contest</Badge> */}
-        <button className="btn btn-outline-primary d-flex align-items-center justify-content-center">
+        <button className="btn btn-outline-primary d-flex align-items-center justify-content-center"
+          onClick={onExport}
+        >
           <Download size={18} className="me-2" />
           Export Results
         </button>
