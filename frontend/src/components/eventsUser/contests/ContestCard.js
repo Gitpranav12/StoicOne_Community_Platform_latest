@@ -19,14 +19,14 @@ export default function ContestCard({ contest }) {
     navigate(`/events/result?contest=${contest.id}&type=${typeParam}`);
   };
 
- const isContestEnded = new Date(contest.end_date) < new Date();
+  const isContestEnded = new Date(contest.end_date) < new Date();
 
   const canViewResults =
     contest.user_status === "completed" &&
     Number(contest.all_completed_and_reviewed) === 1 &&
     isContestEnded;
 
-      // 🔹 Debug log
+  // 🔹 Debug log
   console.log(`Contest: ${contest.title}`);
   console.log('user_status:', contest.user_status);
   console.log('all_completed_and_reviewed:', contest.all_completed_and_reviewed);
@@ -77,7 +77,7 @@ export default function ContestCard({ contest }) {
         </div>
 
         {/* Button section - mt-auto pushes this to the bottom */}
-          <div className="mt-auto pt-3 d-flex flex-column gap-2">
+        <div className="mt-auto pt-3 d-flex flex-column gap-2">
           {/* Completed button */}
           {contest.user_status === "completed" && (
             <Button variant="success" className="w-100" disabled>
@@ -86,20 +86,22 @@ export default function ContestCard({ contest }) {
           )}
 
           {/* View Results button */}
-          <Button
-            variant="outline-success"
-            className="w-100"
-            disabled={!canViewResults}
-            onClick={handleViewResults}
-          >
-            View Results
-          </Button>
+          {contest.user_status === "completed" && (
+            <Button
+              variant="outline-success"
+              className="w-100"
+              disabled={!canViewResults}
+              onClick={handleViewResults}
+            >
+              View Results
+            </Button>
+          )}
 
           {/* Join/Upcoming button fallback */}
           {contest.user_status !== "completed" && contest.status === "Ongoing" && (
             <Button
               variant="primary"
-              className="w-100"
+              className="w-100 d-flex align-items-center justify-content-center gap-2"
               onClick={() => navigate(`/events/contest/${contest.id}`)}
             >
               <Play size={16} /> Join Contest
