@@ -127,14 +127,15 @@ export default function Quiz() {
   const isLastSection = currentSectionIndex === totalSections - 1;
 
   // Score helpers
-  const overallScoreTotal = useMemo(
-    () => sectionScores.reduce((acc, s) => acc + s.score, 0),
-    [sectionScores]
-  );
-  const overallTotalQuestions = useMemo(
-    () => sectionScores.reduce((acc, s) => acc + s.total, 0),
-    [sectionScores]
-  );
+const overallScoreTotal = useMemo(() => {
+  if (sectionScores.length === 0) return 0;
+  const sumPercentages = sectionScores.reduce((acc, s) => acc + s.score, 0);
+  return Math.round(sumPercentages / sectionScores.length);
+}, [sectionScores]);
+
+const overallTotalQuestions = useMemo(() => {
+  return sectionScores.reduce((acc, s) => acc + s.total, 0);
+}, [sectionScores]);
 
   // Time formatting
   const formatTime = (sec) => {
@@ -200,7 +201,9 @@ export default function Quiz() {
   // };
 
   const handleSubmitSection = async () => {
-    const score = calculateSectionScore();
+    const correctCount = calculateSectionScore();
+    const percentageScore = (correctCount / totalQuestions) * 100;
+    const score = Math.round(percentageScore); // store 100, 80, etc.
     const roundId = currentSection.id; // assuming each section has its round_id
     const userId = currentUserId;
 

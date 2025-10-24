@@ -502,7 +502,7 @@ router.get('/coding_submissions/all', async (req, res) => {
         c.title AS contestTitle,
         MAX(cs.submitted_at) AS latestSubmission,
         p.joined_at,
-        TIMESTAMPDIFF(MINUTE, p.joined_at, MAX(cs.submitted_at)) AS timeSpent,
+        TIMESTAMPDIFF(MINUTE, p.joined_at, MAX(p.submitted_at)) AS timeSpent,
         COUNT(DISTINCT cs.question_id) AS totalQuestionsSubmitted,
         GROUP_CONCAT(DISTINCT cs.language) AS languagesUsed,
         AVG(cs.auto_score) AS avgAutoScore,

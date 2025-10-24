@@ -57,7 +57,7 @@ export default function ContestTable({
 
   const getStatusBadge = (status) => {
     const statusConfig = {
-      active: { class: "bg-success", text: "Active" },
+      active: { class: "bg-success", text: "Ongoing" },
       upcoming: { class: "bg-warning", text: "Upcoming" },
       completed: { class: "bg-secondary", text: "Completed" },
       draft: { class: "bg-info", text: "Draft" },

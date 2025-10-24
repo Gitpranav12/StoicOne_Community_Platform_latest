@@ -17,7 +17,8 @@ export default function OverallScorePopup({
   const score = overallScore;
   const total = overallTotal;
 
-  const percentage = total > 0 ? ((score / total) * 100).toFixed(0) : 0;
+  // const percentage = total > 0 ? ((score / total) * 100).toFixed(0) : 0;
+  const percentage = overallScore; // already in percentage now
   const statusColor = (score / total >= 0.7) ? "#0d6efd" : "#fc5f7c";
 
   return (
@@ -118,7 +119,7 @@ export default function OverallScorePopup({
                quizSections[index]?.title ||
                `Section ${index + 1}`}
               <span className="badge rounded-pill mx-2" style={{ background: '#0d6efd', color: '#fff' }}>
-                {s.score} / {s.total}
+                {s.score}% ({s.total} Questions)
               </span>
             </li>
           ))}

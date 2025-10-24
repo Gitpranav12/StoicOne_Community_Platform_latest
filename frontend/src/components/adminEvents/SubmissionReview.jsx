@@ -289,7 +289,7 @@ const statsSubmissions = submissions;
                             submission.quiz_score
                           )}`}
                         >
-                          {submission.quiz_score}
+                          {submission.quiz_score}%
                         </div>
                       </td>
                       <td className="text-center">
