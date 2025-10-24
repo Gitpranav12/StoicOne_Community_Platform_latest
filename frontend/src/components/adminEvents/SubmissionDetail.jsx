@@ -5,7 +5,6 @@ import {
   Clock,
   Code,
   CheckCircle,
-  XCircle,
   Save,
   MessageSquare,
 } from "lucide-react";
@@ -31,7 +30,6 @@ export default function SubmissionDetail() {
   const [feedback, setFeedback] = useState("");
   const [isSaving, setIsSaving] = useState(false);
 
-  // 🧩 Fetch data
   useEffect(() => {
     if (!contestId || !userId) return;
 
@@ -60,7 +58,6 @@ export default function SubmissionDetail() {
     fetchData();
   }, [contestId, userId]);
 
-  // 🧮 Helpers
   const currentSub = submissions[currentIndex];
 
   const formatDate = (date) =>
@@ -79,7 +76,6 @@ export default function SubmissionDetail() {
     return "text-danger";
   };
 
-  // 💾 Save feedback + score and go to next
   const handleSave = async () => {
     if (!currentSub) return;
 
@@ -88,18 +84,16 @@ export default function SubmissionDetail() {
       await axios.put(
         `http://localhost:8080/api/contests/coding_submissions/${currentSub.id}`,
         {
-          manual_score: Number(manualScore), // ✅ convert to number
+          manual_score: Number(manualScore),
           feedback,
         }
       );
 
-      // ✅ Update local array
       const updated = [...submissions];
       updated[currentIndex].manual_score = manualScore;
       updated[currentIndex].feedback = feedback;
       setSubmissions(updated);
 
-      // 🧭 Move to next question automatically
       if (currentIndex + 1 < submissions.length) {
         const nextIndex = currentIndex + 1;
         setCurrentIndex(nextIndex);
@@ -143,183 +137,168 @@ export default function SubmissionDetail() {
 
   return (
     <Layout>
-      <div className="px-3 mx-auto" style={{ maxWidth: "100%" }}>
-        {/* Mobile responsiveness */}
+      <div className="container-fluid px-3 py-3">
+        {/* ✅ Responsive CSS */}
         <style>{`
-          @media (max-width: 768px) {
-            .mobile-narrow {
-              max-width: 285px;
-              margin: 0 auto;
+          @media (max-width: 992px) {
+            .btn-responsive {
+              width: 100%;
+              justify-content: center;
             }
+          }
+          pre {
+            white-space: pre-wrap;
+            word-wrap: break-word;
           }
         `}</style>
 
-        <div className="mobile-narrow">
-          {/* Header */}
-          <div className="d-flex justify-content-between mb-4 flex-wrap gap-2">
-            <button
-              className="btn btn-outline-secondary d-flex align-items-center"
-              onClick={() => navigate(-1)}
-            >
-              <ArrowLeft size={18} className="me-2" /> Back
-            </button>
+        {/* Header */}
+        <div className="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-2">
+          <Button
+            variant="outline-secondary"
+            className="d-flex align-items-center btn-responsive"
+            onClick={() => navigate(-1)}
+          >
+            <ArrowLeft size={18} className="me-2" /> Back
+          </Button>
 
-            <button
-              className="btn btn-primary d-flex align-items-center"
-              onClick={handleSave}
-              disabled={isSaving}
-            >
-              <Save size={18} className="me-2" />
-              {isSaving ? "Saving..." : "Save & Next"}
-            </button>
-          </div>
+          <Button
+            variant="primary"
+            className="d-flex align-items-center btn-responsive"
+            onClick={handleSave}
+            disabled={isSaving}
+          >
+            <Save size={18} className="me-2" />
+            {isSaving ? "Saving..." : "Save & Next"}
+          </Button>
+        </div>
 
-          {/* User & Contest Info */}
-          <Card className="mb-4 shadow-sm">
-            <Card.Body className="d-flex flex-column flex-md-row align-items-center gap-3">
-              {/* 👤 Profile photo */}
-              <img
-                src={user?.avatar || "/images/default-avatar.png"} // fallback if no image
-                alt={user?.name || "Participant"}
-                className="rounded-circle"
-                style={{
-                  width: 80,
-                  height: 80,
-                  objectFit: "cover",
-                  border: "2px solid #ddd",
-                }}
-                onError={(e) => {
-                  // fallback if image URL fails
-                  e.target.src = "/images/default-avatar.png";
-                }}
-              />
+        {/* User & Contest Info */}
+        <Card className="mb-4 shadow-sm">
+          <Card.Body className="d-flex flex-column flex-md-row align-items-center gap-3 text-center text-md-start">
+            <img
+              src={user?.avatar || "/images/default-avatar.png"}
+              alt={user?.name || "Participant"}
+              className="rounded-circle mx-auto mx-md-0"
+              style={{
+                width: 80,
+                height: 80,
+                objectFit: "cover",
+                border: "2px solid #ddd",
+              }}
+              onError={(e) => {
+                e.target.src = "/images/default-avatar.png";
+              }}
+            />
 
-              <div>
-                <h5 className="mb-2 d-flex align-items-center">
-                  <CheckCircle className="me-2 text-success" /> Participant
-                </h5>
-                <p className="mb-1 fw-semibold">User ID : {user?.id}</p>
-                <p className="mb-1 fw-semibold">Name : {user?.name}</p>
-                <p className="text-muted mb-0">Email : {user?.email}</p>
-              </div>
-            </Card.Body>
+            <div>
+              <h5 className="mb-2 d-flex justify-content-center justify-content-md-start align-items-center">
+                <CheckCircle className="me-2 text-success" /> Participant
+              </h5>
+              <p className="mb-1 fw-semibold">User ID : {user?.id}</p>
+              <p className="mb-1 fw-semibold">Name : {user?.name}</p>
+              <p className="text-muted mb-0">Email : {user?.email}</p>
+            </div>
+          </Card.Body>
+
+          <hr className="m-0" />
+
+          <Card.Body>
+            <h5 className="mb-3 d-flex align-items-center flex-wrap">
+              <Calendar className="me-2 text-primary" /> Contest - {contest?.id}
+            </h5>
+            <p className="fw-semibold mb-1">{contest?.title}</p>
+            <p className="text-muted">{contest?.description}</p>
+            <small className="text-secondary d-flex align-items-center flex-wrap gap-1">
+              <Clock className="me-1" />
+              <span>{formatDate(contest.start_time)}</span>
+              <span>–</span>
+              <span>{formatDate(contest.end_time)}</span>
+            </small>
+          </Card.Body>
+        </Card>
+
+        {/* Coding Submission */}
+        <Card className="mb-4 shadow-sm">
+          <Card.Header className="bg-white d-flex flex-wrap align-items-center">
+            <Code className="me-2" />
+            <h5 className="mb-0 flex-grow-1">
+              Q{currentIndex + 1}: {currentSub.question_title}
+            </h5>
+            <Badge bg="light" text="dark" className={getScoreColor(currentSub.manual_score || 0)}>
+              Score: {currentSub.manual_score || 0}
+            </Badge>
+          </Card.Header>
+
+          <Card.Body>
+            <p className="text-muted mb-2">
+              <strong>Problem :</strong> {currentSub.problem_statement}
+            </p>
+            <p>
+              <strong>Sample Input :</strong>{" "}
+              <Badge bg="secondary">{currentSub.sample_input}</Badge>
+            </p>
+            <p>
+              <strong>Sample Output :</strong>{" "}
+              <Badge bg="secondary">{currentSub.sample_output}</Badge>
+            </p>
 
             <hr />
+            <div className="d-flex flex-column flex-md-row justify-content-between align-items-start mb-2 gap-2">
+              <h6 className="mb-0">Submitted Code:</h6>
+              <h6 className="mb-0">Language Used: {currentSub.language}</h6>
+            </div>
 
-            <Card.Body>
-              <h5 className="mb-3 d-flex align-items-center">
-                <Calendar className="me-2 text-primary" /> Contest -{" "}
-                {contest?.id}
-              </h5>
-              <p className="fw-semibold mb-1">{contest?.title}</p>
-              <p className="text-muted">{contest?.description}</p>
-              <small className="text-secondary d-flex align-items-center gap-1">
-                <Clock className="me-1" />
-                <span>{formatDate(contest.start_time)}</span>
-                <span>–</span>
-                <span>{formatDate(contest.end_time)}</span>
-              </small>
-            </Card.Body>
-          </Card>
+            <pre className="bg-dark text-light p-3 rounded" style={{ maxHeight: 400, overflowY: "auto" }}>
+              <code>{currentSub.code}</code>
+            </pre>
+          </Card.Body>
+        </Card>
 
-          {/* Coding Submission */}
-          <Card className="mb-4 shadow-sm">
-            <Card.Header className="bg-white d-flex align-items-center">
-              <Code className="me-2" />
-              <h5 className="mb-0">
-                Q{currentIndex + 1} : {currentSub.question_title}
-              </h5>
-              <Badge
-                bg={getScoreColor(currentSub.manual_score || 0)}
-                className="ms-auto"
-              >
-                Score: {currentSub.manual_score || 0}
-              </Badge>
-            </Card.Header>
-            <Card.Body>
-              <p className="text-muted mb-2">
-                <strong>Problem :</strong> {currentSub.problem_statement}
-              </p>
-              <p>
-                <strong>Sample Input :</strong>{" "}
-                <Badge bg="secondary">{currentSub.sample_input}</Badge>
-              </p>
-              <p>
-                <strong>Sample Output :</strong>{" "}
-                <Badge bg="secondary">{currentSub.sample_output}</Badge>
-              </p>
-
-              <hr />
-              <div className="d-flex justify-content-between align-items-center mb-2">
-                <h6>Submitted Code:</h6>
-                <h6>Language Used: {currentSub.language}</h6>
-              </div>
-
-              <pre
-                className="bg-dark text-light p-3 rounded"
-                style={{ maxHeight: 400, overflowY: "auto" }}
-              >
-                <code>{currentSub.code}</code>
-              </pre>
-            </Card.Body>
-          </Card>
-
-          {/* Feedback + Score */}
-          <Card className="mb-4 shadow-sm">
-            <Card.Header className="bg-white d-flex align-items-center">
-              <MessageSquare size={20} className="me-2" />
-              <h5 className="mb-0">Admin Feedback</h5>
-            </Card.Header>
-            <Card.Body>
-              <div className="mb-3">
-                <label className="form-label fw-semibold">
-                  Manual Score (0–100)
-                </label>
-                <input
-                  type="number"
-                  className="form-control"
-                  min="0"
-                  max="100"
-                  value={manualScore}
-                  onChange={(e) => {
-                    const val = e.target.value;
-                    // ✅ Only allow numbers between 0 and 100
-                    if (val === "") {
-                      setManualScore("");
-                    } else if (!isNaN(val) && val >= 0 && val <= 100) {
-                      setManualScore(val);
-                    }
-                  }}
-                  onBlur={() => {
-                    // ✅ Clamp value if user types outside range and leaves field
-                    if (manualScore === "") return;
-                    let num = Number(manualScore);
-                    if (num < 0) num = 0;
-                    if (num > 100) num = 100;
-                    setManualScore(num);
-                  }}
-                />
-                <small className="text-muted">
-                  Enter a score between 0 and 100.
-                </small>
-              </div>
-              <textarea
-                className="form-control mb-2"
-                rows="4"
-                placeholder="Write feedback for this submission..."
-                value={feedback}
-                onChange={(e) => setFeedback(e.target.value)}
+        {/* Feedback Section */}
+        <Card className="mb-4 shadow-sm">
+          <Card.Header className="bg-white d-flex align-items-center">
+            <MessageSquare size={20} className="me-2" />
+            <h5 className="mb-0">Admin Feedback</h5>
+          </Card.Header>
+          <Card.Body>
+            <div className="mb-3">
+              <label className="form-label fw-semibold">Manual Score (0–100)</label>
+              <input
+                type="number"
+                className="form-control"
+                min="0"
+                max="100"
+                value={manualScore}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  if (val === "") setManualScore("");
+                  else if (!isNaN(val) && val >= 0 && val <= 100) setManualScore(val);
+                }}
+                onBlur={() => {
+                  if (manualScore === "") return;
+                  let num = Number(manualScore);
+                  if (num < 0) num = 0;
+                  if (num > 100) num = 100;
+                  setManualScore(num);
+                }}
               />
-              <small className="text-muted">
-                Feedback will be visible to the participant.
-              </small>
-            </Card.Body>
-          </Card>
+              <small className="text-muted">Enter a score between 0 and 100.</small>
+            </div>
+            <textarea
+              className="form-control mb-2"
+              rows="4"
+              placeholder="Write feedback for this submission..."
+              value={feedback}
+              onChange={(e) => setFeedback(e.target.value)}
+            />
+            <small className="text-muted">Feedback will be visible to the participant.</small>
+          </Card.Body>
+        </Card>
 
-          {/* Progress footer */}
-          <div className="text-center text-muted mb-4">
-            {currentIndex + 1} / {submissions.length} submissions reviewed
-          </div>
+        {/* Progress Footer */}
+        <div className="text-center text-muted mb-4">
+          {currentIndex + 1} / {submissions.length} submissions reviewed
         </div>
       </div>
     </Layout>
