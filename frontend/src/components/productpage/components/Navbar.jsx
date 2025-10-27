@@ -49,7 +49,7 @@ export function Navbar({ onNavigate, currentPage }) {
         >
           <img
             src="\logo.png"
-            alt="Stoicone Logo"
+            alt="StoicOne Logo"
             style={{
               width: '36px',
               height: '36px',
@@ -159,14 +159,10 @@ export function Navbar({ onNavigate, currentPage }) {
               </li>
             ))}
           </ul>
-
-          {/* === Contact Button === */}
-          <div className="d-flex align-items-center gap-2">
-            <button
-              className="btn btn-outline-dark"
-              onClick={() => handleNavigate('try-free')}
-            >
-              Contact Us
+          {/* Buttons */}
+          <div className="d-flex gap-2 align-items-center">
+            <button className="btn btn-outline-dark" onClick={() => onNavigate('contact')}>
+              Contact us
             </button>
           </div>
         </div>

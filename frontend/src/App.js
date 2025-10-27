@@ -27,7 +27,7 @@ import ExploreCollectives from './components/collectives/ExploreCollectives';
 import { CollectivesProvider } from './components/collectives/CollectivesContext';
 import CollectivesPage from "./components/collectives/CollectivePage";
 import Productpage from "./components/productpage/Productpage";
-
+import ContactForm from "./components/productpage/components/pages/ContactForm";
 // Admin Dashboard pages
 
 import UsersAdmin from "./components/adminDashboard/pages/UsersAdmin";
@@ -144,6 +144,7 @@ export default function App() {
 
               {/* Product Page */}
               <Route path="/product" element={<Productpage />} />
+               <Route path="/contact" element={<ContactForm />} />
               {/* admin events pages routes */}
               <Route path="/admin/events" element={<ProtectedRoute><EventsAdminPage /></ProtectedRoute>} />
               <Route path="/admin/events/createContest" element={<ProtectedRoute><CreateContestForm /></ProtectedRoute>} />
