@@ -460,11 +460,106 @@ export default function ContestDetails() {
                 >
                   {participants.length > 0 ? (
                     participants.map((p, idx) => (
+                      // <div
+                      //   key={idx}
+                      //   className="d-flex align-items-center justify-content-between border-bottom py-2"
+                      // >
+                      //   <div className="d-flex align-items-center">
+                      //     {p.avatar ? (
+                      //       <img
+                      //         src={p.avatar}
+                      //         alt={p.name || "User"}
+                      //         title={
+                      //           p.submitted_at
+                      //             ? "Submitted"
+                      //             : "Not submitted yet"
+                      //         }
+                      //         className="rounded-circle me-2"
+                      //         style={{
+                      //           width: 32,
+                      //           height: 32,
+                      //           objectFit: "cover",
+                      //           border: "2px solid",
+                      //           borderColor: p.submitted_at
+                      //             ? "#0bf10bff"
+                      //             : "#f90b0bff",
+                      //         }}
+                      //       />
+                      //     ) : (
+                      //       <div
+                      //         className="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center me-2"
+                      //         title={
+                      //           p.submitted_at
+                      //             ? "Submitted"
+                      //             : "Not submitted yet"
+                      //         }
+                      //         style={{
+                      //           width: 32,
+                      //           height: 32,
+                      //           fontSize: "0.9rem",
+                      //           border: "2px solid",
+                      //           borderColor: p.submitted_at
+                      //             ? "#0bf10bff"
+                      //             : "#f90b0bff",
+                      //         }}
+                      //       >
+                      //         {p.name ? p.name[0].toUpperCase() : "U"}
+                      //       </div>
+                      //     )}
+
+                      //     <div>
+                      //       <div className="fw-semibold">
+                      //         {p.name || "Unknown User"}
+                      //       </div>
+                      //       <div className="text-muted small">
+                      //         {p.email || p.user_id}
+                      //       </div>
+                      //     </div>
+                      //   </div>
+                      //   <div className="text-muted small">
+                      //     {p.submitted_at ? (
+                      //       <div>
+                      //         Submitted{" "}
+                      //         {new Date(p.submitted_at)
+                      //           .toLocaleString("en-GB", {
+                      //             day: "2-digit",
+                      //             month: "short",
+                      //             year: "2-digit",
+                      //             hour: "numeric",
+                      //             minute: "2-digit",
+                      //             hour12: true,
+                      //           })
+                      //           .replace(",", ", at")}
+                      //       </div>
+                      //     ) : p.joined_at ? (
+                      //       <div>
+                      //         Joined{" "}
+                      //         {new Date(p.joined_at)
+                      //           .toLocaleString("en-GB", {
+                      //             day: "2-digit",
+                      //             month: "short",
+                      //             year: "2-digit",
+                      //             hour: "numeric",
+                      //             minute: "2-digit",
+                      //             hour12: true,
+                      //           })
+                      //           .replace(",", ", at")}
+                      //       </div>
+                      //     ) : (
+                      //       <div>-</div>
+                      //     )}
+                      //   </div>
+                      // </div>
                       <div
                         key={idx}
-                        className="d-flex align-items-center justify-content-between border-bottom py-2"
+                        className="d-flex align-items-start justify-content-between border-bottom py-2 flex-wrap"
+                        style={{ rowGap: "4px" }}
                       >
-                        <div className="d-flex align-items-center">
+                        {/* LEFT SIDE - Avatar + Name + Email */}
+                        <div
+                          className="d-flex align-items-center"
+                          style={{ flex: "1 1 250px", minWidth: 0 }}
+                        >
                           {p.avatar ? (
                             <img
                               src={p.avatar}
@@ -483,6 +578,7 @@ export default function ContestDetails() {
                                 borderColor: p.submitted_at
                                   ? "#0bf10bff"
                                   : "#f90b0bff",
+                                flexShrink: 0,
                               }}
                             />
                           ) : (
@@ -501,6 +597,7 @@ export default function ContestDetails() {
                                 borderColor: p.submitted_at
                                   ? "#0bf10bff"
                                   : "#f90b0bff",
+                                flexShrink: 0,
                               }}
                             >
                               {p.name ? p.name[0].toUpperCase() : "U"}
@@ -511,12 +608,23 @@ export default function ContestDetails() {
                             <div className="fw-semibold">
                               {p.name || "Unknown User"}
                             </div>
-                            <div className="text-muted small">
+                            <div
+                              className="text-muted small"
+                              style={{ wordBreak: "break-all" }}
+                            >
                               {p.email || p.user_id}
                             </div>
                           </div>
                         </div>
-                        <div className="text-muted small">
+
+                        {/* RIGHT SIDE - Joined/Submitted info */}
+                        <div
+                          className="text-muted small text-end"
+                          style={{
+                            flex: "0 0 auto",
+                            whiteSpace: "nowrap",
+                          }}
+                        >
                           {p.submitted_at ? (
                             <div>
                               Submitted{" "}

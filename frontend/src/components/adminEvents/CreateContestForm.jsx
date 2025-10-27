@@ -58,6 +58,8 @@ export default function CreateContestForm({ onSuccess }) {
             outputFormat: q.output_format || "",
             sampleInput: q.sample_input || "",
             sampleOutput: q.sample_output || "",
+            sampleInput2: q.sample_input_2 || "", // ✅ added
+            sampleOutput2: q.sample_output_2 || "", // ✅ added
           };
         }
         return q;
@@ -226,6 +228,8 @@ export default function CreateContestForm({ onSuccess }) {
                 output_format: q.outputFormat,
                 sample_input: q.sampleInput,
                 sample_output: q.sampleOutput,
+                sample_input_2: q.sampleInput2, // 🆕
+                sample_output_2: q.sampleOutput2, // 🆕
               };
             }
             return q;
@@ -823,6 +827,8 @@ function CodingQuestionEditor({
     outputFormat: "",
     sampleInput: "",
     sampleOutput: "",
+    sampleInput2: "", // 🆕 second sample input
+    sampleOutput2: "", // 🆕 second sample output
   });
   const [editIndex, setEditIndex] = useState(null);
 
@@ -834,6 +840,8 @@ function CodingQuestionEditor({
       outputFormat: "",
       sampleInput: "",
       sampleOutput: "",
+      sampleInput2: "", // 🆕 reset
+      sampleOutput2: "", // 🆕 reset
     });
     setEditIndex(null);
   };
@@ -859,14 +867,7 @@ function CodingQuestionEditor({
     } else {
       addQuestion(roundIndex, question);
     }
-    setQuestion({
-      title: "",
-      description: "",
-      inputFormat: "",
-      outputFormat: "",
-      sampleInput: "",
-      sampleOutput: "",
-    });
+    resetQuestion();
   };
 
   const handleEdit = (i) => {
@@ -880,6 +881,8 @@ function CodingQuestionEditor({
       outputFormat: q.outputFormat || "",
       sampleInput: q.sampleInput || "",
       sampleOutput: q.sampleOutput || "",
+      sampleInput2: q.sampleInput2 || "", // 🆕 load 2nd test case
+      sampleOutput2: q.sampleOutput2 || "", // 🆕 load 2nd test case
     });
   };
 
@@ -922,7 +925,7 @@ function CodingQuestionEditor({
           setQuestion({ ...question, outputFormat: e.target.value })
         }
       />
-      <textarea
+      {/* <textarea
         className="form-control mb-2"
         placeholder="Sample Input"
         rows="2"
@@ -939,7 +942,48 @@ function CodingQuestionEditor({
         onChange={(e) =>
           setQuestion({ ...question, sampleOutput: e.target.value })
         }
+      /> */}
+
+      {/* ✅ Sample Test Case 1 */}
+      <textarea
+        className="form-control mb-2"
+        placeholder="Sample Input 1"
+        rows="2"
+        value={question.sampleInput}
+        onChange={(e) =>
+          setQuestion({ ...question, sampleInput: e.target.value })
+        }
       />
+      <textarea
+        className="form-control mb-2"
+        placeholder="Sample Output 1"
+        rows="2"
+        value={question.sampleOutput}
+        onChange={(e) =>
+          setQuestion({ ...question, sampleOutput: e.target.value })
+        }
+      />
+
+      {/* ✅ Sample Test Case 2 */}
+      <textarea
+        className="form-control mb-2"
+        placeholder="Sample Input 2"
+        rows="2"
+        value={question.sampleInput2}
+        onChange={(e) =>
+          setQuestion({ ...question, sampleInput2: e.target.value })
+        }
+      />
+      <textarea
+        className="form-control mb-2"
+        placeholder="Sample Output 2"
+        rows="2"
+        value={question.sampleOutput2}
+        onChange={(e) =>
+          setQuestion({ ...question, sampleOutput2: e.target.value })
+        }
+      />
+
       <button
         type="button"
         className="btn btn-sm btn-success mb-3"

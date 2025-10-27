@@ -315,15 +315,33 @@ const CodeCompiler = () => {
     // 3. जर Custom Input नसेल, तर Sample Test Cases रन करा (/submit-code ला कॉल).
     // हीच तुमची मुख्य मागणी आहे.
     // Construct a test case array safely
-    const testCases = question
-      ? [
-          {
-            id: 1,
-            input: question.sampleInput || "",
-            expectedOutput: question.sampleOutput || "",
-          },
-        ]
-      : [];
+    // const testCases = question
+    //   ? [
+    //       {
+    //         id: 1,
+    //         input: question.sampleInput || "",
+    //         expectedOutput: question.sampleOutput || "",
+    //       },
+    //     ]
+    //   : [];
+
+    const testCases = [];
+
+    if (question?.sampleInput && question?.sampleOutput) {
+      testCases.push({
+        id: 1,
+        input: question.sampleInput,
+        expectedOutput: question.sampleOutput,
+      });
+    }
+
+    if (question?.sampleInput2 && question?.sampleOutput2) {
+      testCases.push({
+        id: 2,
+        input: question.sampleInput2,
+        expectedOutput: question.sampleOutput2,
+      });
+    }
 
     if (testCases.length === 0) {
       setOutput("No sample test cases available.");
@@ -345,15 +363,28 @@ const CodeCompiler = () => {
 
   // ✅ Submit button handler (all test cases)
   const handleSubmitCode = async () => {
-    const allTestCases = question
-      ? [
-          {
-            id: 1,
-            input: question.sampleInput || "",
-            expectedOutput: question.sampleOutput || "",
-          },
-        ]
-      : [];
+    const allTestCases = [];
+
+    if (question?.sampleInput && question?.sampleOutput) {
+      allTestCases.push({
+        id: 1,
+        input: question.sampleInput,
+        expectedOutput: question.sampleOutput,
+      });
+    }
+
+    if (question?.sampleInput2 && question?.sampleOutput2) {
+      allTestCases.push({
+        id: 2,
+        input: question.sampleInput2,
+        expectedOutput: question.sampleOutput2,
+      });
+    }
+
+    if (allTestCases.length === 0) {
+      setOutput("No available test cases for this question.");
+      return;
+    }
     runEvaluation(allTestCases, true);
   };
 
@@ -594,14 +625,24 @@ const CodeCompiler = () => {
           <h6 className="fw-bold text-primary">Output Format</h6>
           <p>{question.outputFormat || "N/A"}</p>
 
-          <h6 className="fw-bold text-primary">Sample Input</h6>
+          <h6 className="fw-bold text-primary">Sample Input 1</h6>
           <pre className="bg-light p-2 rounded">
             {question.sampleInput || "—"}
           </pre>
 
-          <h6 className="fw-bold text-primary">Sample Output</h6>
+          <h6 className="fw-bold text-primary">Sample Output 1</h6>
           <pre className="bg-light p-2 rounded">
             {question.sampleOutput || "—"}
+          </pre>
+
+             <h6 className="fw-bold text-primary">Sample Input 2</h6>
+          <pre className="bg-light p-2 rounded">
+            {question.sampleInput2 || "—"}
+          </pre>
+
+          <h6 className="fw-bold text-primary">Sample Output 2</h6>
+          <pre className="bg-light p-2 rounded">
+            {question.sampleOutput2 || "—"}
           </pre>
         </div>
 

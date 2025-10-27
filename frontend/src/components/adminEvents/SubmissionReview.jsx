@@ -36,28 +36,39 @@ export default function SubmissionReview({ contests }) {
     fetchSubmissions();
   }, []);
 
-
   // ✅ All submissions for stats
-const statsSubmissions = submissions;
-
+  const statsSubmissions = submissions;
 
   const filteredSubmissions = submissions.filter((submission) => {
     const matchesContest =
       selectedContest === "all" ||
       submission.contest_id.toString() === selectedContest;
-    const matchesStatus =
-      filterStatus === "all" || submission.status === filterStatus;
+    // const matchesStatus =
+    //   filterStatus === "all" || submission.status === filterStatus;
     const matchesSearch =
       submission.username?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       submission.contestTitle?.toLowerCase().includes(searchTerm.toLowerCase());
 
-    // ✅ Hide if participant is completed AND already reviewed
-    const isVisible = !(
-      submission.participantStatus === "completed" &&
-      submission.reviewStatus === "reviewed"
-    );
+    // // ✅ Hide if participant is completed AND already reviewed
+    // const isVisible = !(
+    //   submission.participantStatus === "completed" &&
+    //   submission.reviewStatus === "reviewed"
+    // );
 
-    return matchesContest && matchesStatus && matchesSearch && isVisible;
+    // return matchesContest && matchesStatus && matchesSearch && isVisible;
+
+    let matchesStatus = true;
+
+    // ✅ Map filter status dropdown values to actual data fields
+    if (filterStatus === "completed") {
+      matchesStatus =
+        submission.latestStatus === "reviewed" ;
+    } else if (filterStatus === "pending") {
+      matchesStatus = submission.latestStatus === "pending";
+    }
+
+    // ✅ Don't hide reviewed submissions anymore
+    return matchesContest && matchesStatus && matchesSearch;
   });
 
   const formatDate = (date) => {
@@ -87,7 +98,6 @@ const statsSubmissions = submissions;
     if (score >= 60) return "text-warning";
     return "text-danger";
   };
-
 
   return (
     <div className="submission-review">
@@ -136,7 +146,10 @@ const statsSubmissions = submissions;
           <div className="card border shadow-sm text-center">
             <div className="card-body">
               <div className="fw-bold h4 text-warning">
-                {statsSubmissions.filter((s) => s.latestStatus === "pending").length}
+                {
+                  statsSubmissions.filter((s) => s.latestStatus === "pending")
+                    .length
+                }
               </div>
               <div className="small text-muted">Pending Review</div>
             </div>
@@ -148,8 +161,10 @@ const statsSubmissions = submissions;
             <div className="card-body">
               <div className="fw-bold h4 text-info">
                 {Math.round(
-                  statsSubmissions.reduce((sum, s) => sum + s.avgManualScore, 0) /
-                    statsSubmissions.length
+                  statsSubmissions.reduce(
+                    (sum, s) => sum + s.avgManualScore,
+                    0
+                  ) / statsSubmissions.length
                 ) || 0}
                 %
               </div>
@@ -178,7 +193,7 @@ const statsSubmissions = submissions;
               </div>
             </div>
 
-            {/* <div className="col-md-4">
+            <div className="col-md-4">
               <select
                 className="form-select"
                 value={selectedContest}
@@ -191,9 +206,9 @@ const statsSubmissions = submissions;
                   </option>
                 ))}
               </select>
-            </div> */}
+            </div>
 
-            {/* <div className="col-md-4">
+            <div className="col-md-4">
               <select
                 className="form-select"
                 value={filterStatus}
@@ -202,9 +217,8 @@ const statsSubmissions = submissions;
                 <option value="all">All Status</option>
                 <option value="completed">Completed</option>
                 <option value="pending">Pending Review</option>
-                <option value="failed">Failed</option>
               </select>
-            </div> */}
+            </div>
           </div>
         </div>
       </div>
@@ -222,22 +236,32 @@ const statsSubmissions = submissions;
             >
               <table className="table table-hover mb-0">
                 <thead className="table-light">
-                  <tr
-                  
-                  >
+                  <tr>
                     <th scope="col">Participant</th>
                     <th scope="col">Contest</th>
-                    <th scope="col" className="text-center" style={{ whiteSpace: "nowrap" }}>
+                    <th
+                      scope="col"
+                      className="text-center"
+                      style={{ whiteSpace: "nowrap" }}
+                    >
                       Coding Score
                     </th>
-                    <th scope="col" className="text-center" style={{ whiteSpace: "nowrap" }}>
+                    <th
+                      scope="col"
+                      className="text-center"
+                      style={{ whiteSpace: "nowrap" }}
+                    >
                       Quiz Score
                     </th>
                     <th scope="col" className="text-center">
                       Status
                     </th>
                     <th scope="col">Submitted</th>
-                    <th scope="col" className="text-center" style={{ whiteSpace: "nowrap" }}>
+                    <th
+                      scope="col"
+                      className="text-center"
+                      style={{ whiteSpace: "nowrap" }}
+                    >
                       Time Spent
                     </th>
                     <th scope="col" className="text-center">

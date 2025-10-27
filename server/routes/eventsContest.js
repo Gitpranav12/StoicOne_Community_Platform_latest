@@ -37,9 +37,24 @@ router.post('/', async (req, res) => {
         }
       } else if (round.type === 'coding') {
         for (const q of round.questions) {
+          
           await conn.query(
-            'INSERT INTO coding_questions (round_id, title, description, input_format, output_format, sample_input, sample_output) VALUES (?, ?, ?, ?, ?, ?, ?)',
-            [roundId, q.title, q.description, q.input_format, q.output_format, q.sample_input, q.sample_output]
+           // ✅ Added sample_input_2, sample_output_2
+            `INSERT INTO coding_questions 
+              (round_id, title, description, input_format, output_format, 
+              sample_input, sample_output, sample_input_2, sample_output_2) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            [
+              roundId,
+              q.title,
+              q.description,
+              q.input_format,
+              q.output_format,
+              q.sample_input,
+              q.sample_output,
+              q.sample_input_2 || null, // ✅
+              q.sample_output_2 || null  // ✅
+            ]
           );
         }
       }
@@ -96,7 +111,9 @@ router.get('/:id', async (req, res) => {
           input_format: q.input_format,
           output_format: q.output_format,
           sampleInsample_inputput: q.sample_input,
-          sample_output: q.sample_output
+          sample_output: q.sample_output,
+          sample_input_2: q.sample_input_2,   // ✅
+          sample_output_2: q.sample_output_2  // ✅
         }));
       }
     }
@@ -197,9 +214,23 @@ router.put('/:id', async (req, res) => {
         }
       } else if (round.type === 'coding') {
         for (const q of round.questions) {
-          await conn.query(
-            'INSERT INTO coding_questions (round_id, title, description, input_format, output_format, sample_input, sample_output) VALUES (?, ?, ?, ?, ?, ?, ?)',
-            [roundId, q.title, q.description, q.input_format, q.output_format, q.sample_input, q.sample_output]
+                    await conn.query(
+              // ✅ Updated to include test case 2
+            `INSERT INTO coding_questions 
+              (round_id, title, description, input_format, output_format, 
+              sample_input, sample_output, sample_input_2, sample_output_2) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            [
+              roundId,
+              q.title,
+              q.description,
+              q.input_format,
+              q.output_format,
+              q.sample_input,
+              q.sample_output,
+              q.sample_input_2 || null,
+              q.sample_output_2 || null
+            ]
           );
         }
       }
@@ -322,6 +353,8 @@ router.get('/:contestId/round/:roundId/coding', async (req, res) => {
       outputFormat: q.output_format,
       sampleInput: q.sample_input,
       sampleOutput: q.sample_output,
+      sampleInput2: q.sample_input_2,   // ✅
+      sampleOutput2: q.sample_output_2  // ✅
     }));
 
     res.json({
