@@ -1,177 +1,173 @@
 import { useState, useEffect } from 'react';
-import { Menu, X, Users, FileText, DollarSign, Briefcase } from 'lucide-react';
-import './navbar.css'
+import { ChevronDown, Menu, X } from 'lucide-react';
+import './navbar.css';
 
-export function Navbar({ onNavigate }) {
+export function Navbar({ onNavigate, currentPage }) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [showProductDropdown, setShowProductDropdown] = useState(false);
 
+  // Handle scroll behavior
   useEffect(() => {
-    const handleScroll = () => setIsScrolled(window.scrollY > 20);
+    const handleScroll = () => setIsScrolled(window.scrollY > 50);
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   const products = [
-    { name: 'CRM', icon: <Users size={20} />, description: 'Customer Relationship Management', page: 'crm' },
-    { name: 'HRM', icon: <Briefcase size={20} />, description: 'Human Resource Management', page: 'hrm' },
-    { name: 'Invoicing', icon: <FileText size={20} />, description: 'Invoice & Billing System', page: 'invoicing' },
-    { name: 'Suite', icon: <DollarSign size={20} />, description: 'Complete Business Suite', page: 'suite' },
+    { name: 'CRM', page: 'crm', description: 'Customer Relationship Management' },
+    { name: 'HRM', page: 'hrm', description: 'Human Resource Management' },
+    { name: 'Invoicing', page: 'invoicing', description: 'Invoice & Billing System' },
+    { name: 'Business Suite', page: 'suite', description: 'Complete Business Solution' },
   ];
 
-  const navLinks = [
-    { label: 'Features', page: 'features' },
-    { label: 'Pricing', page: 'pricing' },
-    { label: 'About Us', page: 'about' },
-  ];
+  const handleNavigate = (page) => {
+    onNavigate(page);
+    setShowProductDropdown(false);
+    setIsMobileMenuOpen(false);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   return (
     <nav
-      className={`navbar navbar-expand-lg fixed-top ${isScrolled ? 'navbar-scrolled' : 'navbar-transparent'}`}
+      className="navbar navbar-expand-lg navbar-light fixed-top"
       style={{
+        backgroundColor: isScrolled ? '#ffffff' : 'transparent',
+        borderBottom: isScrolled ? '1px solid #e5e7eb' : 'none',
+        boxShadow: isScrolled ? '0 1px 3px rgba(0, 0, 0, 0.05)' : 'none',
         transition: 'all 0.3s ease',
-        zIndex: 1050,
-        paddingTop: '1rem',       // inavbar height
-        paddingBottom: '1rem',    // navbar height
+        padding: '0.75rem 0',
       }}
     >
       <div className="container">
-        {/* Logo */}
-        <button
-          className="navbar-brand d-flex align-items-center border-0 bg-transparent"
-          onClick={() => onNavigate('home')}
-          style={{ cursor: 'pointer' }}
-        >
-          <div className="d-flex align-items-center gap-2">
-            <img
-              src="\logo.png"
-              alt="Stoicone Logo"
-              style={{
-                width: '40px',       // bigger logo
-                height: '40px',
-                objectFit: 'cover',
-                borderRadius: '6px',
-              }}
-            />
-            <span className="fw-semibold text-dark">Stoicone Products</span>
-          </div>
-        </button>
 
-        {/* Mobile Menu Toggle */}
+        {/* === Logo === */}
+        <div
+          className="d-flex align-items-center gap-2 flex-nowrap"
+          style={{ cursor: 'pointer' }}
+          onClick={() => handleNavigate('home')}
+        >
+          <img
+            src="\logo.png"
+            alt="Stoicone Logo"
+            style={{
+              width: '36px',
+              height: '36px',
+              borderRadius: '6px',
+              objectFit: 'cover',
+              flexShrink: 0,
+            }}
+          />
+          <span className="fw-semibold text-dark text-nowrap">Stoic Products</span>
+        </div>
+
+        {/* === Mobile Toggle === */}
         <button
-          className="navbar-toggler border-0"
+          className="navbar-toggler border-0 shadow-none"
           type="button"
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          aria-label="Toggle navigation"
         >
           {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
 
-        {/* Navbar Links */}
+        {/* === Navigation Menu === */}
         <div className={`collapse navbar-collapse ${isMobileMenuOpen ? 'show' : ''}`}>
-          <ul className="navbar-nav mx-auto mb-2 mb-lg-0 d-flex align-items-center gap-3">
-            {/* Products Dropdown FIRST */}
+          <ul className="navbar-nav mx-auto">
+
+            {/* === Products Dropdown === */}
             <li
               className="nav-item dropdown position-relative"
               onMouseEnter={() => setShowProductDropdown(true)}
               onMouseLeave={() => setShowProductDropdown(false)}
             >
-              <a
-                className="nav-link dropdown-toggle text-dark d-flex align-items-center"
-                href="#products"
-                role="button"
-                style={{ transition: 'color 0.3s ease' }}
-              >
-                Products
-              </a>
-
-              <div
-                className={`dropdown-menu shadow-lg border-0 ${showProductDropdown ? 'show' : ''}`}
+              <button
+                className="nav-link d-flex align-items-center border-0 bg-transparent"
                 style={{
-                  minWidth: '500px',
-                  padding: '1.5rem',
-                  marginTop: '0.5rem',
-                  borderRadius: '12px',
-                  display: showProductDropdown ? 'block' : 'none',
+                  color: '#1f2937',
+                  fontWeight: 400,
+                  fontSize: '0.95rem',
+                  padding: '0.5rem 1rem',
                 }}
               >
-                <div className="row g-3">
-                  {products.map((product, index) => (
-                    <div className="col-6" key={index}>
-                      <button
-                        onClick={() => {
-                          onNavigate(product.page);
-                          setShowProductDropdown(false);
-                        }}
-                        className="text-decoration-none border-0 bg-transparent w-100 text-start"
-                        style={{ transition: 'all 0.3s ease' }}
-                      >
-                        <div
-                          className="p-3 rounded d-flex gap-3 align-items-start"
-                          style={{
-                            border: '1px solid #e0e0e0',
-                            transition: 'all 0.3s ease',
-                            cursor: 'pointer',
-                          }}
-                          onMouseEnter={e => {
-                            e.currentTarget.style.borderColor = '#1E88E5';
-                            e.currentTarget.style.backgroundColor = '#f8f9fa';
-                          }}
-                          onMouseLeave={e => {
-                            e.currentTarget.style.borderColor = '#e0e0e0';
-                            e.currentTarget.style.backgroundColor = 'transparent';
-                          }}
-                        >
-                          <div
-                            className="d-flex align-items-center justify-content-center rounded"
-                            style={{
-                              width: '40px',
-                              height: '40px',
-                              background: 'linear-gradient(135deg, #1E88E5, #1565C0)',
-                              color: 'white',
-                              flexShrink: 0,
-                            }}
-                          >
-                            {product.icon}
-                          </div>
-                          <div>
-                            <h6 className="mb-1 text-dark fw-semibold">{product.name}</h6>
-                            <small className="text-muted">{product.description}</small>
-                          </div>
-                        </div>
-                      </button>
-                    </div>
+                Products
+                <ChevronDown
+                  size={16}
+                  className="ms-1"
+                  style={{
+                    transform: showProductDropdown ? 'rotate(180deg)' : 'rotate(0)',
+                    transition: 'transform 0.2s ease',
+                  }}
+                />
+              </button>
+
+              {showProductDropdown && (
+                <div
+                  className="dropdown-menu show border shadow-sm"
+                  style={{
+                    minWidth: '280px',
+                    padding: '0.5rem',
+                    marginTop: '0.5rem',
+                    borderRadius: '8px',
+                    borderColor: '#e5e7eb',
+                  }}
+                >
+                  {products.map((product) => (
+                    <button
+                      key={product.page}
+                      onClick={() => handleNavigate(product.page)}
+                      className="dropdown-item border-0 bg-transparent w-100 text-start"
+                      style={{
+                        padding: '0.75rem 1rem',
+                        borderRadius: '6px',
+                        transition: 'background-color 0.2s ease',
+                      }}
+                      onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#f9fafb')}
+                      onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
+                    >
+                      <div className="fw-semibold" style={{ color: '#1f2937', fontSize: '0.95rem' }}>
+                        {product.name}
+                      </div>
+                      <small style={{ color: '#6b7280', fontSize: '0.85rem' }}>
+                        {product.description}
+                      </small>
+                    </button>
                   ))}
                 </div>
-              </div>
+              )}
             </li>
 
-            {/* Other Nav Links */}
-            {navLinks.map((link, idx) => (
-              <li className="nav-item" key={idx}>
+            {/* === Static Links === */}
+            {[
+              { name: 'Features', href: '#features' },
+              { name: 'Pricing', href: '#pricing' },
+              { name: 'About Us', href: '#about' },
+            ].map((link) => (
+              <li className="nav-item" key={link.name}>
                 <a
-                  className="nav-link text-dark"
-                  href={`#${link.page}`}
-                  onClick={() => onNavigate(link.page)}
-                  style={{ transition: 'color 0.3s ease' }}
-                  onMouseEnter={e => (e.target.style.color = '#1E88E5')}
-                  onMouseLeave={e => (e.target.style.color = '')}
+                  href={link.href}
+                  className="nav-link"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  style={{
+                    color: '#1f2937',
+                    fontWeight: 400,
+                    fontSize: '0.95rem',
+                    padding: '0.5rem 1rem',
+                  }}
                 >
-                  {link.label}
+                  {link.name}
                 </a>
               </li>
             ))}
           </ul>
 
-          {/* Buttons */}
-          <div className="d-flex gap-2 align-items-center">
-            <button className="btn btn-outline-dark" onClick={() => onNavigate('try-free')}>
-              Contact us
+          {/* === Contact Button === */}
+          <div className="d-flex align-items-center gap-2">
+            <button
+              className="btn btn-outline-dark"
+              onClick={() => handleNavigate('try-free')}
+            >
+              Contact Us
             </button>
-            {/* <button className="btn btn-dark" onClick={() => onNavigate('book-demo')}>
-              Book Demo
-            </button> */}
           </div>
         </div>
       </div>

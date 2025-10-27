@@ -63,8 +63,8 @@ export function Pricing() {
       id="pricing"
       className="section-padding bg-white"
       style={{
-        paddingTop: '120px',
-        paddingBottom: '120px',
+        paddingTop: '40px',
+        paddingBottom: '20px',
         scrollMarginTop: '80px'
       }}
     >

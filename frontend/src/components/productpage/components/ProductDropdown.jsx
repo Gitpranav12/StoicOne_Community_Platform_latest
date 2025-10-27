@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Users, Target, BarChart3, Zap, Mail, Calendar, DollarSign, FileText, Briefcase, Settings, ArrowRight } from 'lucide-react';
-import HRMS from './Images/HRMS.jpg'
+import HRMS from './Images/HRMS.jpg';
+
 export function ProductDropdown({ onNavigate }) {
   const [hoveredProduct, setHoveredProduct] = useState(null);
 
@@ -69,7 +70,8 @@ export function ProductDropdown({ onNavigate }) {
 
   return (
     <section className="py-5 bg-white" id="products">
-      <div className="container py-5">
+      {/* Reduced side spacing using container-fluid */}
+      <div className="container-fluid px-4 py-5">
         <div className="text-center mb-5">
           <h2 className="display-5 fw-bold text-dark mb-3">
             Complete Suite of Business Tools

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Users, FileText, Briefcase, Zap, ArrowRight } from 'lucide-react';
+import { Users, FileText, Briefcase, Zap } from 'lucide-react';
 import HRMS from './Images/HRMS.jpg';
 import CRM2 from './Images/CRM2.png';
 
@@ -91,7 +91,8 @@ export function Features() {
 
   return (
     <section id="features" className="py-5 bg-white">
-      <div className="container py-5">
+      {/* 👇 container-fluid gives full width, reduced padding */}
+      <div className="container-fluid px-4 px-md-5 py-5">
         <div className="text-center mb-5">
           <h2 className="display-5 fw-bold text-dark mb-3">
             Powerful Features for Modern Teams
@@ -107,7 +108,7 @@ export function Features() {
             {Object.keys(features).map((key) => (
               <button
                 key={key}
-                className={`btn d-flex align-items-center gap-2`}
+                className="btn d-flex align-items-center gap-2"
                 onClick={() => setActiveTab(key)}
                 style={{
                   borderRadius: '12px',
@@ -131,14 +132,12 @@ export function Features() {
         {/* Tab Content */}
         <div className="tab-content">
           {Object.keys(features).map((key) => (
-            <div 
-              key={key}
-              className={activeTab === key ? 'd-block' : 'd-none'}
-            >
-              <div className="row align-items-center g-5">
+            <div key={key} className={activeTab === key ? 'd-block' : 'd-none'}>
+              {/* 👇 row spacing tightened */}
+              <div className="row align-items-center g-4 g-md-5 mx-0">
                 {/* Content */}
-                <div className="col-lg-6">
-                  <div 
+                <div className="col-lg-6 px-3 px-md-4">
+                  <div
                     className="d-inline-flex align-items-center justify-content-center rounded mb-4"
                     style={{
                       width: '80px',
@@ -150,32 +149,31 @@ export function Features() {
                   >
                     {features[key].icon}
                   </div>
-                  
+
                   <h3 className="fw-bold text-dark mb-3 display-6">
                     {features[key].title}
                   </h3>
-                  
+
                   <p className="text-muted lead mb-4">
                     {features[key].description}
                   </p>
 
-                  {/* Feature Points */}
                   <ul className="list-unstyled mb-4">
                     {features[key].points.map((point, idx) => (
                       <li key={idx} className="d-flex align-items-start mb-3">
-                        <svg 
-                          className="me-3 mt-1 flex-shrink-0" 
-                          width="24" 
-                          height="24" 
-                          fill="none" 
-                          stroke={features[key].color} 
+                        <svg
+                          className="me-3 mt-1 flex-shrink-0"
+                          width="24"
+                          height="24"
+                          fill="none"
+                          stroke={features[key].color}
                           viewBox="0 0 24 24"
                         >
-                          <path 
-                            strokeLinecap="round" 
-                            strokeLinejoin="round" 
-                            strokeWidth={2.5} 
-                            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" 
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2.5}
+                            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
                           />
                         </svg>
                         <span className="text-dark">{point}</span>
@@ -183,10 +181,9 @@ export function Features() {
                     ))}
                   </ul>
 
-                  {/* Stats */}
-                  <div className="d-flex gap-4 mb-4">
+                  <div className="d-flex gap-4 mb-4 flex-wrap">
                     {features[key].stats.map((stat, idx) => (
-                      <div 
+                      <div
                         key={idx}
                         className="p-3 rounded border"
                         style={{
@@ -194,25 +191,27 @@ export function Features() {
                           borderColor: `${features[key].color}30`
                         }}
                       >
-                        <h4 className="fw-bold mb-0" style={{ color: features[key].color }}>
+                        <h4
+                          className="fw-bold mb-0"
+                          style={{ color: features[key].color }}
+                        >
                           {stat.value}
                         </h4>
                         <small className="text-muted">{stat.label}</small>
                       </div>
                     ))}
                   </div>
-
                 </div>
 
                 {/* Visual */}
-                <div className="col-lg-6">
+                <div className="col-lg-6 px-3 px-md-4">
                   <div className="rounded shadow-lg overflow-hidden">
                     <img
                       src={features[key].image}
                       alt={features[key].title}
                       className="img-fluid w-100"
                       style={{
-                        maxHeight: '500px',
+                        maxHeight: '480px',
                         objectFit: 'cover'
                       }}
                     />

@@ -1,0 +1,275 @@
+import { useState, useEffect } from 'react';
+import { Menu, X, Users, FileText, DollarSign, Briefcase } from 'lucide-react';
+import './navbar.css'
+
+export function Navbar({ onNavigate }) {
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [showProductDropdown, setShowProductDropdown] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => setIsScrolled(window.scrollY > 20);
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const products = [
+    { name: 'CRM', icon: <Users size={20} />, description: 'Customer Relationship Management', page: 'crm' },
+    { name: 'HRM', icon: <Briefcase size={20} />, description: 'Human Resource Management', page: 'hrm' },
+    { name: 'Invoicing', icon: <FileText size={20} />, description: 'Invoice & Billing System', page: 'invoicing' },
+    { name: 'Suite', icon: <DollarSign size={20} />, description: 'Complete Business Suite', page: 'suite' },
+  ];
+
+  const navLinks = [
+    { label: 'Features', page: 'features' },
+    { label: 'Pricing', page: 'pricing' },
+    { label: 'About Us', page: 'about' },
+  ];
+
+  return (
+    <nav
+      className={`navbar navbar-expand-lg fixed-top ${isScrolled ? 'navbar-scrolled' : 'navbar-transparent'}`}
+      style={{
+        transition: 'all 0.3s ease',
+        zIndex: 1050,
+        paddingTop: '0.75rem',    // reduced top padding
+        paddingBottom: '0.75rem', // reduced bottom padding
+      }}
+    >
+      {/* Use container-fluid for full width with minimal padding */}
+      <div className="container-fluid px-3">
+        {/* Logo */}
+{/* Logo */}
+{/* Logo + Name */}
+<div
+  className="d-flex align-items-center gap-2 flex-nowrap"
+  style={{ cursor: 'pointer' }}
+  onClick={() => onNavigate('home')}
+>
+  <img
+    src="\logo.png"
+    alt="Stoicone Logo"
+    style={{
+      width: '36px',
+      height: '36px',
+      objectFit: 'cover',
+      borderRadius: '6px',
+      flexShrink: 0,
+    }}
+  />
+  <span className="fw-semibold text-dark text-nowrap">
+    Stoic Products
+  </span>
+</div>
+
+
+
+        {/* Mobile Menu Toggle */}
+        <button
+          className="navbar-toggler border-0"
+          type="button"
+          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          aria-label="Toggle navigation"
+        >
+          {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+        </button>
+
+        {/* Navbar Links */}
+        <div className={`collapse navbar-collapse ${isMobileMenuOpen ? 'show' : ''}`}>
+          <ul className="navbar-nav mx-auto mb-2 mb-lg-0 d-flex align-items-center gap-2">
+            {/* Products Dropdown */}
+            <li
+              className="nav-item dropdown position-relative"
+              onMouseEnter={() => setShowProductDropdown(true)}
+              onMouseLeave={() => setShowProductDropdown(false)}
+            >
+              <a className="nav-link dropdown-toggle text-dark d-flex align-items-center" href="#products">
+                Products
+              </a>
+
+              <div
+                className={`dropdown-menu shadow-lg border-0 ${showProductDropdown ? 'show' : ''}`}
+                style={{
+                  minWidth: '400px',  // slightly smaller dropdown
+                  padding: '1rem',
+                  marginTop: '0.5rem',
+                  borderRadius: '12px',
+                  display: showProductDropdown ? 'block' : 'none',
+                }}
+              >
+                <div className="row g-2">
+                  {products.map((product, index) => (
+                    <div className="col-6" key={index}>
+                      <button
+                        onClick={() => {
+                          onNavigate(product.page);
+                          setShowProductDropdown(false);
+                        }}
+                        className="text-decoration-none border-0 bg-transparent w-100 text-start"
+                      >
+                        <div
+                          className="p-2 rounded d-flex gap-2 align-items-start"
+                          style={{
+                            border: '1px solid #e0e0e0',
+                            cursor: 'pointer',
+                          }}
+                          onMouseEnter={e => {
+                            e.currentTarget.style.borderColor = '#1E88E5';
+                            e.currentTarget.style.backgroundColor = '#f8f9fa';
+                          }}
+                          onMouseLeave={e => {
+                            e.currentTarget.style.borderColor = '#e0e0e0';
+                            e.currentTarget.style.backgroundColor = 'transparent';
+                          }}
+                        >
+                          <div
+                            className="d-flex align-items-center justify-content-center rounded"
+                            style={{
+                              width: '36px',
+                              height: '36px',
+                              background: 'linear-gradient(135deg, #1E88E5, #1565C0)',
+                              color: 'white',
+                              flexShrink: 0,
+                            }}
+                          >
+                            {product.icon}
+                          </div>
+                          <div>
+                            <h6 className="mb-1 text-dark fw-semibold">{product.name}</h6>
+                            <small className="text-muted">{product.description}</small>
+                          </div>
+                        </div>
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </li>
+
+            {/* Other Nav Links */}
+            {navLinks.map((link, idx) => (
+              <li className="nav-item" key={idx}>
+                <a
+                  className="nav-link text-dark"
+                  href={`#${link.page}`}
+                  onClick={() => onNavigate(link.page)}
+                  onMouseEnter={e => (e.target.style.color = '#1E88E5')}
+                  onMouseLeave={e => (e.target.style.color = '')}
+                >
+                  {link.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+
+          {/* Buttons */}
+          <div className="d-flex gap-2 align-items-center">
+            <button className="btn btn-outline-dark" onClick={() => onNavigate('try-free')}>
+              Contact us
+            </button>
+          </div>
+        </div>
+      </div>
+    </nav>
+  );
+}
+
+
+
+
+///style
+
+
+
+/* .navbar {
+  transition: all 0.3s ease;
+  backdrop-filter: blur(8px);
+  z-index: 1000;
+}
+
+.navbar-transparent {
+  background: rgba(255, 255, 255, 0.85);
+  box-shadow: none;
+}
+
+.navbar-scrolled {
+  background: #ffffff !important;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+
+.navbar .nav-link {
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.navbar .nav-link:hover {
+  color: #1e88e5 !important;
+}
+
+.navbar-toggler {
+  border: none;
+  outline: none;
+}
+
+.navbar-toggler-icon {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%280, 0, 0, 0.8%29' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+}
+
+.navbar-collapse {
+  background: rgba(255, 255, 255, 0.95);
+} */
+
+/* Transparent navbar by default */
+/* Navbar when at top (transparent) */
+.navbar-transparent {
+  background-color: transparent !important;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(8px); /* optional, gives nice glass effect */
+}
+
+/* Navbar background when scrolled */
+.navbar-scrolled {
+  background-color: rgba(255, 255, 255, 0.9) !important; /* slightly transparent white */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  backdrop-filter: blur(8px); /* optional blur for elegant effect */
+}
+
+
+@media (min-width: 992px) {
+  .navbar-collapse {
+    background: transparent;
+  }
+}
+.bg-custom-lightblue-CRM {
+  background-color: #428dfecd;
+}
+.bg-custom-lightblue-HRM {
+  background-color: #5ba934cd;
+}
+
+.pricing-card {
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+.pricing-card:hover {
+  transform: translateY(-6px) scale(1.02);
+  box-shadow: 0 6px 20px rgba(40, 167, 69, 0.25);
+  border-color: #28a745 !important; 
+}
+
+.selected-card {
+  border: 3px solid #28a745 !important;
+  box-shadow: 0 8px 28px rgba(40, 167, 69, 0.5);
+  transform: scale(1.04);
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+@media (max-width: 991px) {
+  .navbar .navbar-brand {
+    display: flex;
+    align-items: center;
+  }
+}
+

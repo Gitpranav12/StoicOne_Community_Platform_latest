@@ -72,8 +72,12 @@ export function UseCases() {
   ];
 
   return (
-    <section id="use-cases" className="py-5" style={{ background: 'linear-gradient(135deg, #f8f9fa 0%, #e3f2fd 50%, #ffffff 100%)' }}>
-      <div className="container py-5">
+    <section 
+      id="use-cases" 
+      className="py-5" 
+      style={{ background: 'linear-gradient(135deg, #f8f9fa 0%, #e3f2fd 50%, #ffffff 100%)' }}
+    >
+      <div className="container-fluid px-4 py-5">
         <div className="text-center mb-5">
           <h2 className="display-5 fw-bold text-dark mb-3">
             Built for Every Team
@@ -140,9 +144,7 @@ export function UseCases() {
                     {useCase.icon}
                   </div>
                   
-                  <h5 className="fw-bold text-dark mb-3">
-                    {useCase.title}
-                  </h5>
+                  <h5 className="fw-bold text-dark mb-3">{useCase.title}</h5>
                   
                   <p className="text-muted mb-4" style={{ fontSize: '0.95rem' }}>
                     {useCase.description}
@@ -194,28 +196,6 @@ export function UseCases() {
           <p className="text-muted mb-3">
             See how our tools can transform your workflow
           </p>
-          {/* <button 
-            className="btn btn-lg"
-            style={{
-              background: 'linear-gradient(135deg, #1E88E5, #1565C0)',
-              color: 'white',
-              border: 'none',
-              borderRadius: '12px',
-              padding: '12px 32px',
-              fontWeight: '600',
-              transition: 'all 0.3s ease'
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = 'translateY(-3px)';
-              e.currentTarget.style.boxShadow = '0 15px 30px rgba(30, 136, 229, 0.4)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = 'translateY(0)';
-              e.currentTarget.style.boxShadow = 'none';
-            }}
-          >
-            Start Free Trial
-          </button> */}
         </div>
       </div>
     </section>
