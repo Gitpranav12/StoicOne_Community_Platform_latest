@@ -13,6 +13,7 @@ import { HRMPage } from './components/pages/HRMPage';
 import { InvoicingPage } from './components/pages/InvoicingPage';
 import { SuitePage } from './components/pages/SuitePage';
 import { ScheduleDemoPage } from './components/pages/ScheduleDemoPage';
+import ContactForm from './components/pages/ContactForm';
 
 export default function App() {
   const [currentPage, setCurrentPage] = useState('home');
@@ -62,6 +63,8 @@ export default function App() {
         return <SuitePage onNavigate={setCurrentPage} />;
       case 'schedule-demo':
         return <ScheduleDemoPage onNavigate={setCurrentPage} />;
+        case 'contact':
+        return <ContactForm onNavigate={setCurrentPage} />;
       default:
         return (
           <>
