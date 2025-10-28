@@ -2,8 +2,29 @@ import React from 'react';
 import { Card } from 'react-bootstrap';
 
 export default function LeaderItem({ user, index, type }) {
-  const medal = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : null;
-  const rankDisplay = medal || index + 1;
+  const getMedalIcon = (index) => {
+    switch (index) {
+      case 0:
+        return '/icons/medal_first.png';
+      case 1:
+        return '/icons/medal_second.png';
+      case 2:
+        return '/icons/medal_third.png';
+      default:
+        return null;
+    }
+  };
+
+  const medal = getMedalIcon(index);
+  const rankDisplay = medal ? (
+    <img
+      src={medal}
+      alt="medal"
+      style={{ width: '28px', height: '28px', objectFit: "cover" }}
+    />
+  ) : (
+    index + 1
+  );
 
   return (
     <Card className="p-3 mb-2 border-0 shadow-sm rounded-3 bg-white leader-item">

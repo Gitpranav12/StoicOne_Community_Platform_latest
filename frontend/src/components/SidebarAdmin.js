@@ -16,7 +16,8 @@ import {
   ChevronRight,
   BarChart3,
   MessageSquare,
-    Trophy
+    Trophy,
+    Database 
 } from "lucide-react";  //<----added this.........
 import { useCollectives } from "./collectives/CollectivesContext";
 
@@ -41,6 +42,8 @@ const adminItems = [
   { to: "/admin/tags", label: "Tags", icon: <Tag size={18} /> },
   { to: "/admin/collectives", label: "Collectives", icon: <UserCog size={18} /> },
    { to: "/admin/events", label: "Contests", icon: <Trophy size={18} /> },
+     // ✅ Add this new menu item for DataPage
+  { to: "/admin/data", label: "Data", icon: <Database size={18} /> },
 
 ];  //<----added this.........
 

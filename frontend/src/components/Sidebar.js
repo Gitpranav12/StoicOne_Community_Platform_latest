@@ -3,7 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import styles from './Sidebar.module.css';
 import {
   Home, Search, Tag, Bot, FileText, Users, UserCog,
-  ChevronDown, ChevronRight, BarChart3, MessageSquare, Trophy
+  ChevronDown, ChevronRight, BarChart3, MessageSquare, Trophy, Database 
 } from "lucide-react";
 import { useCollectives } from "./collectives/CollectivesContext";
 import { UserContext } from "../components/UserProfilePage/context/UserContext";
@@ -28,7 +28,8 @@ const adminItems = [
   { to: "/admin/tags", label: "Tags", icon: <Tag size={18} /> },
   { to: "/admin/collectives", label: "Collectives", icon: <UserCog size={18} /> },
    { to: "/admin/events", label: "Contests", icon: <Trophy size={18} /> },
-
+  // ✅ Add this new menu item for DataPage
+  { to: "/admin/data", label: "Data", icon: <Database size={18} /> },
 ];
 
 const Sidebar = ({ isOpen }) => {

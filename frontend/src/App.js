@@ -13,7 +13,7 @@ import QuestionsPage from "./components/questionlist/QuestionsPage";
 import QuestionDetailsWrapper from "./components/questionlist/QuestionDetailsWrapper";
 import AiAssistant from "./components/AiAssistant";
 import Signup from "./pages/Signup/index";
-import ForgotPassword from "./pages/ForgotPassword/ForgotPassword";
+import ForgotPassword from "./pages/ForgotPassword";
 import Login from "./pages/Login/index";
 import TagsPage from "./components/tags/TagsPage";
 import Articles from "./components/Articles";
@@ -27,7 +27,7 @@ import ExploreCollectives from './components/collectives/ExploreCollectives';
 import { CollectivesProvider } from './components/collectives/CollectivesContext';
 import CollectivesPage from "./components/collectives/CollectivePage";
 import Productpage from "./components/productpage/Productpage";
-
+import ContactForm from "./components/productpage/components/pages/ContactForm";
 // Admin Dashboard pages
 
 import UsersAdmin from "./components/adminDashboard/pages/UsersAdmin";
@@ -54,6 +54,9 @@ import { Toaster } from 'react-hot-toast';
 import SubmissionDetail from "./components/adminEvents/SubmissionDetail";
 // Result page
 import ResultWrapper from "./components/eventsUser/Result/ResultWrapper";
+// data page
+import DataPage from "./components/adminDashboard/datapages/DataPage"; // adjust path as needed
+
 
 export default function App() {
 
@@ -146,6 +149,7 @@ export default function App() {
 
               {/* Product Page */}
               <Route path="/product" element={<Productpage />} />
+              <Route path="/contact" element={<ContactForm />} />
               {/* admin events pages routes */}
               <Route path="/admin/events" element={<ProtectedRoute><EventsAdminPage /></ProtectedRoute>} />
               <Route path="/admin/events/createContest" element={<ProtectedRoute><CreateContestForm /></ProtectedRoute>} />
@@ -153,6 +157,10 @@ export default function App() {
               <Route path="/admin/events/submissionDetails" element={<ProtectedRoute><SubmissionDetail /></ProtectedRoute>} />
               {/* Result Page */}
               <Route path="/events/result" element={<ProtectedRoute><ResultWrapper /></ProtectedRoute>} />
+
+              {/* Schedule demo and contacts */}
+              <Route path="/admin/data" element={<ProtectedRoute><DataPage /></ProtectedRoute>} />
+
 
             </Routes>
 

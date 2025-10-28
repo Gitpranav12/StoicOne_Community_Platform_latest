@@ -615,7 +615,7 @@ const CodeCompiler = () => {
 
           <hr />
           <h4 className="fw-bold">
-            {question.id}. {question.title}
+            {currentQuestionIndex + 1}. {question.title}
           </h4>
           <p style={{ whiteSpace: "pre-wrap" }}>{question.description}</p>
 
