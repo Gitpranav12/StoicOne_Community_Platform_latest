@@ -2,6 +2,7 @@
 require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
+const helmet = require('helmet');
 const passport = require("passport");
 const authRoute = require("./routes/auth");
 const cookieSession = require("cookie-session");
@@ -38,7 +39,7 @@ app.use(passport.session());
 app.use(
     cors({
         // origin: "http://localhost:3000",
-         origin: ["http://localhost:3000", "http://localhost:3001"], // 👈 both allowed
+        origin: ["http://localhost:3000", "http://localhost:3001"], // 👈 both allowed
         methods: "GET,POST,PUT,DELETE",
         credentials: true,
     })
