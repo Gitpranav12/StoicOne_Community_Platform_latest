@@ -131,6 +131,7 @@ const Login = () => {
                                 placeholder="Password"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
+                                autoComplete="off"
                                 required
                                 // आयकॉनसाठी जागा सोडण्यासाठी Padding-right ॲड करा
                                 style={{ paddingRight: '2.5rem' }} 
