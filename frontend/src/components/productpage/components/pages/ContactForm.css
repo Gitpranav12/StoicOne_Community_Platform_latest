@@ -85,7 +85,7 @@ form label {
 }
 
 /* Inputs, selects, textarea */
-input[type="text"],
+/* input[type="text"],
 input[type="email"],
 input[type="tel"],
 select,
@@ -97,7 +97,7 @@ textarea {
   margin-bottom: 0.6rem;
   font-size: 0.9rem;
   transition: all 0.2s ease;
-}
+} */
 
 input:focus,
 select:focus,
