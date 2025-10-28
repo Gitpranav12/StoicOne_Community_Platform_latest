@@ -1,4 +1,4 @@
-.navbar {
+/* .navbar {
   transition: all 0.3s ease;
   backdrop-filter: blur(8px);
   z-index: 1000;
@@ -34,7 +34,7 @@
 
 .navbar-collapse {
   background: rgba(255, 255, 255, 0.95);
-}
+} */
 
 /* Transparent navbar by default */
 /* Navbar when at top (transparent) */
@@ -61,7 +61,7 @@
 .bg-custom-lightblue-CRM {
   background-color: #428dfecd;
 }
-.bg-custom-lightblue-HRM {
+.bg-custom-lightgreen-HRM {
   background-color: #5ba934cd;
 }
 

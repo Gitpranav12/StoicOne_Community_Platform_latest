@@ -11,16 +11,18 @@ import {
 } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
-import Layout from "../../Layout/Layout";
+// import Layout from "../../Layout/Layout"; // Layout ko yahan se remove kar sakte hain, kyunki ab yeh conditionally render hoga
 import { UserContext } from "../UserProfilePage/context/UserContext";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import toast from "react-hot-toast";
+import { useLayout } from "../../context/LayoutContext"; // <<<<<< 1. CONTEXT IMPORT KAREIN
 
 export default function ProgressPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const { id } = useParams(); // contest id
+  const { setIsLayoutVisible } = useLayout(); // <<<<<< 2. CONTEXT SE FUNCTION LEIN
 
   // States for contest data and UI behavior
   const [contest, setContest] = useState(null);
@@ -34,18 +36,63 @@ export default function ProgressPage() {
   // State to track completed rounds
   const [roundStatus, setRoundStatus] = useState([]);
 
+  // <<<<<< 3. FULLSCREEN AUR LAYOUT HIDE KARNE WALA useEffect >>>>>>
+  useEffect(() => {
+    // Layout ko hide karein
+    setIsLayoutVisible(false);
+
+    // Fullscreen Mode Logic
+    const enterFullScreen = () => {
+      const element = document.documentElement;
+      if (element.requestFullscreen) {
+        element.requestFullscreen().catch((err) => {
+          console.warn(`Fullscreen request failed: ${err.message}`);
+        });
+      } else if (element.mozRequestFullScreen) { /* Firefox */
+        element.mozRequestFullScreen();
+      } else if (element.webkitRequestFullscreen) { /* Chrome, Safari & Opera */
+        element.webkitRequestFullscreen();
+      } else if (element.msRequestFullscreen) { /* IE/Edge */
+        element.msRequestFullscreen();
+      }
+    };
+
+    // Disable Browser Back Button Logic
+    const preventBackNavigation = () => {
+      window.history.pushState(null, null, window.location.href);
+      window.onpopstate = () => {
+        window.history.pushState(null, null, window.location.href);
+      };
+    };
+
+    enterFullScreen();
+    preventBackNavigation();
+
+    // Cleanup Logic
+    return () => {
+      // Layout ko wapas show karein
+      setIsLayoutVisible(true);
+
+      // Back button ko re-enable karein
+      window.onpopstate = null;
+
+      // Fullscreen se exit karein
+      if (document.exitFullscreen && document.fullscreenElement) {
+        document.exitFullscreen();
+      }
+    };
+  }, [setIsLayoutVisible]); // Dependency array mein setIsLayoutVisible add karein
+
+
   // Utility to check if a round is completed
-  // const isRoundCompleted = (index) => roundStatus && roundStatus[index];
-  // ✅ NEW
   const isRoundCompleted = (roundId) =>
     roundStatus && roundStatus.includes(roundId);
 
-  // ===== Progress bar aur Rounds completed calculation (NEW - yaha add kiya) =====
-  const totalRounds = contest?.rounds?.length || 0; // कुल rounds
-  // const completedRounds = roundStatus.filter(Boolean).length; // पूरे हो चुके rounds
+  // ===== Progress bar aur Rounds completed calculation =====
+  const totalRounds = contest?.rounds?.length || 0;
   const completedRounds = roundStatus.length;
   const progressPercent =
-    totalRounds === 0 ? 0 : Math.round((completedRounds / totalRounds) * 100); // Progress %
+    totalRounds === 0 ? 0 : Math.round((completedRounds / totalRounds) * 100);
 
   // Fetch contest details from API
   useEffect(() => {
@@ -54,30 +101,25 @@ export default function ProgressPage() {
         const response = await axios.get(
           `http://localhost:8080/api/contests/${id}`
         );
-        setContest(response.data); // Persistent round completion via localStorage
+        setContest(response.data);
 
         let key = `contest_${id}_rounds_complete`;
         let completed = JSON.parse(localStorage.getItem(key) || "[]");
-        // setRoundStatus(
-        //   response.data.rounds.map((_, idx) => completed.includes(idx))
-        // ); // ...rest unchanged...
-
-        // setRoundStatus(
-        //   response.data.rounds.map((r) => completed.includes(r.id))
-        // );
-
-        setRoundStatus(completed); // instead of mapping to booleans
+        setRoundStatus(completed);
 
         const durationInMinutes = location.state?.duration || 0;
         const storageKey = `contest_end_time_${id}_${currentUserId}`;
-
         let endTime = localStorage.getItem(storageKey);
 
-        if (!endTime) {
+        if (!endTime && durationInMinutes > 0) { // Ensure duration is positive before setting
           endTime = Date.now() + durationInMinutes * 60 * 1000;
           localStorage.setItem(storageKey, endTime);
         }
-        startTimer(endTime, storageKey);
+
+        if (endTime) {
+            startTimer(parseInt(endTime, 10), storageKey);
+        }
+        
       } catch (error) {
         console.error("Error fetching contest:", error);
       } finally {
@@ -85,7 +127,10 @@ export default function ProgressPage() {
       }
     };
     fetchContest();
-  }, [id, location.state, navigate]);
+    // Eslint warning ko aaram se handle karne ke liye, startTimer ko useEffect ke andar move kar sakte hain
+    // ya useCallback use kar sakte hain, but for now this is fine.
+  }, [id, location.state, currentUserId]);
+
 
   // Timer management
   const startTimer = (endTime, storageKey) => {
@@ -101,17 +146,7 @@ export default function ProgressPage() {
       }
     }, 1000);
 
-    // Clear interval on unmount or id change
     return () => clearInterval(timerId);
-  };
-
-  // Function to mark a round as complete externally if desired
-  const setComplete = (index) => {
-    setRoundStatus((prev) => {
-      const updated = [...prev];
-      updated[index] = true;
-      return updated;
-    });
   };
 
   // Format remaining time for display
@@ -125,8 +160,7 @@ export default function ProgressPage() {
   };
 
   const handleSubmitAndExit = async () => {
-    // Check if all rounds are completed
-    const allRoundsCompleted = roundStatus.every(Boolean);
+    const allRoundsCompleted = roundStatus.length === totalRounds;
 
     if (allRoundsCompleted) {
       try {
@@ -137,43 +171,35 @@ export default function ProgressPage() {
             userId: currentUserId,
           }
         );
-        console.log("Contest marked as completed!");
         toast.success("Contest marked as completed!");
       } catch (error) {
         console.error("Error marking contest completed:", error);
       }
     }
 
-    // Clear any contest-specific localStorage if needed
     localStorage.removeItem(`contest_${id}_rounds_complete`);
     localStorage.removeItem(`contest_end_time_${id}_${currentUserId}`);
 
-    // Navigate to events page
     navigate("/events");
   };
 
-  // Loading state view
+  // <<<<<< 4. LOADING AUR ERROR STATES SE LAYOUT HATAYEIN >>>>>>
   if (loading) {
     return (
-      <Layout>
-        <div
-          className="d-flex justify-content-center align-items-center"
-          style={{ height: "60vh" }}
-        >
-          <Spinner animation="border" variant="primary" />
-        </div>
-      </Layout>
+      <div
+        className="d-flex justify-content-center align-items-center"
+        style={{ height: "100vh" }} // Use 100vh for full-page centering
+      >
+        <Spinner animation="border" variant="primary" />
+      </div>
     );
   }
 
-  // Error state view
   if (!contest) {
     return (
-      <Layout>
-        <div className="text-center mt-5">
-          <h5>Contest not found</h5>
-        </div>
-      </Layout>
+      <div className="text-center mt-5">
+        <h5>Contest not found</h5>
+      </div>
     );
   }
 
@@ -192,13 +218,14 @@ export default function ProgressPage() {
     activeCategory === "All"
       ? contest.rounds
       : contest.rounds.filter((r) =>
-          activeCategory === "Aptitude"
-            ? r.type === "quiz"
-            : r.type === "coding"
-        );
+        activeCategory === "Aptitude"
+          ? r.type === "quiz"
+          : r.type === "coding"
+      );
 
+  // <<<<<< 5. RETURN SE LAYOUT WRAPPER HATAYEIN >>>>>>
   return (
-    <Layout>
+    <div className="container-fluid vh-100 d-flex flex-column p-4 bg-white">
       {/* Header Section */}
       <div className="d-flex justify-content-between align-items-center mb-4 flex-wrap">
         <div>
@@ -233,7 +260,7 @@ export default function ProgressPage() {
             <i className="bi bi-clock me-1"></i>{" "}
             {timeLeft !== null ? formatTime(timeLeft) : "Loading..."}
           </Button>
-          <Button ////// Round Completion Button (NEW - yaha add kiya)
+          <Button
             size="sm"
             style={{
               backgroundColor: "white",
@@ -256,12 +283,12 @@ export default function ProgressPage() {
               color: "black",
               border: "1px solid grey",
               fontWeight: "500",
-              opacity: roundStatus.length === totalRounds ? 1 : 0.6, // visible but faded if incomplete
+              opacity: roundStatus.length === totalRounds ? 1 : 0.6,
               cursor:
                 roundStatus.length === totalRounds ? "pointer" : "not-allowed",
             }}
             onClick={handleSubmitAndExit}
-            disabled={roundStatus.length !== totalRounds} // ✅ disabled until all rounds complete
+            disabled={roundStatus.length !== totalRounds}
           >
             Submit & Exit Contest
           </Button>
@@ -272,10 +299,8 @@ export default function ProgressPage() {
       <div className="mb-4">
         <div className="d-flex justify-content-between align-items-center mb-2">
           <h6 className="fw-semibold mb-0">Progress</h6>
-          {/* ==== Progress % above bar (UPDATED) ==== */}
           <span className="text-muted small">{progressPercent}% Complete</span>
         </div>
-        {/* ==== Real progress bar ==== */}
         <ProgressBar
           now={progressPercent}
           style={{ height: "8px", borderRadius: "10px" }}
@@ -283,11 +308,11 @@ export default function ProgressPage() {
       </div>
 
       {/* Categories and Rounds Section */}
-      <Row className="justify-content-center">
+      <Row className="justify-content-center flex-grow-1">
         <Col md={12}>
-          <Row className="g-0">
+          <Row className="g-0 h-100">
             {/* Categories List */}
-            <Col md={3} className="border-end">
+            <Col md={3} className="border-end d-flex flex-column">
               <div className="p-3 border-bottom bg-light">
                 <h6 className="fw-semibold mb-0">Categories</h6>
               </div>
@@ -357,7 +382,7 @@ export default function ProgressPage() {
               </div>
             </Col>
             {/* Rounds List */}
-            <Col md={9}>
+            <Col md={9} className="d-flex flex-column">
               <div className="p-3 border-bottom bg-light">
                 <h6 className="fw-semibold mb-0">
                   {activeCategory === "All"
@@ -365,13 +390,13 @@ export default function ProgressPage() {
                     : `${activeCategory} Rounds`}
                 </h6>
               </div>
-              <div className="p-3">
+              <div className="p-3 flex-grow-1" style={{ overflowY: "auto" }}>
                 {filteredRounds.length === 0 ? (
                   <p className="text-muted">No rounds found.</p>
                 ) : (
                   filteredRounds.map((round, index) => (
                     <Card
-                      key={round.id || round._id}
+                      key={round.id || index}
                       className="mb-3 border-0 shadow-sm"
                     >
                       <Card.Body>
@@ -394,13 +419,7 @@ export default function ProgressPage() {
                                   : "primary"
                               }
                               size="sm"
-                              disabled={
-                                (index > 0 &&
-                                  !isRoundCompleted(
-                                    contest.rounds[index - 1].id
-                                  )) ||
-                                isRoundCompleted(round.id)
-                              }
+                              disabled={isRoundCompleted(round.id)}
                               onClick={() => {
                                 if (!isRoundCompleted(round.id)) {
                                   navigate(
@@ -412,7 +431,7 @@ export default function ProgressPage() {
                               }}
                             >
                               {isRoundCompleted(round.id)
-                                ? "Complete"
+                                ? "Completed"
                                 : "Start Round"}
                             </Button>
                           </Col>
@@ -441,6 +460,6 @@ export default function ProgressPage() {
           </Toast.Body>
         </Toast>
       </ToastContainer>
-    </Layout>
+    </div>
   );
 }

@@ -42,6 +42,7 @@ import ContestPage from "./components/eventsUser/ContestPage";
 import ProgressPage from "./components/eventsUser/ProgressPage";
 import CodeCompilerPage from "./components/eventsUser/CodeCompiler";
 import QuizPage from "./components/quiz/QuizPage";
+import { LayoutProvider } from "./context/LayoutContext";
 
 import ProtectedRoute from "./ProtectedRoute";
 
@@ -73,6 +74,7 @@ export default function App() {
 
       <UserProvider>
         <CollectivesProvider>
+        <LayoutProvider>
           <Router>
 
             {/* <Routes>
@@ -155,6 +157,7 @@ export default function App() {
             </Routes>
 
           </Router>
+          </LayoutProvider>
         </CollectivesProvider>
 
       </UserProvider>
