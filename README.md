@@ -38,6 +38,17 @@ Project Owner — Stoic & Salamander Global Corporation
 
 ---
 
+## 👩‍💻 Project Members
+1. Rakesh Patil  
+2. Arjun Bhosale  
+3. Mayur Shinde  
+4. Avishkar Shinde  
+5. Raj Thakre  
+6. Pranav Jawarkar  
+7. Apeksha Jagtap  
+
+---
+
 ## 🏢 Organization
 **Stoic & Salamander Global Corporation Pvt. Ltd.**  
 📍 Tower 1, G-04, World Trade Center, Kharadi, Pune, Maharashtra, India  
