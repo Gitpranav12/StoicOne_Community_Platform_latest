@@ -1,6 +1,5 @@
 import React, { useState } from "react";
-import { Container, Row, Col, Image } from "react-bootstrap";
-import "./ContactForm.css";
+import { Container, Row, Col, Image, Form, Button, Alert, Card } from "react-bootstrap";
 
 export default function ContactForm() {
   const [formData, setFormData] = useState({
@@ -97,182 +96,213 @@ export default function ContactForm() {
   };
 
   return (
-    <div className="contact-page">
-      <Container fluid className="py-5">
+    <Container fluid className="bg-light min-vh-100 d-flex align-items-center py-3">
         <Row className="align-items-center">
           {/* Left Column - Form */}
           <Col md={6} className="ps-md-5">
-            <h1 className="heading">Connect with us</h1>
+                <h3 className="text-primary mb-4 fw-semibold py-5 text-end">Connect with us</h3>
 
-            {isSubmitted && (
-              <div className="success-message">
-                Thank you for your message! We'll get back to you soon.
-              </div>
-            )}
-
-            {submitError && (
-              <div className="error-message">
-                There was an error sending your message. Please try again or
-                contact us directly.
-              </div>
-            )}
-
-            {!isSubmitted && (
-              <form id="contact-form" onSubmit={handleSubmit}>
-                <label>Salutation *</label>
-                <div className="radio-group">
-                  <label>
-                    <input
-                      type="radio"
-                      name="salutation"
-                      value="Mrs/Ms"
-                      checked={formData.salutation === "Mrs/Ms"}
-                      onChange={handleChange}
-                    />
-                    Mrs/Ms
-                  </label>
-                  <label>
-                    <input
-                      type="radio"
-                      name="salutation"
-                      value="Mr"
-                      checked={formData.salutation === "Mr"}
-                      onChange={handleChange}
-                    />
-                    Mr
-                  </label>
-                </div>
-                {errors.salutation && (
-                  <div className="error-message-field">
-                    {errors.salutation}
-                  </div>
+                {isSubmitted && (
+                  <Alert variant="success" className="mb-4">
+                    Thank you for your message! We'll get back to you soon.
+                  </Alert>
                 )}
 
-                <label>First name *</label>
-                <input
-                  type="text"
-                  name="first_name"
-                  value={formData.first_name}
-                  onChange={handleChange}
-                  maxLength="40"
-                />
-                {errors.first_name && (
-                  <div className="error-message-field">
-                    {errors.first_name}
-                  </div>
+                {submitError && (
+                  <Alert variant="danger" className="mb-4">
+                    There was an error sending your message. Please try again or
+                    contact us directly.
+                  </Alert>
                 )}
 
-                <label>Last name *</label>
-                <input
-                  type="text"
-                  name="last_name"
-                  value={formData.last_name}
-                  onChange={handleChange}
-                  maxLength="40"
-                />
-                {errors.last_name && (
-                  <div className="error-message-field">
-                    {errors.last_name}
-                  </div>
-                )}
-
-                <div className="form-row d-flex gap-3">
-                  <div>
-                    <label>Phone prefix *</label>
-                    <select
-                      name="phone_prefix"
-                      value={formData.phone_prefix}
-                      onChange={handleChange}
-                    >
-                      <option value="">Select</option>
-                      <option value="+91">+91 (India)</option>
-                      <option value="+44">+44 (UK)</option>
-                      <option value="+1">+1 (USA)</option>
-                    </select>
-                    {errors.phone_prefix && (
-                      <div className="error-message-field">
-                        {errors.phone_prefix}
+                {!isSubmitted && (
+                  <Form id="contact-form" onSubmit={handleSubmit}>
+                    {/* Salutation */}
+                    <Form.Group className="mb-3">
+                      <Form.Label className="fw-semibold">Salutation *</Form.Label>
+                      <div className="d-flex gap-3">
+                        <Form.Check
+                          type="radio"
+                          name="salutation"
+                          value="Mrs/Ms"
+                          checked={formData.salutation === "Mrs/Ms"}
+                          onChange={handleChange}
+                          label="Mrs/Ms"
+                          id="salutation-mrs"
+                          isInvalid={!!errors.salutation}
+                        />
+                        <Form.Check
+                          type="radio"
+                          name="salutation"
+                          value="Mr"
+                          checked={formData.salutation === "Mr"}
+                          onChange={handleChange}
+                          label="Mr"
+                          id="salutation-mr"
+                          isInvalid={!!errors.salutation}
+                        />
                       </div>
-                    )}
-                  </div>
-                  <div>
-                    <label>Phone *</label>
-                    <input
-                      type="tel"
-                      name="phone"
-                      value={formData.phone}
-                      onChange={handleChange}
-                      maxLength="10"
-                      placeholder="Enter 10-digit phone number"
-                    />
-                    {errors.phone && (
-                      <div className="error-message-field">{errors.phone}</div>
-                    )}
-                  </div>
-                </div>
+                      {errors.salutation && (
+                        <Form.Control.Feedback type="invalid" className="d-block">
+                          {errors.salutation}
+                        </Form.Control.Feedback>
+                      )}
+                    </Form.Group>
 
-                <label>Email *</label>
-                <input
-                  type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                />
-                {errors.email && (
-                  <div className="error-message-field">{errors.email}</div>
+                    {/* First Name */}
+                    <Form.Group className="mb-3">
+                      <Form.Label className="fw-semibold">First name *</Form.Label>
+                      <Form.Control
+                        type="text"
+                        name="first_name"
+                        value={formData.first_name}
+                        onChange={handleChange}
+                        maxLength="40"
+                        isInvalid={!!errors.first_name}
+                      />
+                      <Form.Control.Feedback type="invalid">
+                        {errors.first_name}
+                      </Form.Control.Feedback>
+                    </Form.Group>
+
+                    {/* Last Name */}
+                    <Form.Group className="mb-3">
+                      <Form.Label className="fw-semibold">Last name *</Form.Label>
+                      <Form.Control
+                        type="text"
+                        name="last_name"
+                        value={formData.last_name}
+                        onChange={handleChange}
+                        maxLength="40"
+                        isInvalid={!!errors.last_name}
+                      />
+                      <Form.Control.Feedback type="invalid">
+                        {errors.last_name}
+                      </Form.Control.Feedback>
+                    </Form.Group>
+
+                    {/* Phone Fields */}
+                    <Row className="mb-3">
+                      <Col sm={6}>
+                        <Form.Group>
+                          <Form.Label className="fw-semibold">Phone prefix *</Form.Label>
+                          <Form.Select
+                            name="phone_prefix"
+                            value={formData.phone_prefix}
+                            onChange={handleChange}
+                            isInvalid={!!errors.phone_prefix}
+                          >
+                            <option value="">Select</option>
+                            <option value="+91">+91 (India)</option>
+                            <option value="+44">+44 (UK)</option>
+                            <option value="+1">+1 (USA)</option>
+                          </Form.Select>
+                          <Form.Control.Feedback type="invalid">
+                            {errors.phone_prefix}
+                          </Form.Control.Feedback>
+                        </Form.Group>
+                      </Col>
+                      <Col sm={6}>
+                        <Form.Group>
+                          <Form.Label className="fw-semibold">Phone *</Form.Label>
+                          <Form.Control
+                            type="tel"
+                            name="phone"
+                            value={formData.phone}
+                            onChange={handleChange}
+                            maxLength="10"
+                            placeholder="Enter 10-digit phone number"
+                            isInvalid={!!errors.phone}
+                          />
+                          <Form.Control.Feedback type="invalid">
+                            {errors.phone}
+                          </Form.Control.Feedback>
+                        </Form.Group>
+                      </Col>
+                    </Row>
+
+                    {/* Email */}
+                    <Form.Group className="mb-3">
+                      <Form.Label className="fw-semibold">Email *</Form.Label>
+                      <Form.Control
+                        type="email"
+                        name="email"
+                        value={formData.email}
+                        onChange={handleChange}
+                        isInvalid={!!errors.email}
+                      />
+                      <Form.Control.Feedback type="invalid">
+                        {errors.email}
+                      </Form.Control.Feedback>
+                    </Form.Group>
+
+                    {/* Country */}
+                    <Form.Group className="mb-3">
+                      <Form.Label className="fw-semibold">Country/Region *</Form.Label>
+                      <Form.Select
+                        name="country"
+                        value={formData.country}
+                        onChange={handleChange}
+                        isInvalid={!!errors.country}
+                      >
+                        <option value="">Select</option>
+                        <option value="India">India</option>
+                        <option value="United Kingdom">United Kingdom</option>
+                        <option value="United States">United States</option>
+                      </Form.Select>
+                      <Form.Control.Feedback type="invalid">
+                        {errors.country}
+                      </Form.Control.Feedback>
+                    </Form.Group>
+
+                    {/* Message */}
+                    <Form.Group className="mb-3">
+                      <Form.Label className="fw-semibold">Tell us more about your needs (Optional)</Form.Label>
+                      <Form.Control
+                        as="textarea"
+                        name="message"
+                        value={formData.message}
+                        onChange={handleChange}
+                        maxLength="50"
+                        rows={3}
+                        isInvalid={!!errors.message}
+                      />
+                      <Form.Control.Feedback type="invalid">
+                        {errors.message}
+                      </Form.Control.Feedback>
+                    </Form.Group>
+
+                    {/* Legal Consent */}
+                    <Form.Group className="mb-4">
+                      <Form.Check
+                        type="checkbox"
+                        name="legal_consent"
+                        checked={formData.legal_consent}
+                        onChange={handleChange}
+                        label={
+                          <span className="small">
+                            Legal confirmation * <br />
+                            I agree to Stoic contacting me by phone or email for
+                            marketing purposes. I acknowledge the legal note and
+                            understand that I can revoke my consent at any time.
+                          </span>
+                        }
+                        isInvalid={!!errors.legal_consent}
+                      />
+                      <Form.Control.Feedback type="invalid">
+                        {errors.legal_consent}
+                      </Form.Control.Feedback>
+                    </Form.Group>
+
+                    <Button 
+                      type="submit" 
+                      variant="primary" 
+                      className="px-4 py-2 fw-semibold"
+                    >
+                      Submit
+                    </Button>
+                  </Form>
                 )}
-
-                <label>Country/Region *</label>
-                <select
-                  name="country"
-                  value={formData.country}
-                  onChange={handleChange}
-                >
-                  <option value="">Select</option>
-                  <option value="India">India</option>
-                  <option value="United Kingdom">United Kingdom</option>
-                  <option value="United States">United States</option>
-                </select>
-                {errors.country && (
-                  <div className="error-message-field">{errors.country}</div>
-                )}
-
-                <label>Tell us more about your needs (Optional)</label>
-                <textarea
-                  name="message"
-                  value={formData.message}
-                  onChange={handleChange}
-                  maxLength="50"
-                />
-                {errors.message && (
-                  <div className="error-message-field">{errors.message}</div>
-                )}
-
-                <div className="legal-note">
-                  <label>
-                    <input
-                      type="checkbox"
-                      name="legal_consent"
-                      checked={formData.legal_consent}
-                      onChange={handleChange}
-                    />
-                    Legal confirmation * <br />
-                    I agree to Stoic contacting me by phone or email for
-                    marketing purposes. I acknowledge the legal note and
-                    understand that I can revoke my consent at any time.
-                  </label>
-                </div>
-                {errors.legal_consent && (
-                  <div className="error-message-field">
-                    {errors.legal_consent}
-                  </div>
-                )}
-
-                <button type="submit" className="submit-btn mt-3">
-                  Submit
-                </button>
-              </form>
-            )}
           </Col>
 
           {/* Right Column - Image */}
@@ -281,11 +311,31 @@ export default function ContactForm() {
               src="https://devmagz.com/wp-content/uploads/2025/05/email-marketing.png"
               alt="Contact"
               fluid
-              className="rounded shadow-sm contact-image"
+              className="rounded shadow"
+              style={{
+                maxWidth: '500px',
+                height: '600px',
+                objectFit: 'cover'
+              }}
             />
           </Col>
         </Row>
       </Container>
-    </div>
   );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
