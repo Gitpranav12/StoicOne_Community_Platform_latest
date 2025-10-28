@@ -7,7 +7,6 @@ export function Navbar({ onNavigate, currentPage }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [showProductDropdown, setShowProductDropdown] = useState(false);
 
-  // Handle scroll behavior
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 50);
     window.addEventListener('scroll', handleScroll);
@@ -15,10 +14,10 @@ export function Navbar({ onNavigate, currentPage }) {
   }, []);
 
   const products = [
-    { name: 'CRM', page: 'crm', description: 'Customer Relationship Management' },
-    { name: 'HRM', page: 'hrm', description: 'Human Resource Management' },
-    { name: 'Invoicing', page: 'invoicing', description: 'Invoice & Billing System' },
-    { name: 'Business Suite', page: 'suite', description: 'Complete Business Solution' },
+    { name: 'Stoic CRM', page: 'crm', description: 'Customer Relationship Management' },
+    { name: 'Stoic HRM', page: 'hrm', description: 'Human Resource Management' },
+    { name: 'Stoic Invoicing', page: 'invoicing', description: 'Invoice & Billing System' },
+    { name: 'Stoic Business Suite', page: 'suite', description: 'Complete Business Solution' },
   ];
 
   const handleNavigate = (page) => {
@@ -39,31 +38,38 @@ export function Navbar({ onNavigate, currentPage }) {
         padding: '0.75rem 0',
       }}
     >
-      <div className="container">
-
+      <div
+        className="container-fluid px-3 px-lg-4"
+        style={{ maxWidth: '100%', paddingLeft: 0, paddingRight: 0 }}
+      >
         {/* === Logo === */}
         <div
-          className="d-flex align-items-center gap-2 flex-nowrap"
-          style={{ cursor: 'pointer' }}
+          className="d-flex align-items-center gap-3 flex-nowrap"
+          style={{ cursor: 'pointer', marginLeft: '1.5rem' }}
           onClick={() => handleNavigate('home')}
         >
           <img
             src="\logo.png"
             alt="StoicOne Logo"
             style={{
-              width: '36px',
-              height: '36px',
-              borderRadius: '6px',
+              width: '48px', // increased from 36px
+              height: '48px',
+              borderRadius: '10px',
               objectFit: 'cover',
               flexShrink: 0,
             }}
           />
-          <span className="fw-semibold text-dark text-nowrap">Stoic Products</span>
+          <span
+            className="fw-semibold text-dark text-nowrap"
+            style={{ fontSize: '1.25rem', letterSpacing: '0.5px' }} // increased text size
+          >
+            <span className="fw-bold text-primary">STOIC</span> PRODUCT's
+          </span>
         </div>
 
         {/* === Mobile Toggle === */}
         <button
-          className="navbar-toggler border-0 shadow-none"
+          className="navbar-toggler border-0 shadow-none me-3"
           type="button"
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
         >
@@ -73,7 +79,6 @@ export function Navbar({ onNavigate, currentPage }) {
         {/* === Navigation Menu === */}
         <div className={`collapse navbar-collapse ${isMobileMenuOpen ? 'show' : ''}`}>
           <ul className="navbar-nav mx-auto">
-
             {/* === Products Dropdown === */}
             <li
               className="nav-item dropdown position-relative"
@@ -83,8 +88,8 @@ export function Navbar({ onNavigate, currentPage }) {
               <button
                 className="nav-link d-flex align-items-center border-0 bg-transparent"
                 style={{
-                  color: '#1f2937',
-                  fontWeight: 400,
+                  color: '#000000ff',
+                  fontWeight: 500,
                   fontSize: '0.95rem',
                   padding: '0.5rem 1rem',
                 }}
@@ -121,10 +126,13 @@ export function Navbar({ onNavigate, currentPage }) {
                         borderRadius: '6px',
                         transition: 'background-color 0.2s ease',
                       }}
-                      onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#f9fafb')}
+                      onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#E3F2FD')}
                       onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
                     >
-                      <div className="fw-semibold" style={{ color: '#1f2937', fontSize: '0.95rem' }}>
+                      <div
+                        className="fw-semibold"
+                        style={{ color: '#1E88E5', fontSize: '0.95rem' }}
+                      >
                         {product.name}
                       </div>
                       <small style={{ color: '#6b7280', fontSize: '0.85rem' }}>
@@ -137,10 +145,9 @@ export function Navbar({ onNavigate, currentPage }) {
             </li>
 
             {/* === Static Links === */}
-            {[
-              { name: 'Features', href: '#features' },
-              { name: 'Pricing', href: '#pricing' },
-              { name: 'About Us', href: '#about' },
+            {[{ name: 'Features', href: '#features' },
+            { name: 'Pricing', href: '#pricing' },
+            { name: 'About Us', href: '#about' },
             ].map((link) => (
               <li className="nav-item" key={link.name}>
                 <a
@@ -148,8 +155,8 @@ export function Navbar({ onNavigate, currentPage }) {
                   className="nav-link"
                   onClick={() => setIsMobileMenuOpen(false)}
                   style={{
-                    color: '#1f2937',
-                    fontWeight: 400,
+                    color: '#000000ff',
+                    fontWeight: 500,
                     fontSize: '0.95rem',
                     padding: '0.5rem 1rem',
                   }}
@@ -159,11 +166,40 @@ export function Navbar({ onNavigate, currentPage }) {
               </li>
             ))}
           </ul>
+{/* <<<<<<< Updated upstream */}
           {/* Buttons */}
           <div className="d-flex gap-2 align-items-center">
             <button className="btn btn-outline-dark" onClick={() => onNavigate('contact')}>
               Contact us
-            </button>
+
+          {/* === Contact Button === */}
+          {/* <div className="d-flex align-items-center gap-2 me-3">
+            <button
+              className="btn"
+              onClick={() => handleNavigate('try-free')}
+              style={{
+                backgroundColor: '#000000',         // solid black background
+                color: '#ffffff',                   // white text
+                fontSize: '0.9rem',
+                fontWeight: '600',
+                border: '2px solid #000000',        // black border for a solid edge
+                borderRadius: '8px',
+                padding: '0.45rem 1rem',
+                transition: 'all 0.3s ease',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = '#1e88e5'; // soft blue hover
+                e.currentTarget.style.border = '2px solid #1e88e5';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = '#000000';
+                e.currentTarget.style.border = '2px solid #000000';
+              }}
+            >
+              Contact Us
+// >>>>>>> Stashed changes
+             */}
+</button>
           </div>
         </div>
       </div>

@@ -44,31 +44,11 @@ export function SuitePage({ onNavigate }) {
   ];
 
   const modules = [
-  {
-    name: 'Professional CRM',
-    description: 'Enhanced customer relationships with professional network integration',
-    icon: 'bi-people', // Bootstrap icon class
-    color: 'primary'
-  },
-  {
-    name: 'HRM Professional Suite',
-    description: 'Comprehensive human resources with professional development tools',
-    icon: 'bi-person-badge',
-    color: 'success'
-  },
-  {
-    name: 'Financial Hub',
-    description: 'Professional invoicing, billing, and financial management',
-    icon: 'bi-currency-dollar',
-    color: 'warning'
-  },
-  {
-    name: 'Analytics Professional',
-    description: 'Advanced insights for professional business intelligence',
-    icon: 'bi-bar-chart-line',
-    color: 'info'
-  }
-];
+    { name: 'Professional CRM', description: 'Enhanced customer relationships with professional network integration', icon: 'bi-people', color: 'primary' },
+    { name: 'HRM Professional Suite', description: 'Comprehensive human resources with professional development tools', icon: 'bi-person-badge', color: 'success' },
+    { name: 'Financial Hub', description: 'Professional invoicing, billing, and financial management', icon: 'bi-currency-dollar', color: 'warning' },
+    { name: 'Analytics Professional', description: 'Advanced insights for professional business intelligence', icon: 'bi-bar-chart-line', color: 'info' }
+  ];
 
   const pricing = [
     {
@@ -121,21 +101,41 @@ export function SuitePage({ onNavigate }) {
   return (
     <div className="bg-white">
       {/* Hero Section */}
-      <section className="text-white py-5" style={{ backgroundColor: '#a47cedff' }}>
-        <div className="container py-5 my-5">
+      <section
+        className="text-black py-5"
+        style={{
+          background: 'radial-gradient(circle at top left, #ede7f6 0%, #d1c4e9 50%, #7e57c2 100%)',
+          boxShadow: 'inset 0 0 80px rgba(123, 31, 162, 0.25)',
+          minHeight: '100vh',
+          width: '100%',
+          padding: '40px 0',
+        }}
+      >
+        <div className="container-fluid px-4 px-md-5 my-5">
           <div className="row align-items-center">
             <div className="col-12 col-lg-6 mb-4 mb-lg-0 text-center text-lg-start">
-              <div className="badge bg-white mb-3 px-3 py-2" style={{ color: '#8c56f1' }}>
-                Professional Business Suite
+              <div className="mb-4">
+                <span
+                  className="badge rounded-pill px-4 py-2"
+                  style={{
+                    backgroundColor: '#F3E5F5',
+                    color: '#8E24AA',
+                    fontSize: '0.9rem',
+                    fontWeight: '600',
+                    border: '2px solid #8E24AA50',
+                    borderRadius: '8px',
+                  }}
+                >
+                  Professional Business Suite
+                </span>
               </div>
-              <h1 className="display-5 display-lg-3 fw-bold mb-4">
+              <h1 className="display-5 fw-bold mb-4">
                 Enhance Productivity with Professional Integration
               </h1>
               <p className="lead mb-4">
-                Complete business suite designed to enhance productivity through integrated tools and 
-                seamless connections with professionals across your industry ecosystem.
+                Complete business suite designed to enhance productivity through integrated tools and seamless connections with professionals across your industry ecosystem.
               </p>
-               <div className="d-flex flex-column flex-sm-row gap-2 gap-sm-3 mb-4">
+              <div className="d-flex flex-column flex-sm-row gap-2 gap-sm-3 mb-4">
                 <button className="btn btn-dark btn-lg w-100 w-sm-auto">
                   Begin 30-Day Trial
                 </button>
@@ -143,7 +143,7 @@ export function SuitePage({ onNavigate }) {
                   Schedule Demo
                 </button>
               </div>
-              <div className="d-flex flex-column flex-sm-row gap-3 pt-3 text-center text-sm-start">
+              <div className="d-flex flex-column flex-sm-row gap-4 pt-3 text-center text-sm-start">
                 <div>
                   <h3 className="fw-bold mb-0">60%</h3>
                   <small>Productivity Gain</small>
@@ -158,11 +158,13 @@ export function SuitePage({ onNavigate }) {
                 </div>
               </div>
             </div>
+
             <div className="col-12 col-lg-6 text-center">
               <img
                 src="https://static.wixstatic.com/media/c05a3f_4805301e35d143cb9e1d03d08f6539c6~mv2.jpg/v1/fill/w_2500,h_1618,al_c/c05a3f_4805301e35d143cb9e1d03d08f6539c6~mv2.jpg"
                 alt="Integrated Business Platform"
                 className="img-fluid rounded shadow-lg"
+                style={{ maxWidth: '90%', borderRadius: '16px' }}
               />
             </div>
           </div>
@@ -171,54 +173,51 @@ export function SuitePage({ onNavigate }) {
 
       {/* Modules Section */}
       <section className="py-5 bg-light">
-        <div className="container py-5">
+        <div className="container-fluid px-4 px-md-5 py-5">
           <div className="text-center mb-5">
-            <h2 className="display-5 fw-bold mb-3">Professional Business Modules</h2>
+            <h2 className="display-6 fw-bold mb-3">Professional Business Modules</h2>
             <p className="lead text-muted">
               Integrated tools designed to enhance productivity and professional connections
             </p>
           </div>
-      <div className="row g-4">
-  {modules.map((module, idx) => (
-    <div className="col-12 col-md-6 col-lg-3" key={idx}>
-      <div
-        className={`card h-100 border-${module.color} shadow-sm`}
-        style={{
-          transition: 'transform 0.3s ease, box-shadow 0.3s ease',
-          cursor: 'pointer',
-        }}
-        onMouseEnter={e => {
-          e.currentTarget.style.transform = 'scale(1.05)';
-          e.currentTarget.style.boxShadow = '0 12px 24px rgba(0,0,0,0.2)';
-        }}
-        onMouseLeave={e => {
-          e.currentTarget.style.transform = 'scale(1)';
-          e.currentTarget.style.boxShadow = '0 4px 8px rgba(0,0,0,0.1)';
-        }}
-      >
-        <div className="card-body p-4 text-center">
-          <div
-            className={`text-${module.color} mb-3`}
-            style={{ fontSize: '3rem' }}
-          >
-            <i className={`bi ${module.icon}`}></i>
+          <div className="row g-4 justify-content-center">
+            {modules.map((module, idx) => (
+              <div className="col-12 col-sm-6 col-lg-3" key={idx}>
+                <div
+                  className={`card h-100 border-${module.color} shadow-sm`}
+                  style={{
+                    transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+                    cursor: 'pointer',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = 'scale(1.05)';
+                    e.currentTarget.style.boxShadow = '0 12px 24px rgba(0,0,0,0.15)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = 'scale(1)';
+                    e.currentTarget.style.boxShadow = '0 4px 8px rgba(0,0,0,0.05)';
+                  }}
+                >
+                  <div className="card-body p-4 text-center">
+                    <div className={`text-${module.color} mb-3`} style={{ fontSize: '3rem' }}>
+                      <i className={`bi ${module.icon}`}></i>
+                    </div>
+                    <h5 className="card-title fw-bold">{module.name}</h5>
+                    <p className="card-text text-muted">{module.description}</p>
+                    <button className={`btn btn-${module.color} btn-sm w-100`}>
+                      Explore Module
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
-          <h5 className="card-title fw-bold">{module.name}</h5>
-          <p className="card-text text-muted">{module.description}</p>
-          <button className={`btn btn-${module.color} btn-sm w-100`}>
-            Explore Module
-          </button>
-        </div>
-      </div>
-    </div>
-  ))}
-</div>
         </div>
       </section>
 
       {/* Benefits Section */}
       <section className="py-5 bg-light">
-        <div className="container py-5">
+        <div className="container-fluid px-4 px-md-5 py-5">
           <div className="row align-items-center">
             <div className="col-12 col-lg-6 mb-4 mb-lg-0 text-center text-lg-start">
               <img
@@ -228,17 +227,15 @@ export function SuitePage({ onNavigate }) {
               />
             </div>
             <div className="col-12 col-lg-6">
-              <h2 className="display-5 fw-bold mb-4">
-                Why Choose Our Professional Suite?
-              </h2>
+              <h2 className="display-6 fw-bold mb-4">Why Choose Our Professional Suite?</h2>
               <p className="lead text-muted mb-4">
                 Trusted by professional organizations to enhance productivity and connect with industry experts.
               </p>
               <ul className="list-unstyled">
                 {benefits.map((benefit, idx) => (
                   <li key={idx} className="d-flex align-items-center mb-3">
-                    <CheckCircle size={24} className="me-3 flex-shrink-0" style={{ color: '#6f42c1' }} />
-                    <span className="fs-5">{benefit}</span>
+                    <CheckCircle size={22} className="me-3 flex-shrink-0" style={{ color: '#6f42c1' }} />
+                    <span className="fs-6">{benefit}</span>
                   </li>
                 ))}
               </ul>
@@ -248,102 +245,96 @@ export function SuitePage({ onNavigate }) {
       </section>
 
       {/* Pricing Section */}
-<section className="py-5">
-  <div className="container py-5">
-    <div className="text-center mb-5">
-      <h2 className="display-5 fw-bold mb-3">Professional Suite Pricing</h2>
-      <p className="lead text-muted">
-        Choose the perfect professional plan for your organization
-      </p>
-    </div>
-    <div className="row g-4">
-      {pricing.map((plan, idx) => (
-        <div className="col-12 col-md-6 col-lg-4" key={idx}>
-          <div
-            className={`card h-100 ${plan.popular ? 'shadow-lg' : 'border-0 shadow-sm'}`}
-            style={{
-              transition: 'transform 0.3s ease, box-shadow 0.3s ease',
-              cursor: 'pointer',
-              borderColor: plan.popular ? '#6f42c1' : undefined,
-              borderWidth: plan.popular ? '2px' : undefined,
-            }}
-            onMouseEnter={e => {
-              e.currentTarget.style.transform = 'scale(1.05)';
-              e.currentTarget.style.boxShadow = '0 12px 24px rgba(0,0,0,0.2)';
-            }}
-            onMouseLeave={e => {
-              e.currentTarget.style.transform = 'scale(1)';
-              e.currentTarget.style.boxShadow = '0 4px 8px rgba(0,0,0,0.1)';
-            }}
-          >
-            {plan.popular && (
-              <div className="card-header text-white text-center py-2" style={{ backgroundColor: '#6f42c1' }}>
-                Professional Choice
+      <section className="py-5">
+        <div className="container-fluid px-4 px-md-5 py-5">
+          <div className="text-center mb-5">
+            <h2 className="display-6 fw-bold mb-3">Professional Suite Pricing</h2>
+            <p className="lead text-muted">Choose the perfect professional plan for your organization</p>
+          </div>
+          <div className="row g-4 justify-content-center">
+            {pricing.map((plan, idx) => (
+              <div className="col-12 col-md-6 col-lg-4" key={idx}>
+                <div
+                  className={`card h-100 ${plan.popular ? 'shadow-lg' : 'border-0 shadow-sm'}`}
+                  style={{
+                    transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+                    cursor: 'pointer',
+                    borderColor: plan.popular ? '#6f42c1' : undefined,
+                    borderWidth: plan.popular ? '2px' : undefined,
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = 'scale(1.05)';
+                    e.currentTarget.style.boxShadow = '0 12px 24px rgba(0,0,0,0.15)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = 'scale(1)';
+                    e.currentTarget.style.boxShadow = '0 4px 8px rgba(0,0,0,0.05)';
+                  }}
+                >
+                  {plan.popular && (
+                    <div className="card-header text-white text-center py-2" style={{ backgroundColor: '#6f42c1' }}>
+                      Professional Choice
+                    </div>
+                  )}
+                  <div className="card-body p-4 text-center text-md-start">
+                    <h4 className="fw-bold mb-3">{plan.name}</h4>
+                    <div className="mb-4">
+                      <h2 className="display-5 fw-bold">{plan.price}</h2>
+                      <small className="text-muted">{plan.period}</small>
+                    </div>
+                    <ul className="list-unstyled mb-4">
+                      {plan.features.map((feature, i) => (
+                        <li key={i} className="mb-2 d-flex align-items-center">
+                          <CheckCircle size={18} className="me-2" style={{ color: '#6f42c1' }} />
+                          {feature}
+                        </li>
+                      ))}
+                    </ul>
+                    <button
+                      className="btn w-100"
+                      style={{
+                        backgroundColor: plan.popular ? '#6f42c1' : 'transparent',
+                        border: '2px solid #6f42c1',
+                        color: plan.popular ? 'white' : '#6f42c1',
+                        transition: '0.3s',
+                      }}
+                      onMouseEnter={(e) => {
+                        e.target.style.backgroundColor = '#5a32a3';
+                        e.target.style.color = 'white';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.target.style.backgroundColor = plan.popular ? '#6f42c1' : 'transparent';
+                        e.target.style.color = plan.popular ? 'white' : '#6f42c1';
+                      }}
+                    >
+                      Select Plan
+                    </button>
+                  </div>
+                </div>
               </div>
-            )}
-            <div className="card-body p-4 text-center text-md-start">
-              <h4 className="fw-bold mb-3">{plan.name}</h4>
-              <div className="mb-4">
-                <h2 className="display-4 fw-bold">{plan.price}</h2>
-                <small className="text-muted">{plan.period}</small>
-              </div>
-              <ul className="list-unstyled mb-4">
-                {plan.features.map((feature, i) => (
-                  <li key={i} className="mb-2 d-flex align-items-center">
-                    <CheckCircle size={18} className="me-2" style={{ color: '#6f42c1' }} />
-                    {feature}
-                  </li>
-                ))}
-              </ul>
-              <button
-                className="btn w-100"
-                style={{
-                  backgroundColor: plan.popular ? '#6f42c1' : 'transparent',
-                  border: '2px solid #6f42c1',
-                  color: plan.popular ? 'white' : '#6f42c1',
-                  transition: '0.3s',
-                }}
-                onMouseEnter={e => {
-                  e.target.style.backgroundColor = '#5a32a3';
-                  e.target.style.color = 'white';
-                }}
-                onMouseLeave={e => {
-                  e.target.style.backgroundColor = plan.popular ? '#6f42c1' : 'transparent';
-                  e.target.style.color = plan.popular ? 'white' : '#6f42c1';
-                }}
-              >
-                Select Plan
-              </button>
-            </div>
+            ))}
           </div>
         </div>
-      ))}
-    </div>
-  </div>
-</section>
+      </section>
 
       {/* CTA Section */}
-      <section className="py-5 text-white" style={{ background:"#a47cedff" }}>
-        <div className="container py-5">
-          <div className="row justify-content-center text-center">
-            <div className="col-12 col-lg-8">
-              <h2 className="display-5 fw-bold mb-4">
-                Ready to Enhance Professional Productivity?
-              </h2>
-              <p className="lead mb-4">
-                Start your 21-day professional trial today. Connect with experts and transform your business operations.
-              </p>
-               <div className="d-flex gap-3 justify-content-center">
-                              <button className="btn btn-light btn-lg">
-                                Start Enterprise Trial
-                                <ArrowRight size={20} className="ms-2" />
-                              </button>
-                               <button
-                                className="btn btn-outline-light btn-lg"
-                              >
-                                Return to Home
-                              </button>
-              </div>
+      <section className="py-5 text-white" style={{ background: "#a47cedff" }}>
+        <div className="container-fluid px-4 px-md-5 py-5 text-center">
+          <div className="col-lg-8 mx-auto">
+            <h2 className="display-6 fw-bold mb-4">
+              Ready to Enhance Professional Productivity?
+            </h2>
+            <p className="lead mb-4">
+              Start your 21-day professional trial today. Connect with experts and transform your business operations.
+            </p>
+            <div className="d-flex gap-3 justify-content-center">
+              <button className="btn btn-light btn-lg">
+                Start Enterprise Trial
+                <ArrowRight size={20} className="ms-2" />
+              </button>
+              <button className="btn btn-outline-light btn-lg">
+                Return to Home
+              </button>
             </div>
           </div>
         </div>

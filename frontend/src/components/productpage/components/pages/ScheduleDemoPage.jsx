@@ -7,7 +7,7 @@ export function ScheduleDemoPage({ onNavigate }) {
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedTime, setSelectedTime] = useState(null);
   const [showSuccess, setShowSuccess] = useState(false);
-  
+
   const [formData, setFormData] = useState({
     fullName: '',
     workEmail: '',
@@ -113,9 +113,9 @@ export function ScheduleDemoPage({ onNavigate }) {
 
   const formatDate = (date) => {
     if (!date) return '';
-    return date.toLocaleDateString('en-US', { 
-      weekday: 'short', 
-      month: 'short', 
+    return date.toLocaleDateString('en-US', {
+      weekday: 'short',
+      month: 'short',
       day: 'numeric',
       year: 'numeric'
     });
@@ -130,20 +130,20 @@ export function ScheduleDemoPage({ onNavigate }) {
   };
 
   return (
-    <div style={{ background: 'linear-gradient(180deg, #f8fafb 0%, #ffffff 100%)', minHeight: '100vh' }}>
+    <div style={{ background: 'linear-gradient(135deg, #ffffff 0%, #e3f2fd 30%, #bbdefb 70%, #ffffff 100%)', minHeight: '100vh' }}>
       {/* Header */}
-      <section 
+      <section
         className="position-relative"
-        style={{ 
-          background: 'linear-gradient(135deg, #1E88E5 0%, #1565C0 100%)',
+        style={{
+          background: 'radial-gradient(circle at top left, #e1f5fe 0%, #81d4fa 50%, #0288d1 100%)',
           paddingTop: '100px',
           paddingBottom: '60px'
         }}
       >
         <div className="container">
-          <button 
+          <button
             onClick={() => onNavigate('home')}
-            className="btn btn-link text-decoration-none mb-3 p-0 text-white d-inline-flex align-items-center"
+            className="btn btn-link text-decoration-none mb-3 p-0 text-black d-inline-flex align-items-center"
             style={{ opacity: 0.95 }}
           >
             <ArrowLeft size={18} className="me-2" />
@@ -153,29 +153,36 @@ export function ScheduleDemoPage({ onNavigate }) {
           <div className="row align-items-center">
             <div className="col-lg-7">
               <div className="d-inline-block mb-3">
-                <span 
+                <span
                   className="badge px-3 py-2"
-                  style={{ 
-                    background: 'rgba(255, 255, 255, 0.2)',
-                    color: 'white',
-                    border: '1px solid rgba(255, 255, 255, 0.3)',
-                    borderRadius: '8px'
+                  style={{
+                    background: 'rgba(227, 242, 253, 0.3)',
+                    color: '#3078e2ff',
+                    border: '1px solid rgba(124, 192, 248, 0.77)',
+                    borderRadius: '12px',
+                    boxShadow: '0 4px 12px rgba(30, 136, 229, 0.15)',
+                    backdropFilter: 'blur(8px)',
+                    WebkitBackdropFilter: 'blur(8px)',
+                    transition: 'all 0.3s ease',
                   }}
+
+
+
                 >
                   <Video size={16} className="me-2" style={{ display: 'inline-block', verticalAlign: 'middle' }} />
                   30-Minute Live Demo
                 </span>
               </div>
-              
-              <h1 className="display-4 fw-bold text-white mb-3">
+
+              <h1 className="display-4 fw-bold text-black mb-3">
                 Schedule Your Personalized Demo
               </h1>
-              
-              <p className="lead text-white mb-4" style={{ opacity: 0.95 }}>
+
+              <p className="lead text-black mb-4" style={{ opacity: 0.95 }}>
                 See how our business suite transforms operations. Choose your expert, pick a time, and get started in minutes.
               </p>
 
-              <div className="d-flex flex-wrap gap-4 text-white">
+              <div className="d-flex flex-wrap gap-4 text-black">
                 <div className="d-flex align-items-center gap-2">
                   <CheckCircle2 size={20} />
                   <span>No credit card required</span>
@@ -191,12 +198,12 @@ export function ScheduleDemoPage({ onNavigate }) {
               </div>
             </div>
             <div className="col-lg-5">
-              <div 
+              <div
                 className="card border-0 shadow-lg p-4 mt-4 mt-lg-0"
                 style={{ borderRadius: '20px', background: 'rgba(255, 255, 255, 0.95)' }}
               >
                 <div className="d-flex align-items-center gap-3 mb-3">
-                  <div 
+                  <div
                     className="rounded-circle d-flex align-items-center justify-content-center"
                     style={{
                       width: '48px',
@@ -214,7 +221,7 @@ export function ScheduleDemoPage({ onNavigate }) {
                 </div>
 
                 <div className="d-flex align-items-center gap-3 mb-3">
-                  <div 
+                  <div
                     className="rounded-circle d-flex align-items-center justify-content-center"
                     style={{
                       width: '48px',
@@ -232,7 +239,7 @@ export function ScheduleDemoPage({ onNavigate }) {
                 </div>
 
                 <div className="d-flex align-items-center gap-3">
-                  <div 
+                  <div
                     className="rounded-circle d-flex align-items-center justify-content-center"
                     style={{
                       width: '48px',
@@ -269,9 +276,9 @@ export function ScheduleDemoPage({ onNavigate }) {
                 <div className="row g-4">
                   {experts.map((expert) => (
                     <div className="col-md-4" key={expert.id}>
-                      <div 
+                      <div
                         className="card border-0 shadow-sm h-100"
-                        style={{ 
+                        style={{
                           borderRadius: '20px',
                           transition: 'all 0.3s ease',
                           cursor: 'pointer',
@@ -287,13 +294,13 @@ export function ScheduleDemoPage({ onNavigate }) {
                           e.currentTarget.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.1)';
                         }}
                       >
-                        <div 
+                        <div
                           className="p-4 text-center"
                           style={{
                             background: `linear-gradient(135deg, ${expert.color}15, ${expert.color}05)`
                           }}
                         >
-                          <div 
+                          <div
                             className="rounded-circle d-inline-flex align-items-center justify-content-center fw-bold mb-3"
                             style={{
                               width: '100px',
@@ -308,14 +315,14 @@ export function ScheduleDemoPage({ onNavigate }) {
                             {expert.avatar}
                           </div>
                         </div>
-                        
+
                         <div className="card-body text-center">
                           <h5 className="fw-bold text-dark mb-1">{expert.name}</h5>
                           <p className="text-muted mb-2" style={{ fontSize: '0.9rem' }}>
                             {expert.role}
                           </p>
-                          
-                          <div 
+
+                          <div
                             className="badge px-3 py-2 mb-3"
                             style={{
                               background: `${expert.color}15`,
@@ -342,7 +349,7 @@ export function ScheduleDemoPage({ onNavigate }) {
 
                           <div className="d-flex gap-2 justify-content-center flex-wrap mb-2">
                             {expert.languages.map((lang, idx) => (
-                              <span 
+                              <span
                                 key={idx}
                                 className="badge bg-light text-dark"
                                 style={{ fontSize: '0.75rem' }}
@@ -353,7 +360,7 @@ export function ScheduleDemoPage({ onNavigate }) {
                             ))}
                           </div>
 
-                          <button 
+                          <button
                             className="btn btn-primary w-100 mt-3"
                             style={{ borderRadius: '10px' }}
                             onClick={() => handleExpertSelect(expert)}
@@ -378,7 +385,7 @@ export function ScheduleDemoPage({ onNavigate }) {
                   <div className="card-body p-3">
                     <div className="d-flex align-items-center justify-content-between">
                       <div className="d-flex align-items-center gap-3">
-                        <div 
+                        <div
                           className="rounded-circle d-flex align-items-center justify-content-center fw-bold"
                           style={{
                             width: '56px',
@@ -395,7 +402,7 @@ export function ScheduleDemoPage({ onNavigate }) {
                           <small className="text-muted">{selectedExpert.role}</small>
                         </div>
                       </div>
-                      <button 
+                      <button
                         className="btn btn-link text-primary p-0"
                         onClick={() => setStep(1)}
                       >
@@ -414,12 +421,12 @@ export function ScheduleDemoPage({ onNavigate }) {
                           <Calendar size={24} style={{ color: '#1E88E5' }} />
                           Select a Date
                         </h5>
-                        
+
                         <div className="row g-2">
                           {dates.slice(0, 10).map((date, idx) => {
-                            const isSelected = selectedDate && 
+                            const isSelected = selectedDate &&
                               date.toDateString() === selectedDate.toDateString();
-                            
+
                             return (
                               <div className="col-6" key={idx}>
                                 <button
@@ -482,7 +489,7 @@ export function ScheduleDemoPage({ onNavigate }) {
                           <div className="row g-2" style={{ maxHeight: '400px', overflowY: 'auto' }}>
                             {timeSlots.map((time, idx) => {
                               const isSelected = selectedTime === time;
-                              
+
                               return (
                                 <div className="col-6" key={idx}>
                                   <button
@@ -525,7 +532,7 @@ export function ScheduleDemoPage({ onNavigate }) {
                       <div className="mt-4">
                         <button
                           className="btn btn-primary btn-lg w-100"
-                          style={{ 
+                          style={{
                             borderRadius: '12px',
                             background: 'linear-gradient(135deg, #1E88E5, #1565C0)',
                             border: 'none'
@@ -535,7 +542,7 @@ export function ScheduleDemoPage({ onNavigate }) {
                           Continue to Details
                           <ArrowRight size={20} className="ms-2" style={{ display: 'inline-block', verticalAlign: 'middle' }} />
                         </button>
-                        
+
                         <div className="text-center mt-3 p-3 rounded" style={{ background: '#E3F2FD' }}>
                           <small className="text-dark">
                             <strong>Selected:</strong> {formatDate(selectedDate)} at {selectedTime}
@@ -586,7 +593,7 @@ export function ScheduleDemoPage({ onNavigate }) {
                         </div>
                       </div>
                     </div>
-                    <button 
+                    <button
                       className="btn btn-sm btn-link p-0 mt-2"
                       onClick={() => setStep(2)}
                     >
@@ -599,7 +606,7 @@ export function ScheduleDemoPage({ onNavigate }) {
                 <div className="card border-0 shadow-lg" style={{ borderRadius: '20px' }}>
                   <div className="card-body p-4 p-lg-5">
                     <h4 className="fw-bold text-dark mb-4">Almost There! Tell Us About Yourself</h4>
-                    
+
                     <form onSubmit={handleSubmit}>
                       <div className="row g-4">
                         <div className="col-md-6">
@@ -714,15 +721,15 @@ export function ScheduleDemoPage({ onNavigate }) {
           {step === 4 && showSuccess && (
             <div className="row justify-content-center">
               <div className="col-lg-7">
-                <div 
+                <div
                   className="card border-0 shadow-lg text-center"
-                  style={{ 
+                  style={{
                     borderRadius: '24px',
                     background: 'linear-gradient(135deg, #ffffff, #f8f9fa)'
                   }}
                 >
                   <div className="card-body p-5">
-                    <div 
+                    <div
                       className="d-inline-flex align-items-center justify-content-center rounded-circle mb-4"
                       style={{
                         width: '120px',
@@ -739,7 +746,7 @@ export function ScheduleDemoPage({ onNavigate }) {
                       Your demo session has been confirmed. Check your email for the meeting link and calendar invite.
                     </p>
 
-                    <div 
+                    <div
                       className="p-4 rounded mb-4"
                       style={{ background: 'linear-gradient(135deg, #E3F2FD, #F3E5F5)' }}
                     >
@@ -813,7 +820,7 @@ export function ScheduleDemoPage({ onNavigate }) {
                   <div className="col-md-4">
                     <div className="card border-0 shadow-sm h-100" style={{ borderRadius: '16px' }}>
                       <div className="card-body text-center p-4">
-                        <div 
+                        <div
                           className="d-inline-flex align-items-center justify-content-center rounded-circle mb-3"
                           style={{
                             width: '56px',
@@ -834,7 +841,7 @@ export function ScheduleDemoPage({ onNavigate }) {
                   <div className="col-md-4">
                     <div className="card border-0 shadow-sm h-100" style={{ borderRadius: '16px' }}>
                       <div className="card-body text-center p-4">
-                        <div 
+                        <div
                           className="d-inline-flex align-items-center justify-content-center rounded-circle mb-3"
                           style={{
                             width: '56px',
@@ -855,7 +862,7 @@ export function ScheduleDemoPage({ onNavigate }) {
                   <div className="col-md-4">
                     <div className="card border-0 shadow-sm h-100" style={{ borderRadius: '16px' }}>
                       <div className="card-body text-center p-4">
-                        <div 
+                        <div
                           className="d-inline-flex align-items-center justify-content-center rounded-circle mb-3"
                           style={{
                             width: '56px',
@@ -887,7 +894,7 @@ export function ScheduleDemoPage({ onNavigate }) {
             <div className="row g-4 text-center">
               <div className="col-md-3">
                 <div className="d-flex flex-column align-items-center">
-                  <div 
+                  <div
                     className="d-flex align-items-center justify-content-center rounded-circle mb-3"
                     style={{
                       width: '64px',
@@ -904,7 +911,7 @@ export function ScheduleDemoPage({ onNavigate }) {
               </div>
               <div className="col-md-3">
                 <div className="d-flex flex-column align-items-center">
-                  <div 
+                  <div
                     className="d-flex align-items-center justify-content-center rounded-circle mb-3"
                     style={{
                       width: '64px',
@@ -921,7 +928,7 @@ export function ScheduleDemoPage({ onNavigate }) {
               </div>
               <div className="col-md-3">
                 <div className="d-flex flex-column align-items-center">
-                  <div 
+                  <div
                     className="d-flex align-items-center justify-content-center rounded-circle mb-3"
                     style={{
                       width: '64px',
@@ -938,7 +945,7 @@ export function ScheduleDemoPage({ onNavigate }) {
               </div>
               <div className="col-md-3">
                 <div className="d-flex flex-column align-items-center">
-                  <div 
+                  <div
                     className="d-flex align-items-center justify-content-center rounded-circle mb-3"
                     style={{
                       width: '64px',

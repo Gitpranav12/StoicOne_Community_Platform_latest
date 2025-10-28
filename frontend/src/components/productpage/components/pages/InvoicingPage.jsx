@@ -2,36 +2,12 @@ import { FileText, DollarSign, BarChart3, Zap, CreditCard, Globe, CheckCircle, A
 
 export function InvoicingPage({ onNavigate }) {
   const features = [
-    {
-      icon: <FileText size={48} />,
-      title: 'Professional Invoice Creation',
-      description: 'Generate polished, branded invoices with customizable templates and automated client details.'
-    },
-    {
-      icon: <DollarSign size={48} />,
-      title: 'Payment Management',
-      description: 'Track payment statuses, monitor overdue accounts, and automate payment reminder notifications.'
-    },
-    {
-      icon: <BarChart3 size={48} />,
-      title: 'Financial Analytics',
-      description: 'Gain valuable insights with comprehensive financial reporting and revenue performance metrics.'
-    },
-    {
-      icon: <Zap size={48} />,
-      title: 'Workflow Automation',
-      description: 'Automate recurring billing, payment follow-ups, and client communication workflows.'
-    },
-    {
-      icon: <CreditCard size={48} />,
-      title: 'Integrated Payment Processing',
-      description: 'Seamlessly accept online payments through multiple secure payment gateways.'
-    },
-    {
-      icon: <Globe size={48} />,
-      title: 'Global Currency Support',
-      description: 'Handle international clients with multi-currency support and real-time exchange rate integration.'
-    }
+    { icon: <FileText size={48} />, title: 'Professional Invoice Creation', description: 'Generate polished, branded invoices with customizable templates and automated client details.' },
+    { icon: <DollarSign size={48} />, title: 'Payment Management', description: 'Track payment statuses, monitor overdue accounts, and automate payment reminder notifications.' },
+    { icon: <BarChart3 size={48} />, title: 'Financial Analytics', description: 'Gain valuable insights with comprehensive financial reporting and revenue performance metrics.' },
+    { icon: <Zap size={48} />, title: 'Workflow Automation', description: 'Automate recurring billing, payment follow-ups, and client communication workflows.' },
+    { icon: <CreditCard size={48} />, title: 'Integrated Payment Processing', description: 'Seamlessly accept online payments through multiple secure payment gateways.' },
+    { icon: <Globe size={48} />, title: 'Global Currency Support', description: 'Handle international clients with multi-currency support and real-time exchange rate integration.' },
   ];
 
   const benefits = [
@@ -40,7 +16,7 @@ export function InvoicingPage({ onNavigate }) {
     'Save 10+ hours weekly on administrative tasks',
     'Deliver consistently branded professional invoices',
     'Access real-time financial performance dashboards',
-    'Automate tax compliance and reporting requirements'
+    'Automate tax compliance and reporting requirements',
   ];
 
   const pricing = [
@@ -53,9 +29,9 @@ export function InvoicingPage({ onNavigate }) {
         'Professional template library',
         'Payment status tracking',
         'Basic financial reporting',
-        'Email support response within 24 hours',
-        'Up to 3 team members'
-      ]
+        'Email support within 24h',
+        'Up to 3 team members',
+      ],
     },
     {
       name: 'Professional',
@@ -68,42 +44,64 @@ export function InvoicingPage({ onNavigate }) {
         'Automated recurring billing',
         'Advanced analytics and reporting',
         'Integrated payment processing',
-        'Priority support with 4-hour response',
-        'Unlimited team collaboration'
-      ]
+        'Priority support (4-hour response)',
+        'Unlimited team collaboration',
+      ],
     },
     {
       name: 'Enterprise',
       price: 'Custom',
       period: 'Tailored pricing',
       features: [
-        'All Professional features included',
-        'Multi-currency and international tax support',
+        'All Professional features',
+        'Multi-currency & tax support',
         'Custom API integrations',
-        'Dedicated account management',
-        'Full API access and developer support',
-        'White-label solution available',
-        '99.9% uptime SLA guarantee'
-      ]
-    }
+        'Dedicated account manager',
+        'Full API access & developer support',
+        'White-label solution',
+        '99.9% uptime SLA guarantee',
+      ],
+    },
   ];
 
   return (
     <div className="bg-white">
       {/* Hero Section */}
-      <section className="text-white py-5" style={{ backgroundColor: '#f9c968ff' }}>
-        <div className="container py-5 my-5">
+      <section
+        className="text-dark py-5"
+        style={{
+          background:
+            'radial-gradient(circle at top left, #fff8e1 0%, #ffe082 50%, #ffc108 90%)',
+          boxShadow: 'inset 0 0 80px rgba(123, 31, 162, 0.25)',
+          minHeight: '100vh',
+          width: '100%',
+          padding: '40px 0',
+        }}
+      >
+        <div className="container-fluid px-3 px-md-4 px-lg-5 my-5">
           <div className="row align-items-center">
-            <div className="col-12 col-lg-6 mb-4 mb-lg-0">
-              <div className="badge bg-white text-warning mb-3 px-3 py-2">
-                Enterprise Invoicing Platform
+            <div className="col-lg-6 text-start">
+              <div className="mb-4">
+                <span
+                  className="badge rounded-pill px-4 py-2"
+                  style={{
+                    backgroundColor: '#faefccff',
+                    color: '#fcb000ff',
+                    fontSize: '0.9rem',
+                    fontWeight: '600',
+                    border: '2px solid #f5bd06c9',
+                  }}
+                >
+                  CRM Solution
+                </span>
               </div>
-              <h1 className="display-4 display-lg-3 fw-bold mb-4">
+              <h1 className="display-4 fw-bold mb-4">
                 Streamline Your Financial Operations
               </h1>
               <p className="lead mb-4">
-                Advanced invoicing and payment management platform designed to optimize your cash flow, 
-                automate billing processes, and provide comprehensive financial visibility.
+                Advanced invoicing and payment management platform designed to
+                optimize your cash flow, automate billing processes, and provide
+                comprehensive financial visibility.
               </p>
               <div className="d-flex flex-column flex-sm-row gap-2 gap-sm-3 mb-4">
                 <button className="btn btn-dark btn-lg w-100 w-sm-auto">
@@ -128,10 +126,10 @@ export function InvoicingPage({ onNavigate }) {
                 </div>
               </div>
             </div>
-            <div className="col-12 col-lg-6 text-center">
+            <div className="col-lg-6 text-center mt-4 mt-lg-0">
               <img
                 src="https://www.bestinfohub.com/wp-content/uploads/2024/01/demystifying-account-planning.jpg"
-                alt="Hands using invoicing software on desktop"
+                alt="Hands using invoicing software"
                 className="img-fluid rounded shadow-lg"
               />
             </div>
@@ -139,57 +137,57 @@ export function InvoicingPage({ onNavigate }) {
         </div>
       </section>
 
-    {/* Features Section */}
-<section className="py-5 bg-light">
-  <div className="container py-5">
-    <div className="text-center mb-5">
-      <h2 className="display-5 fw-bold mb-3">Comprehensive Billing Solutions</h2>
-      <p className="lead text-muted">
-        Enterprise-grade features to optimize your entire billing lifecycle
-      </p>
-    </div>
-    <div className="row g-4">
-      {features.map((feature, idx) => (
-        <div className="col-12 col-md-6 col-lg-4" key={idx}>
-          <div
-            className="card h-100 border-0 shadow-sm"
-            style={{
-              transition: 'transform 0.3s ease, box-shadow 0.3s ease',
-              cursor: 'pointer',
-            }}
-            onMouseEnter={e => {
-              e.currentTarget.style.transform = 'scale(1.05)';
-              e.currentTarget.style.boxShadow = '0 12px 24px rgba(0,0,0,0.2)';
-            }}
-            onMouseLeave={e => {
-              e.currentTarget.style.transform = 'scale(1)';
-              e.currentTarget.style.boxShadow = '0 4px 8px rgba(0,0,0,0.1)';
-            }}
-          >
-            <div className="card-body p-4 text-center text-md-start">
-              <div className="text-warning mb-3">{feature.icon}</div>
-              <h5 className="card-title fw-bold">{feature.title}</h5>
-              <p className="card-text text-muted">{feature.description}</p>
-            </div>
+      {/* Features Section */}
+      <section className="py-5 bg-light">
+        <div className="container-fluid px-3 px-md-4 px-lg-5 py-5">
+          <div className="text-center mb-5">
+            <h2 className="display-5 fw-bold mb-3">Comprehensive Billing Solutions</h2>
+            <p className="lead text-muted">
+              Enterprise-grade features to optimize your entire billing lifecycle
+            </p>
+          </div>
+          <div className="row g-4">
+            {features.map((feature, idx) => (
+              <div className="col-12 col-md-6 col-lg-4" key={idx}>
+                <div
+                  className="card h-100 border-0 shadow-sm"
+                  style={{
+                    transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+                    cursor: 'pointer',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = 'scale(1.05)';
+                    e.currentTarget.style.boxShadow = '0 12px 24px rgba(0,0,0,0.2)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = 'scale(1)';
+                    e.currentTarget.style.boxShadow = '0 4px 8px rgba(0,0,0,0.1)';
+                  }}
+                >
+                  <div className="card-body p-4 text-center text-md-start">
+                    <div className="text-warning mb-3">{feature.icon}</div>
+                    <h5 className="card-title fw-bold">{feature.title}</h5>
+                    <p className="card-text text-muted">{feature.description}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
-      ))}
-    </div>
-  </div>
-</section>
+      </section>
 
       {/* Benefits Section */}
       <section className="py-5">
-        <div className="container py-5">
+        <div className="container-fluid px-3 px-md-4 px-lg-5 py-5">
           <div className="row align-items-center">
-            <div className="col-12 col-lg-6 mb-4 mb-lg-0 text-center text-lg-start">
+            <div className="col-lg-6 mb-4 mb-lg-0 text-center text-lg-start">
               <img
                 src="https://images.unsplash.com/photo-1552664730-d307ca884978?w=800"
                 alt="Financial Team Collaboration"
                 className="img-fluid rounded shadow"
               />
             </div>
-            <div className="col-12 col-lg-6">
+            <div className="col-lg-6">
               <h2 className="display-5 fw-bold mb-4">
                 Transform Your Financial Operations
               </h2>
@@ -209,103 +207,84 @@ export function InvoicingPage({ onNavigate }) {
         </div>
       </section>
 
-     {/* Pricing Section */}
-<section className="py-5 bg-light">
-  <div className="container py-5">
-    <div className="text-center mb-5">
-      <h2 className="display-5 fw-bold mb-3">Flexible Enterprise Plans</h2>
-      <p className="lead text-muted">
-        Scalable solutions designed to grow with your business
-      </p>
-    </div>
-    <div className="row g-4">
-      {pricing.map((plan, idx) => (
-        <div className="col-12 col-md-6 col-lg-4" key={idx}>
-          <div
-            className={`card h-100 ${plan.popular ? 'border-warning shadow-lg' : 'border-0 shadow-sm'}`}
-            style={{
-              transition: 'transform 0.3s ease, box-shadow 0.3s ease',
-              cursor: 'pointer',
-            }}
-            onMouseEnter={e => {
-              e.currentTarget.style.transform = 'scale(1.05)';
-              e.currentTarget.style.boxShadow = '0 12px 24px rgba(0,0,0,0.2)';
-            }}
-            onMouseLeave={e => {
-              e.currentTarget.style.transform = 'scale(1)';
-              e.currentTarget.style.boxShadow = '0 4px 8px rgba(0,0,0,0.1)';
-            }}
-          >
-            {plan.popular && (
-              <div className="card-header bg-warning text-dark text-center py-2 fw-bold">
-                Most Popular
+      {/* Pricing Section */}
+      <section className="py-5 bg-light">
+        <div className="container-fluid px-3 px-md-4 px-lg-5 py-5">
+          <div className="text-center mb-5">
+            <h2 className="display-5 fw-bold mb-3">Flexible Enterprise Plans</h2>
+            <p className="lead text-muted">
+              Scalable solutions designed to grow with your business
+            </p>
+          </div>
+          <div className="row g-4">
+            {pricing.map((plan, idx) => (
+              <div className="col-12 col-md-6 col-lg-4" key={idx}>
+                <div
+                  className={`card h-100 ${
+                    plan.popular ? 'border-warning shadow-lg' : 'border-0 shadow-sm'
+                  }`}
+                  style={{
+                    transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+                    cursor: 'pointer',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = 'scale(1.05)';
+                    e.currentTarget.style.boxShadow = '0 12px 24px rgba(0,0,0,0.2)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = 'scale(1)';
+                    e.currentTarget.style.boxShadow = '0 4px 8px rgba(0,0,0,0.1)';
+                  }}
+                >
+                  {plan.popular && (
+                    <div className="card-header bg-warning text-dark text-center py-2 fw-bold">
+                      Most Popular
+                    </div>
+                  )}
+                  <div className="card-body p-4 text-center text-md-start">
+                    <h4 className="fw-bold mb-3">{plan.name}</h4>
+                    <div className="mb-4">
+                      <h2 className="display-4 fw-bold">{plan.price}</h2>
+                      <small className="text-muted">{plan.period}</small>
+                    </div>
+                    <ul className="list-unstyled mb-4">
+                      {plan.features.map((feature, i) => (
+                        <li key={i} className="mb-2 d-flex align-items-center">
+                          <CheckCircle size={18} className="text-warning me-2" />
+                          {feature}
+                        </li>
+                      ))}
+                    </ul>
+                    <button
+                      className={`btn ${
+                        plan.popular ? 'btn-warning' : 'btn-outline-warning'
+                      } w-100`}
+                    >
+                      Select Plan
+                    </button>
+                  </div>
+                </div>
               </div>
-            )}
-            <div className="card-body p-4 text-center text-md-start">
-              <h4 className="fw-bold mb-3">{plan.name}</h4>
-              <div className="mb-4">
-                <h2 className="display-4 fw-bold">{plan.price}</h2>
-                <small className="text-muted">{plan.period}</small>
-              </div>
-              <ul className="list-unstyled mb-4">
-                {plan.features.map((feature, i) => (
-                  <li key={i} className="mb-2 d-flex align-items-center">
-                    <CheckCircle size={18} className="text-warning me-2" />
-                    {feature}
-                  </li>
-                ))}
-              </ul>
-              <button
-                className={`btn ${plan.popular ? 'btn-warning' : 'btn-outline-warning'} w-100`}
-                style={{
-                  transition: '0.3s',
-                }}
-                onMouseEnter={e => {
-                  if (!plan.popular) {
-                    e.target.style.backgroundColor = '#ffc107';
-                    e.target.style.color = '#212529';
-                  }
-                }}
-                onMouseLeave={e => {
-                  if (!plan.popular) {
-                    e.target.style.backgroundColor = '';
-                    e.target.style.color = '';
-                  }
-                }}
-              >
-                Select Plan
-              </button>
-            </div>
+            ))}
           </div>
         </div>
-      ))}
-    </div>
-  </div>
-</section>
+      </section>
 
       {/* CTA Section */}
-      <section className="py-5 text-white" style={{ background:"#f9c968ff" }}>
-        <div className="container py-5">
-          <div className="row justify-content-center text-center">
-            <div className="col-12 col-lg-8">
-              <h2 className="display-5 fw-bold mb-4">
-                Ready to Optimize Your Billing Process?
-              </h2>
-              <p className="lead mb-4">
-                Experience the platform with our 30-day enterprise trial. No commitment required.
-              </p>
-              <div className="d-flex gap-3 justify-content-center">
-                <button className="btn btn-light btn-lg">
-                  Start Enterprise Trial
-                  <ArrowRight size={20} className="ms-2" />
-                </button>
-                 <button
-                  className="btn btn-outline-light btn-lg"
-                >
-                  Return to Home
-                </button>
-              </div>
-            </div>
+      <section className="py-5 text-white" style={{ background: '#f9c968ff' }}>
+        <div className="container-fluid px-3 px-md-4 px-lg-5 py-5 text-center">
+          <h2 className="display-5 fw-bold mb-4">
+            Ready to Optimize Your Billing Process?
+          </h2>
+          <p className="lead mb-4">
+            Experience the platform with our 30-day enterprise trial. No commitment required.
+          </p>
+          <div className="d-flex flex-column flex-sm-row gap-3 justify-content-center">
+            <button className="btn btn-light btn-lg">
+              Start Enterprise Trial
+              <ArrowRight size={20} className="ms-2" />
+            </button>
+            <button className="btn btn-outline-light btn-lg">Return to Home</button>
           </div>
         </div>
       </section>
