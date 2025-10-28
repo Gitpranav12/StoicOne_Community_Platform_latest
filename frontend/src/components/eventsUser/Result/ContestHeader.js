@@ -13,17 +13,28 @@ export default function ContestHeader({ title, stats, type, onBack, onExport }) 
 
   return (
     <Card className="p-3 mb-4 shadow-sm border-0 bg-white rounded-3">
-      <div className="d-flex flex-column flex-md-row justify-content-between align-items-center mb-3 gap-3">
-        <button className="btn btn-outline-primary" onClick={onBack}>← Back</button>
-        <h4 className="fw-bold m-0">{title}</h4>
-        {/* <Badge bg="secondary" className="fs-6 py-2 px-3">{typeTextMap[type]} Contest</Badge> */}
-        <button className="btn btn-outline-primary d-flex align-items-center justify-content-center"
-          onClick={onExport}
-        >
-          <Download size={18} className="me-2" />
-          Export Results
-        </button>
+      <div className="mb-3">
+        {/* Row 1: Back (left) and Export (right) */}
+        <div className="d-flex justify-content-between align-items-center mb-2">
+          <button className="btn btn-outline-primary" onClick={onBack}>
+            ← Back
+          </button>
+
+          <button
+            className="btn btn-outline-primary d-flex align-items-center justify-content-center"
+            onClick={onExport}
+          >
+            <Download size={18} className="me-2" />
+            Export Results
+          </button>
+        </div>
+
+        {/* Row 2: Title Centered */}
+        <div className="text-center">
+          <h4 className="fw-bold m-0">{title}</h4>
+        </div>
       </div>
+
 
       <Row className="text-center mt-3">
         <Col xs={6} md={3} className="mb-3">

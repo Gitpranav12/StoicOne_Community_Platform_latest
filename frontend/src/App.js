@@ -53,6 +53,9 @@ import { Toaster } from 'react-hot-toast';
 import SubmissionDetail from "./components/adminEvents/SubmissionDetail";
 // Result page
 import ResultWrapper from "./components/eventsUser/Result/ResultWrapper";
+// data page
+import DataPage from "./components/adminDashboard/datapages/DataPage"; // adjust path as needed
+
 
 export default function App() {
 
@@ -144,7 +147,7 @@ export default function App() {
 
               {/* Product Page */}
               <Route path="/product" element={<Productpage />} />
-               <Route path="/contact" element={<ContactForm />} />
+              <Route path="/contact" element={<ContactForm />} />
               {/* admin events pages routes */}
               <Route path="/admin/events" element={<ProtectedRoute><EventsAdminPage /></ProtectedRoute>} />
               <Route path="/admin/events/createContest" element={<ProtectedRoute><CreateContestForm /></ProtectedRoute>} />
@@ -152,6 +155,10 @@ export default function App() {
               <Route path="/admin/events/submissionDetails" element={<ProtectedRoute><SubmissionDetail /></ProtectedRoute>} />
               {/* Result Page */}
               <Route path="/events/result" element={<ProtectedRoute><ResultWrapper /></ProtectedRoute>} />
+
+              {/* Schedule demo and contacts */}
+              <Route path="/admin/data" element={<ProtectedRoute><DataPage /></ProtectedRoute>} />
+
 
             </Routes>
 
