@@ -1,214 +1,291 @@
-// src/components/AttitudeSection.jsx
-import React, { useState, useEffect, useContext } from "react";
-import PropTypes from "prop-types";
-import { UserContext } from "../../components/UserProfilePage/context/UserContext";
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import "bootstrap/dist/css/bootstrap.min.css";
+import Logo from "../../components/logo";
+import Logo1 from "../../components/logom";
 
-/*
-Props:
- - userId: id of profile to show
- - editable: boolean (show edit controls if true and current user matches)
-Usage:
- <AttitudeSection userId={user.id} editable={true} />
-*/
+const ForgotPassword = () => {
+  const navigate = useNavigate();
+  const [step, setStep] = useState(1); // 1=email, 2=otp, 3=new password
+  const [email, setEmail] = useState("");
+  const [otp, setOtp] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [message, setMessage] = useState("");
+  const [error, setError] = useState("");
+  
+  // ✅ नवीन स्टेट्स: पासवर्ड व्हिजिबिलिटी नियंत्रित करण्यासाठी
+  const [newPasswordVisible, setNewPasswordVisible] = useState(false);
+  const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
 
-const ForgotPassword = ({ userId, editable = false }) => {
-  const { user: currentUser, fetchUserData } = useContext(UserContext);
-  const [data, setData] = useState({
-    score: 0,
-    rank: null,
-    percentile: null,
-    badges: [],
-    endorsements: 0,
-    note: "",
-  });
-  const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
-  const [error, setError] = useState(null);
-
-  const API_BASE = process.env.REACT_APP_API_BASE || "http://localhost:8080/api";
-
-  useEffect(() => {
-    let mounted = true;
-    setLoading(true);
-    fetch(`${API_BASE}/user/${userId}/attitude`, { credentials: "include" })
-      .then((r) => r.json())
-      .then((res) => {
-        if (!mounted) return;
-        if (res && res.attitude) setData(res.attitude);
-        setLoading(false);
-      })
-      .catch((err) => {
-        if (!mounted) return;
-        setError("Failed to load attitude");
-        setLoading(false);
-      });
-    return () => (mounted = false);
-  }, [userId]);
-
-  const isOwner = currentUser?.id === userId;
-
-  const handleSave = async () => {
-    setSaving(true);
-    setError(null);
+  // Step 1: Send OTP
+  const handleForgotPassword = async (e) => {
+    e.preventDefault();
+    setMessage("");
+    setError("");
     try {
-      const res = await fetch(`${API_BASE}/user/${userId}/attitude`, {
-        method: "PUT",
-        credentials: "include",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ attitude: data }),
-      });
-      const json = await res.json();
-      if (!res.ok) throw new Error(json.message || "Save failed");
-      // refresh context/profile if needed
-      if (isOwner && fetchUserData) fetchUserData();
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  const handleEndorse = async () => {
-    // optimistic UI
-    setData((d) => ({ ...d, endorsements: (d.endorsements || 0) + 1 }));
-    try {
-      const res = await fetch(`${API_BASE}/user/${userId}/attitude/endorse`, {
+      const res = await fetch("http://localhost:8080/api/forgot-password", {
         method: "POST",
-        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
       });
-      if (!res.ok) {
-        // revert on failure
-        const json = await res.json();
-        setData((d) => ({ ...d, endorsements: Math.max((d.endorsements || 1) - 1, 0) }));
-        throw new Error(json.message || "Endorse failed");
+      const data = await res.json();
+
+      if (res.ok) {
+        if (data.testOtp) {
+          alert(`TESTING OTP: ${data.testOtp}`);
+        }
+        setMessage(data.message || data.msg || "OTP sent successfully!");
+        setStep(2);
+      } else {
+        setError(data.message || data.msg || "Failed to send OTP");
       }
     } catch (err) {
-      setError(err.message);
+      console.error(err);
+      setError("Server error. Check if backend is running.");
     }
   };
 
-  if (loading) return <div>Loading attitude...</div>;
+  // Step 2: Verify OTP
+  const handleVerifyOtp = async (e) => {
+    e.preventDefault();
+    setMessage("");
+    setError("");
+    try {
+      const res = await fetch("http://localhost:8080/api/verify-otp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, otp }),
+      });
+      const data = await res.json();
+
+      if (res.ok) {
+        setMessage("OTP verified, now enter new password");
+        setStep(3);
+      } else {
+        setError(data.message || data.msg || "Invalid or expired OTP");
+      }
+    } catch (err) {
+      console.error(err);
+      setError("Server error during OTP verification.");
+    }
+  };
+
+  // Step 3: Reset Password
+  const handleResetPassword = async (e) => {
+    e.preventDefault();
+    setMessage("");
+    setError("");
+
+    if (newPassword !== confirmPassword) {
+      setError("New password and confirm password do not match.");
+      return;
+    }
+
+    try {
+      const res = await fetch("http://localhost:8080/api/reset-password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, otp, newPassword }),
+      });
+      const data = await res.json();
+
+      if (res.ok) {
+        setMessage(data.message || data.msg || "Password updated successfully! Redirecting to login...");
+        setTimeout(() => {
+          navigate("/"); // '/' (Login Page) वर रीडायरेक्ट करा
+        }, 1500);
+      } else {
+        setError(data.message || data.msg || "Failed to reset password.");
+      }
+    } catch (err) {
+      console.error(err);
+      setError("Server error during password reset.");
+    }
+  };
+
+  // Password validation function
+  const isPasswordValid = (password) => {
+    // At least 8 chars, 1 uppercase, 1 lowercase, 2 numbers, 1 special char
+    const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=(?:.*\d){2,})(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{8,}$/;
+    return regex.test(password);
+  };
 
   return (
-    <section style={{ border: "1px solid #e6e6e6", padding: 16, borderRadius: 8, background: "#fff", maxWidth: 800 }}>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 12 }}>
-        <div>
-          <h4 style={{ margin: 0 }}>Attitude</h4>
-          <p style={{ marginTop: 6, color: "#666" }}>A quick snapshot of the user's attitude & soft-skill standing (HackerRank-like)</p>
+    <div
+      className="d-flex align-items-center justify-content-center min-vh-100 p-3"
+      style={{ backgroundColor: "#f8f9fa" }}
+    >
+      <div
+        className="row shadow-lg rounded-4 overflow-hidden bg-white w-100"
+        style={{ maxWidth: "900px" }}
+      >
+        <div
+          className="col-md-5 d-none d-md-flex flex-column justify-content-center align-items-center p-4"
+          style={{ backgroundColor: "#0d6efd10" }}
+        >
+          <Logo />
         </div>
 
-        <div style={{ textAlign: "right" }}>
-          <div style={{ fontSize: 20, fontWeight: 700 }}>{data.score ?? 0}</div>
-          <div style={{ color: "#666", fontSize: 12 }}>Score</div>
-        </div>
-      </div>
+        <div className="col-12 col-md-7 p-4 p-md-5 d-flex flex-column justify-content-center">
+          <div className="d-flex d-md-none justify-content-center mb-4">
+            <Logo1 />
+          </div>
 
-      {/* Rank / Percentile */}
-      <div style={{ display: "flex", gap: 12, marginTop: 14, alignItems: "center" }}>
-        <div>
-          <div style={{ fontSize: 14, color: "#333" }}>Rank</div>
-          <div style={{ fontWeight: 600 }}>{data.rank ?? "—"}</div>
-        </div>
-        <div>
-          <div style={{ fontSize: 14, color: "#333" }}>Percentile</div>
-          <div style={{ fontWeight: 600 }}>{data.percentile ? `${data.percentile}%` : "—"}</div>
-        </div>
+          <h3 className="text-center mb-4 fw-bold" style={{ color: "#0d6efd" }}>
+            {step === 1 ? "Forgot Password" : step === 2 ? "Verify OTP" : "Reset Password"}
+          </h3>
 
-        {/* Endorse button */}
-        <div style={{ marginLeft: "auto", display: "flex", gap: 8, alignItems: "center" }}>
-          <button
-            onClick={handleEndorse}
-            style={{
-              border: "1px solid #0d6efd",
-              background: "white",
-              color: "#0d6efd",
-              padding: "6px 10px",
-              borderRadius: 6,
-              cursor: "pointer",
-            }}
-            title="Endorse this user's attitude"
-          >
-            Endorse
-          </button>
-          <div style={{ fontSize: 13, color: "#333" }}>{data.endorsements ?? 0} endorsements</div>
-        </div>
-      </div>
-
-      {/* Progress bar to show score visually */}
-      <div style={{ marginTop: 14 }}>
-        <div style={{ fontSize: 13, color: "#444", marginBottom: 6 }}>Progress</div>
-        <div style={{ background: "#eee", height: 10, borderRadius: 6, overflow: "hidden" }}>
-          <div
-            style={{
-              width: `${Math.min(100, data.score ?? 0)}%`,
-              height: "100%",
-              background: "linear-gradient(90deg,#0d6efd,#00c2ff)",
-            }}
-          />
-        </div>
-      </div>
-
-      {/* Badges */}
-      <div style={{ marginTop: 14 }}>
-        <div style={{ fontSize: 13, color: "#444", marginBottom: 6 }}>Badges</div>
-        <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-          {(data.badges || []).length === 0 ? (
-            <div style={{ color: "#888" }}>No badges yet</div>
-          ) : (
-            data.badges.map((b, i) => (
-              <div key={i} style={{ padding: "6px 10px", borderRadius: 999, background: "#f1f7ff", border: "1px solid #dbeafe", fontSize: 13 }}>
-                {b}
-              </div>
-            ))
+          {message && (
+            <p className="text-center mb-3" style={{ color: "green" }}>
+              {message}
+            </p>
           )}
+
+          {error && (
+            <p className="text-center mb-3" style={{ color: "red" }}>
+              {error}
+            </p>
+          )}
+
+          {/* Step 1: Enter Email */}
+          {step === 1 && (
+            <form onSubmit={handleForgotPassword}>
+              <div className="mb-3">
+                <input
+                  type="email"
+                  className="form-control"
+                  placeholder="Enter your email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                />
+              </div>
+              <button
+                type="submit"
+                className="btn w-100 mb-3"
+                style={{ background: "#0d6efd", color: "white" }}
+              >
+                Send OTP
+              </button>
+            </form>
+          )}
+
+          {/* Step 2: Enter OTP */}
+          {step === 2 && (
+            <form onSubmit={handleVerifyOtp}>
+              <p className="text-center text-muted mb-3">
+                OTP sent to {email}. Check your email and server console.
+              </p>
+              <div className="mb-3">
+                <input
+                  type="text"
+                  className="form-control"
+                  placeholder="Enter 6-digit OTP"
+                  value={otp}
+                  onChange={(e) => setOtp(e.target.value)}
+                  maxLength="6"
+                  required
+                />
+              </div>
+              <button
+                type="submit"
+                className="btn w-100 mb-3"
+                style={{ background: "#0d6efd", color: "white" }}
+              >
+                Verify OTP
+              </button>
+              <div className="text-center">
+                <Link onClick={handleForgotPassword} style={{ color: "#0d6efd", cursor: 'pointer', fontWeight: "500" }}>
+                  Resend OTP
+                </Link>
+              </div>
+            </form>
+          )}
+
+          {/* Step 3: Reset Password */}
+          {step === 3 && (
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                if (!isPasswordValid(newPassword)) {
+                  setError(
+                    "Password must be at least 8 characters, include 1 uppercase, 1 lowercase, 2 numbers, and 1 special character."
+                  );
+                  return;
+                }
+                handleResetPassword(e);
+              }}
+            >
+              <div className="mb-3 position-relative">
+                <input
+                  type={newPasswordVisible ? "text" : "password"}
+                  className="form-control"
+                  placeholder="Enter new password"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  required
+                  style={{ paddingRight: '2.5rem' }}
+                />
+                <i
+                  className={`bi ${newPasswordVisible ? "bi-eye-slash" : "bi-eye"} position-absolute translate-middle-y`}
+                  onClick={() => setNewPasswordVisible(prevState => !prevState)}
+                  style={{
+                    right: '10px',
+                    top: '50%',
+                    cursor: 'pointer',
+                    zIndex: 10,
+                    color: '#6c757d'
+                  }}
+                ></i>
+              </div>
+
+              <div className="mb-3 position-relative">
+                <input
+                  type={confirmPasswordVisible ? "text" : "password"}
+                  className="form-control"
+                  placeholder="Confirm new password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  required
+                  style={{ paddingRight: '2.5rem' }}
+                />
+                <i
+                  className={`bi ${confirmPasswordVisible ? "bi-eye-slash" : "bi-eye"} position-absolute translate-middle-y`}
+                  onClick={() => setConfirmPasswordVisible(prevState => !prevState)}
+                  style={{
+                    right: '10px',
+                    top: '50%',
+                    cursor: 'pointer',
+                    zIndex: 10,
+                    color: '#6c757d'
+                  }}
+                ></i>
+              </div>
+
+              <button
+                type="submit"
+                className="btn w-100 mb-3"
+                style={{ background: "#0d6efd", color: "white" }}
+              >
+                Reset Password
+              </button>
+              <div className="mb-2 text-muted small">
+                Password must be at least 8 characters, include 1 uppercase, 1 lowercase, 2 numbers, and 1 special character.
+              </div>
+            </form>
+          )}
+
+          <div className="text-center mt-3">
+            Back to{" "}
+            <Link to="/" style={{ color: "#0d6efd", fontWeight: "500" }}>
+              Log In
+            </Link>
+          </div>
         </div>
       </div>
-
-      {/* Note / Description (editable for owner) */}
-      <div style={{ marginTop: 14 }}>
-        <div style={{ fontSize: 13, color: "#444", marginBottom: 6 }}>Summary</div>
-        {editable && isOwner ? (
-          <>
-            <textarea
-              value={data.note || ""}
-              onChange={(e) => setData((d) => ({ ...d, note: e.target.value }))}
-              rows={4}
-              style={{ width: "100%", padding: 10, borderRadius: 8, border: "1px solid #ddd", resize: "vertical" }}
-            />
-            <div style={{ display: "flex", gap: 8, marginTop: 8 }}>
-              <button onClick={handleSave} disabled={saving} style={{ padding: "8px 12px", background: "#0d6efd", color: "#fff", borderRadius: 6 }}>
-                {saving ? "Saving..." : "Save"}
-              </button>
-              <button
-                onClick={() => {
-                  // revert by re-fetching
-                  setLoading(true);
-                  fetch(`${API_BASE}/user/${userId}/attitude`, { credentials: "include" })
-                    .then((r) => r.json())
-                    .then((res) => {
-                      setData(res.attitude || {});
-                      setLoading(false);
-                    })
-                    .catch(() => setLoading(false));
-                }}
-                style={{ padding: "8px 12px", borderRadius: 6, border: "1px solid #ddd" }}
-              >
-                Cancel
-              </button>
-            </div>
-            {error && <div style={{ color: "red", marginTop: 8 }}>{error}</div>}
-          </>
-        ) : (
-          <div style={{ whiteSpace: "pre-wrap", color: "#333" }}>{data.note || <span style={{ color: "#888" }}>No summary added</span>}</div>
-        )}
-      </div>
-    </section>
+    </div>
   );
-};
-
-ForgotPassword.propTypes = {
-  userId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
-  editable: PropTypes.bool,
 };
 
 export default ForgotPassword;

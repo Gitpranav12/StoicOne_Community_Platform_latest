@@ -13,7 +13,7 @@ import QuestionsPage from "./components/questionlist/QuestionsPage";
 import QuestionDetailsWrapper from "./components/questionlist/QuestionDetailsWrapper";
 import AiAssistant from "./components/AiAssistant";
 import Signup from "./pages/Signup/index";
-import ForgotPassword from "./pages/ForgotPassword";
+import ForgotPassword from "./pages/ForgotPassword/ForgotPassword";
 import Login from "./pages/Login/index";
 import TagsPage from "./components/tags/TagsPage";
 import Articles from "./components/Articles";
