@@ -616,6 +616,8 @@ router.get('/coding_submissions/byUserAndContest', async (req, res) => {
         cq.description AS problem_statement,
         cq.sample_input,
         cq.sample_output,
+        cq.sample_input_2,
+        cq.sample_output_2,
         cs.code,
         cs.language,
         cs.auto_score,

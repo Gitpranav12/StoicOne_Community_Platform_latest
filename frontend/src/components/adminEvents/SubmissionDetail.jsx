@@ -225,8 +225,8 @@ export default function SubmissionDetail() {
             <h5 className="mb-0 flex-grow-1">
               Q{currentIndex + 1}: {currentSub.question_title}
             </h5>
-            <Badge bg="light" text="dark" className={getScoreColor(currentSub.manual_score || 0)}>
-              Score: {currentSub.manual_score || 0}
+            <Badge bg="light" text="dark" className={getScoreColor(currentSub.auto_score || 0)}>
+              Score: {currentSub.auto_score || 0}
             </Badge>
           </Card.Header>
 
@@ -235,12 +235,21 @@ export default function SubmissionDetail() {
               <strong>Problem :</strong> {currentSub.problem_statement}
             </p>
             <p>
-              <strong>Sample Input :</strong>{" "}
+              <strong>Sample Input 1 :</strong>{" "}
               <Badge bg="secondary">{currentSub.sample_input}</Badge>
             </p>
             <p>
-              <strong>Sample Output :</strong>{" "}
+              <strong>Sample Output 1 :</strong>{" "}
               <Badge bg="secondary">{currentSub.sample_output}</Badge>
+            </p>
+
+             <p>
+              <strong>Sample Input 2 :</strong>{" "}
+              <Badge bg="secondary">{currentSub.sample_input_2}</Badge>
+            </p>
+            <p>
+              <strong>Sample Output 2 :</strong>{" "}
+              <Badge bg="secondary">{currentSub.sample_output_2}</Badge>
             </p>
 
             <hr />

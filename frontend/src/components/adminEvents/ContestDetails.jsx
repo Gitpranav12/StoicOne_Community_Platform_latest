@@ -340,7 +340,6 @@ export default function ContestDetails() {
                         ))}
 
                       {/* Coding */}
-                      {/* Coding */}
                       {round.type === "coding" &&
                         round.questions?.map((q, qIndex) => (
                           <div
@@ -358,15 +357,27 @@ export default function ContestDetails() {
                               <strong>Output Format:</strong> {q.output_format}
                             </div>
                             <div className="mb-2">
-                              <strong>Sample Input:</strong>
+                              <strong>Sample Input 1 :</strong>
                               <pre className="bg-light p-2 rounded">
                                 {q.sample_input}
                               </pre>
                             </div>
                             <div className="mb-2">
-                              <strong>Sample Output:</strong>
+                              <strong>Sample Output 1 :</strong>
                               <pre className="bg-light p-2 rounded">
                                 {q.sample_output}
+                              </pre>
+                            </div>
+                            <div className="mb-2">
+                              <strong>Sample Input 2 :</strong>
+                              <pre className="bg-light p-2 rounded">
+                                {q.sample_input_2}
+                              </pre>
+                            </div>
+                            <div className="mb-2">
+                              <strong>Sample Output 2 :</strong>
+                              <pre className="bg-light p-2 rounded">
+                                {q.sample_output_2}
                               </pre>
                             </div>
                           </div>

@@ -61,8 +61,7 @@ export default function SubmissionReview({ contests }) {
 
     // ✅ Map filter status dropdown values to actual data fields
     if (filterStatus === "completed") {
-      matchesStatus =
-        submission.latestStatus === "reviewed" ;
+      matchesStatus = submission.latestStatus === "reviewed";
     } else if (filterStatus === "pending") {
       matchesStatus = submission.latestStatus === "pending";
     }
@@ -299,13 +298,25 @@ export default function SubmissionReview({ contests }) {
                         </div>
                       </td>
                       <td className="text-center">
-                        <div
-                          className={`fw-bold ${getScoreColor(
-                            submission.avgManualScore
-                          )}`}
-                        >
-                          {submission.avgManualScore}%
-                        </div>
+                        {(() => {
+                          const manualScore =
+                            parseFloat(submission.avgManualScore) || 0;
+                          const autoScore =
+                            parseFloat(submission.avgAutoScore) || 0;
+
+                          const displayScore =
+                            manualScore === 0 ? autoScore : manualScore;
+
+                          return (
+                            <div
+                              className={`fw-bold ${getScoreColor(
+                                displayScore
+                              )}`}
+                            >
+                              {displayScore}%
+                            </div>
+                          );
+                        })()}
                       </td>
                       <td className="text-center">
                         <div
