@@ -1,6 +1,7 @@
 import { FileText, DollarSign, BarChart3, Zap, CreditCard, Globe, CheckCircle, ArrowRight } from 'lucide-react';
-
+import React from "react";
 export function InvoicingPage({ onNavigate }) {
+   const [selected, setSelected] = React.useState(null);
   const features = [
     { icon: <FileText size={48} />, title: 'Professional Invoice Creation', description: 'Generate polished, branded invoices with customizable templates and automated client details.' },
     { icon: <DollarSign size={48} />, title: 'Payment Management', description: 'Track payment statuses, monitor overdue accounts, and automate payment reminder notifications.' },
@@ -103,12 +104,32 @@ export function InvoicingPage({ onNavigate }) {
                 optimize your cash flow, automate billing processes, and provide
                 comprehensive financial visibility.
               </p>
-              <div className="d-flex flex-column flex-sm-row gap-2 gap-sm-3 mb-4">
-                <button className="btn btn-dark btn-lg w-100 w-sm-auto">
-                  Begin 30-Day Trial
-                </button>
-                <button className="btn btn-outline-dark btn-lg w-100 w-sm-auto">
-                  Schedule Demo
+              <div className="d-flex gap-3 mb-4">
+                <button
+                  className="btn btn-lg d-flex align-items-center justify-content-center gap-2 shadow-lg"
+                  onClick={() => onNavigate("schedule-demo")}
+                  style={{
+                    background: "linear-gradient(135deg, #fcb000ff)",
+                    color: "white",
+                    border: "none",
+                    borderRadius: "12px",
+                    padding: "14px 32px",
+                    fontWeight: "600",
+                    transition: "all 0.3s ease",
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = "translateY(-3px)";
+                    e.currentTarget.style.boxShadow =
+                      "0 15px 35px rgba(30, 136, 229, 0.4)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = "translateY(0)";
+                    e.currentTarget.style.boxShadow =
+                      "0 10px 25px rgba(0, 0, 0, 0.2)";
+                  }}
+                >
+                  Book a Free Demo
+                  <ArrowRight size={20} />
                 </button>
               </div>
               <div className="d-flex flex-column flex-sm-row gap-3 pt-3 text-center text-sm-start">
@@ -209,59 +230,51 @@ export function InvoicingPage({ onNavigate }) {
 
       {/* Pricing Section */}
       <section className="py-5 bg-light">
-        <div className="container-fluid px-3 px-md-4 px-lg-5 py-5">
-          <div className="text-center mb-5">
-            <h2 className="display-5 fw-bold mb-3">Flexible Enterprise Plans</h2>
-            <p className="lead text-muted">
-              Scalable solutions designed to grow with your business
-            </p>
-          </div>
-          <div className="row g-4">
-            {pricing.map((plan, idx) => (
-              <div className="col-12 col-md-6 col-lg-4" key={idx}>
-                <div
-                  className={`card h-100 ${
-                    plan.popular ? 'border-warning shadow-lg' : 'border-0 shadow-sm'
-                  }`}
-                  style={{
-                    transition: 'transform 0.3s ease, box-shadow 0.3s ease',
-                    cursor: 'pointer',
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.transform = 'scale(1.05)';
-                    e.currentTarget.style.boxShadow = '0 12px 24px rgba(0,0,0,0.2)';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.transform = 'scale(1)';
-                    e.currentTarget.style.boxShadow = '0 4px 8px rgba(0,0,0,0.1)';
-                  }}
-                >
-                  {plan.popular && (
-                    <div className="card-header bg-warning text-dark text-center py-2 fw-bold">
-                      Most Popular
-                    </div>
-                  )}
-                  <div className="card-body p-4 text-center text-md-start">
-                    <h4 className="fw-bold mb-3">{plan.name}</h4>
-                    <div className="mb-4">
-                      <h2 className="display-4 fw-bold">{plan.price}</h2>
-                      <small className="text-muted">{plan.period}</small>
-                    </div>
-                    <ul className="list-unstyled mb-4">
-                      {plan.features.map((feature, i) => (
-                        <li key={i} className="mb-2 d-flex align-items-center">
-                          <CheckCircle size={18} className="text-warning me-2" />
-                          {feature}
-                        </li>
-                      ))}
-                    </ul>
-                    <button
-                      className={`btn ${
-                        plan.popular ? 'btn-warning' : 'btn-outline-warning'
-                      } w-100`}
-                    >
-                      Select Plan
-                    </button>
+             <div className="container-fluid px-3 px-md-5 py-5">
+               <div className="text-center mb-5">
+                 <h2 className="display-5 fw-bold mb-3">Simple Pricing</h2>
+                 <p className="lead text-muted">
+                   Choose the perfect plan for your organization
+                 </p>
+               </div>
+               <div className="row g-4">
+                 {pricing.map((plan, idx) => (
+                   <div className="col-md-6 col-lg-4" key={idx}>
+                     <div
+                       className={`card h-100 pricing-card ${
+                         plan.popular ? "border-success shadow-lg" : "border-0 shadow-sm"
+                       } ${selected === idx ? "selected-card" : ""}`}
+                       onClick={() => setSelected(idx)}
+                     >
+                       {plan.popular && (
+                         <div className="card-header bg-warning text-white text-center py-2">
+                           Most Popular
+                         </div>
+                       )}
+                       <div className="card-body p-4 text-center">
+                         <h4 className="fw-bold mb-3">{plan.name}</h4>
+                         <div className="mb-4">
+                           <h2 className="display-4 fw-bold">{plan.price}</h2>
+                           <small className="text-muted">{plan.period}</small>
+                         </div>
+                         <ul className="list-unstyled mb-4 text-start">
+                           {plan.features.map((feature, i) => (
+                             <li key={i} className="mb-2">
+                               <CheckCircle
+                                 size={18}
+                                 className="text-success me-2"
+                               />
+                               {feature}
+                             </li>
+                           ))}
+                         </ul>
+                         <button
+                           className={`btn ${
+                             plan.popular ? "btn-warning" : "btn-outline-success"
+                           } w-100`}
+                         >
+                           Get Started
+                         </button>
                   </div>
                 </div>
               </div>
@@ -277,14 +290,37 @@ export function InvoicingPage({ onNavigate }) {
             Ready to Optimize Your Billing Process?
           </h2>
           <p className="lead mb-4">
-            Experience the platform with our 30-day enterprise trial. No commitment required.
-          </p>
-          <div className="d-flex flex-column flex-sm-row gap-3 justify-content-center">
-            <button className="btn btn-light btn-lg">
-              Start Enterprise Trial
-              <ArrowRight size={20} className="ms-2" />
-            </button>
-            <button className="btn btn-outline-light btn-lg">Return to Home</button>
+                       Start your 14-day free trial today. No credit card required.
+                     </p>
+                     <div className="d-flex flex-wrap gap-3 justify-content-center">
+                       <button
+                         className="btn btn-light btn-lg d-flex align-items-center justify-content-center gap-2"
+                         onClick={() => onNavigate("schedule-demo")}
+                         style={{
+                           color: "#1E88E5",
+                           fontWeight: "600",
+                           borderRadius: "10px",
+                           transition: "all 0.3s ease",
+                         }}
+                         onMouseEnter={(e) => {
+                           e.currentTarget.style.transform = "translateY(-2px)";
+                           e.currentTarget.style.boxShadow =
+                             "0 10px 25px rgba(0, 0, 0, 0.2)";
+                         }}
+                         onMouseLeave={(e) => {
+                           e.currentTarget.style.transform = "translateY(0)";
+                           e.currentTarget.style.boxShadow = "none";
+                         }}
+                       >
+                         Let’s Schedule a Demo Together
+                         <ArrowRight size={20} />
+                       </button>
+                       <button
+                         className="btn btn-outline-light btn-lg"
+                         onClick={() => onNavigate("home")}
+                       >
+                         Back to Home
+                       </button>
           </div>
         </div>
       </section>

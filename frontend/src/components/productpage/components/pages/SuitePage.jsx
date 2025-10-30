@@ -1,6 +1,7 @@
 import { Zap, Settings, BarChart3, Users, Shield, Layers, CheckCircle, ArrowRight } from 'lucide-react';
-
+import React from 'react';
 export function SuitePage({ onNavigate }) {
+  const [selected, setSelected] = React.useState(null);
   const features = [
     {
       icon: <Settings size={48} />,
@@ -135,12 +136,32 @@ export function SuitePage({ onNavigate }) {
               <p className="lead mb-4">
                 Complete business suite designed to enhance productivity through integrated tools and seamless connections with professionals across your industry ecosystem.
               </p>
-              <div className="d-flex flex-column flex-sm-row gap-2 gap-sm-3 mb-4">
-                <button className="btn btn-dark btn-lg w-100 w-sm-auto">
-                  Begin 30-Day Trial
-                </button>
-                <button className="btn btn-outline-dark btn-lg w-100 w-sm-auto">
-                  Schedule Demo
+              <div className="d-flex gap-3 mb-4">
+                <button
+                  className="btn btn-lg d-flex align-items-center justify-content-center gap-2 shadow-lg"
+                  onClick={() => onNavigate("schedule-demo")}
+                  style={{
+                    background: "linear-gradient(135deg, #8E24AA)",
+                    color: "white",
+                    border: "none",
+                    borderRadius: "12px",
+                    padding: "14px 32px",
+                    fontWeight: "600",
+                    transition: "all 0.3s ease",
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = "translateY(-3px)";
+                    e.currentTarget.style.boxShadow =
+                      "0 15px 35px rgba(30, 136, 229, 0.4)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = "translateY(0)";
+                    e.currentTarget.style.boxShadow =
+                      "0 10px 25px rgba(0, 0, 0, 0.2)";
+                  }}
+                >
+                  Book a Free Demo
+                  <ArrowRight size={20} />
                 </button>
               </div>
               <div className="d-flex flex-column flex-sm-row gap-4 pt-3 text-center text-sm-start">
@@ -245,78 +266,60 @@ export function SuitePage({ onNavigate }) {
       </section>
 
       {/* Pricing Section */}
-      <section className="py-5">
-        <div className="container-fluid px-4 px-md-5 py-5">
-          <div className="text-center mb-5">
-            <h2 className="display-6 fw-bold mb-3">Professional Suite Pricing</h2>
-            <p className="lead text-muted">Choose the perfect professional plan for your organization</p>
-          </div>
-          <div className="row g-4 justify-content-center">
-            {pricing.map((plan, idx) => (
-              <div className="col-12 col-md-6 col-lg-4" key={idx}>
-                <div
-                  className={`card h-100 ${plan.popular ? 'shadow-lg' : 'border-0 shadow-sm'}`}
-                  style={{
-                    transition: 'transform 0.3s ease, box-shadow 0.3s ease',
-                    cursor: 'pointer',
-                    borderColor: plan.popular ? '#6f42c1' : undefined,
-                    borderWidth: plan.popular ? '2px' : undefined,
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.transform = 'scale(1.05)';
-                    e.currentTarget.style.boxShadow = '0 12px 24px rgba(0,0,0,0.15)';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.transform = 'scale(1)';
-                    e.currentTarget.style.boxShadow = '0 4px 8px rgba(0,0,0,0.05)';
-                  }}
-                >
-                  {plan.popular && (
-                    <div className="card-header text-white text-center py-2" style={{ backgroundColor: '#6f42c1' }}>
-                      Professional Choice
+    <section className="py-5 bg-light">
+                 <div className="container-fluid px-3 px-md-5 py-5">
+                   <div className="text-center mb-5">
+                     <h2 className="display-5 fw-bold mb-3">Simple Pricing</h2>
+                     <p className="lead text-muted">
+                       Choose the perfect plan for your organization
+                     </p>
+                   </div>
+                   <div className="row g-4">
+                     {pricing.map((plan, idx) => (
+                       <div className="col-md-6 col-lg-4" key={idx}>
+                         <div
+                           className={`card h-100 pricing-card ${
+                             plan.popular ? "border-success shadow-lg" : "border-0 shadow-sm"
+                           } ${selected === idx ? "selected-card" : ""}`}
+                           onClick={() => setSelected(idx)}
+                         >
+                         {plan.popular && (
+  <div className="card-header text-center py-2" style={{ backgroundColor: '#8B5CF6', color: 'white' }}>
+    Most Popular
+  </div>
+)}
+                           <div className="card-body p-4 text-center">
+                             <h4 className="fw-bold mb-3">{plan.name}</h4>
+                             <div className="mb-4">
+                               <h2 className="display-4 fw-bold">{plan.price}</h2>
+                               <small className="text-muted">{plan.period}</small>
+                             </div>
+                             <ul className="list-unstyled mb-4 text-start">
+                               {plan.features.map((feature, i) => (
+                                 <li key={i} className="mb-2">
+                                   <CheckCircle
+                                     size={18}
+                                     className="text-success me-2"
+                                   />
+                                   {feature}
+                                 </li>
+                               ))}
+                             </ul>
+                           <button
+  className={`btn ${
+    plan.popular ? "" : "btn-outline-success"
+  } w-100`}
+  style={plan.popular ? { backgroundColor: '#8B5CF6', borderColor: '#8B5CF6', color: 'white' } : {}}
+>
+  Get Started
+</button>
+                      </div>
                     </div>
-                  )}
-                  <div className="card-body p-4 text-center text-md-start">
-                    <h4 className="fw-bold mb-3">{plan.name}</h4>
-                    <div className="mb-4">
-                      <h2 className="display-5 fw-bold">{plan.price}</h2>
-                      <small className="text-muted">{plan.period}</small>
-                    </div>
-                    <ul className="list-unstyled mb-4">
-                      {plan.features.map((feature, i) => (
-                        <li key={i} className="mb-2 d-flex align-items-center">
-                          <CheckCircle size={18} className="me-2" style={{ color: '#6f42c1' }} />
-                          {feature}
-                        </li>
-                      ))}
-                    </ul>
-                    <button
-                      className="btn w-100"
-                      style={{
-                        backgroundColor: plan.popular ? '#6f42c1' : 'transparent',
-                        border: '2px solid #6f42c1',
-                        color: plan.popular ? 'white' : '#6f42c1',
-                        transition: '0.3s',
-                      }}
-                      onMouseEnter={(e) => {
-                        e.target.style.backgroundColor = '#5a32a3';
-                        e.target.style.color = 'white';
-                      }}
-                      onMouseLeave={(e) => {
-                        e.target.style.backgroundColor = plan.popular ? '#6f42c1' : 'transparent';
-                        e.target.style.color = plan.popular ? 'white' : '#6f42c1';
-                      }}
-                    >
-                      Select Plan
-                    </button>
                   </div>
-                </div>
+                ))}
               </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
+            </div>
+          </section>
       {/* CTA Section */}
       <section className="py-5 text-white" style={{ background: "#a47cedff" }}>
         <div className="container-fluid px-4 px-md-5 py-5 text-center">
@@ -325,16 +328,37 @@ export function SuitePage({ onNavigate }) {
               Ready to Enhance Professional Productivity?
             </h2>
             <p className="lead mb-4">
-              Start your 21-day professional trial today. Connect with experts and transform your business operations.
-            </p>
-            <div className="d-flex gap-3 justify-content-center">
-              <button className="btn btn-light btn-lg">
-                Start Enterprise Trial
-                <ArrowRight size={20} className="ms-2" />
-              </button>
-              <button className="btn btn-outline-light btn-lg">
-                Return to Home
-              </button>
+                         Start your 14-day free trial today. No credit card required.
+                       </p>
+                       <div className="d-flex flex-wrap gap-3 justify-content-center">
+                         <button
+                           className="btn btn-light btn-lg d-flex align-items-center justify-content-center gap-2"
+                           onClick={() => onNavigate("schedule-demo")}
+                           style={{
+                             color: "#1E88E5",
+                             fontWeight: "600",
+                             borderRadius: "10px",
+                             transition: "all 0.3s ease",
+                           }}
+                           onMouseEnter={(e) => {
+                             e.currentTarget.style.transform = "translateY(-2px)";
+                             e.currentTarget.style.boxShadow =
+                               "0 10px 25px rgba(0, 0, 0, 0.2)";
+                           }}
+                           onMouseLeave={(e) => {
+                             e.currentTarget.style.transform = "translateY(0)";
+                             e.currentTarget.style.boxShadow = "none";
+                           }}
+                         >
+                           Let’s Schedule a Demo Together
+                           <ArrowRight size={20} />
+                         </button>
+                         <button
+                           className="btn btn-outline-light btn-lg"
+                           onClick={() => onNavigate("home")}
+                         >
+                           Back to Home
+                         </button>
             </div>
           </div>
         </div>
