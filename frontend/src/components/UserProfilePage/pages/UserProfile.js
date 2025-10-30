@@ -5,22 +5,18 @@ import ActivityTab from "../components/ActivityTab";
 import AchievementsTab from "../components/AchievementsTab";
 import SettingsTab from "../components/SettingsTab";
 import ProfileHeader from "../components/ProfileHeader";
-import { UserContext } from "../context/UserContext"; // Import context
-import Layout from "../../../Layout/Layout"; // 1. Import the standard Layout
+import { UserContext } from "../context/UserContext";
+import Layout from "../../../Layout/Layout";
  
 export default function UserProfile() {
-  const { user } = useContext(UserContext); // Access user data
+  const { user } = useContext(UserContext);
 
   return (
-    // 2. Wrap everything in the Layout component
     <Layout>
-      {/* 3. The page-specific content and Footer are placed inside */}
       <>
         <div className="container-fluid p-3 my-2 body">
-          {/* Profile Header with dynamic user data */}
           <ProfileHeader user={user} />
 
-          {/* Tabs Navigation */}
           <ul className="nav nav-tabs mt-3 normal-text">
             <li className="nav-item">
               <NavLink
@@ -57,7 +53,6 @@ export default function UserProfile() {
             </li>
           </ul>
 
-          {/* Tab Content */}
           <div className="mt-3">
             <Routes>
               <Route index element={<ProfileTab user={user} />} />

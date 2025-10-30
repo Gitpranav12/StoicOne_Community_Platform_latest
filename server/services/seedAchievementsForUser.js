@@ -29,7 +29,6 @@ async function seedAchievementsForUser(userId) {
     { name: "Master", type: "comments", requirement: 500, description: "Posted 500 comments", icon: "/icons/master.png" },
   ];
 
-  // ✅ Generic function to insert or update rules dynamically
   async function upsertRule(table, userId, rule) {
     try {
       const [rows] = await pool.query(
@@ -38,7 +37,6 @@ async function seedAchievementsForUser(userId) {
       );
 
       if (rows.length === 0) {
-        // 🔹 Insert new rule if not exists
         await pool.query(
           `INSERT INTO ${table} 
             (user_id, name, type, requirement, description, icon, achieved)
@@ -46,7 +44,6 @@ async function seedAchievementsForUser(userId) {
           [userId, rule.name, rule.type, rule.requirement, rule.description, rule.icon]
         );
       } else {
-        // 🔹 Update existing rule fields if changed
         await pool.query(
           `UPDATE ${table} 
              SET type = ?, requirement = ?, description = ?, icon = ?
@@ -59,17 +56,14 @@ async function seedAchievementsForUser(userId) {
     }
   }
 
-  // 🔹 Process badges
   for (const badge of badgesRules) {
     await upsertRule("badges", userId, badge);
   }
 
-  // 🔹 Process milestones
   for (const ms of milestonesRules) {
     await upsertRule("milestones", userId, ms);
   }
 
-  console.log(`✅ Achievements seeded/updated successfully for user ${userId}`);
 }
 
 module.exports = seedAchievementsForUser;

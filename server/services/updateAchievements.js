@@ -1,8 +1,6 @@
 const pool = require("../db");
 
-// 🔹 Update achievements for a given user
 async function updateAchievements(userId) {
-  // Count stats
   const [[{ qCount }]] = await pool.query(
     "SELECT COUNT(*) AS qCount FROM questions WHERE user_id=?",
     [userId]
@@ -24,7 +22,6 @@ async function updateAchievements(userId) {
   );
 
 
-  // 🔹 Badge rules with descriptions
   const badgesRules = [
     { name: "Participation", type: "questions", requirement: 3, description: "3 questions asked" },
     { name: "Curious Mind", type: "questions", requirement: 10, description: "10 questions asked" },
@@ -67,7 +64,6 @@ async function updateAchievements(userId) {
         break;
     }
 
-    // 🔹 Update badge in DB
     const [result] = await pool.query(
       `UPDATE badges 
    SET achieved=?, achievedAt=IF(achieved=0 AND ?=1, NOW(), achievedAt) 
@@ -75,7 +71,6 @@ async function updateAchievements(userId) {
       [achieved, achieved, userId, badge.name]
     );
 
-    // If achieved just now → insert notification
     if (achieved) {
       await pool.query(
         `INSERT INTO notifications (user_id, type, title, description, points)
@@ -93,7 +88,6 @@ async function updateAchievements(userId) {
     badgesWithProgress.push({ ...badge, achieved, progress });
   }
 
-  // 🔹 Milestones rules with descriptions
   const milestonesRules = [
     { name: "Contributor", type: "answers", requirement: 100, description: "100 answers given" },
     { name: "Mentor", type: "answers", requirement: 500, description: "500 answers given" },
@@ -135,7 +129,6 @@ async function updateAchievements(userId) {
         break;
     }
 
-    // 🔹 Update milestone in DB
     const [msResult] = await pool.query(
       `UPDATE milestones 
    SET achieved=?, achievedAt=IF(achieved=0 AND ?=1, NOW(), achievedAt) 
@@ -143,7 +136,6 @@ async function updateAchievements(userId) {
       [achieved, achieved, userId, ms.name]
     );
 
-    // If achieved just now → insert notification
     if (achieved) {
       await pool.query(
         `INSERT INTO notifications (user_id, type, title, description, points)

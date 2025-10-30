@@ -9,7 +9,6 @@ const seedAchievementsForUser = require('../services/seedAchievementsForUser.js'
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
-// 🔹 1. Get full user profile (with stats, activity, achievements)
 router.get("/:id", async (req, res) => {
     try {
         const { id } = req.params;
@@ -18,10 +17,8 @@ router.get("/:id", async (req, res) => {
         const [user] = await pool.query("SELECT * FROM users WHERE id = ?", [id]);
         if (user.length === 0) return res.status(404).json({ error: "User not found" });
 
-        // Questions
         const [questions] = await pool.query("SELECT * FROM questions WHERE user_id = ?", [id]);
 
-        // Answers authored by this user
         const [answers] = await pool.query(
             `SELECT a.*, q.title AS questionTitle
             FROM answers a
@@ -30,7 +27,6 @@ router.get("/:id", async (req, res) => {
             [id]
         );
 
-        // Comments count
         const [[commentCountRow]] = await pool.query(
             `SELECT COUNT(*) AS cCount
      FROM comments
@@ -39,14 +35,11 @@ router.get("/:id", async (req, res) => {
         );
         const commentsCount = commentCountRow.cCount || 0;
 
-        // Badges
         const [badges] = await pool.query("SELECT * FROM badges WHERE user_id = ?", [id]);
 
-        // Milestones
         const [milestones] = await pool.query("SELECT * FROM milestones WHERE user_id = ?", [id]);
 
 
-        // Notifications (to fetch badge points earned)
         const [[badgeRow]] = await pool.query(
             `SELECT COUNT(*) AS badgeCount
    FROM notifications
@@ -57,7 +50,6 @@ router.get("/:id", async (req, res) => {
         const badgeCount = badgeRow.badgeCount || 0;
         const badgePoints = badgeCount * 10;
 
-        // Notifications (to fetch milestones points earned)
         const [[milestoneRow]] = await pool.query(
             `SELECT COUNT(*) AS milestoneCount
    FROM notifications
@@ -68,12 +60,10 @@ router.get("/:id", async (req, res) => {
         const milestonePoints = milestoneCount * 50;
 
 
-        // highest question views
         const qViews = questions.length > 0
             ? Math.max(...questions.map(q => q.views || 0))
             : 0;
 
-        // Stats with safe defaults
         const stats = {
             Badges: badges?.filter(b => b.achieved === 1).length || 0,
             Milestones: milestones?.filter(b => b.achieved === 1).length || 0,
@@ -94,7 +84,6 @@ router.get("/:id", async (req, res) => {
 
         await pool.query("UPDATE users SET score=? WHERE id=?", [score, id]);
 
-        // Reputation Levels with thresholds and icons
         const reputationLevels = [
             { name: "Champion", min: 10000, icon: "/icons/champion.png" },
             { name: "Legendary", min: 5000, icon: "/icons/legendary.png" },
@@ -112,11 +101,9 @@ router.get("/:id", async (req, res) => {
 
 
         const getReputationInfo = (score) => {
-            // find the highest level user qualifies for
             let currentLevel = reputationLevels.find((lvl) => score >= lvl.min);
             if (!currentLevel) currentLevel = reputationLevels[reputationLevels.length - 1];
 
-            // find next level
             const currentIndex = reputationLevels.indexOf(currentLevel);
             const nextLevel = reputationLevels[currentIndex - 1] || null;
 
@@ -136,13 +123,11 @@ router.get("/:id", async (req, res) => {
             };
         };
 
-        // reputation notifications
         const reputation = getReputationInfo(score);
         const [prev] = await pool.query("SELECT reputation_level FROM users WHERE id=?", [id]);
         const prevLevel = prev[0]?.reputation_level || "New";
         if (reputation.name !== prevLevel) {
             await pool.query("UPDATE users SET reputation_level=? WHERE id=?", [reputation.name, id]);
-            // Get the index (position) of both current and previous levels
             const currentIndex = reputationLevels.findIndex(l => l.name === reputation.name);
             const prevIndex = reputationLevels.findIndex(l => l.name === prevLevel);
             if (prevIndex === -1 || currentIndex < prevIndex) {
@@ -165,7 +150,6 @@ router.get("/:id", async (req, res) => {
             }
         }
 
-        // Calculate progress dynamically
         const calculateProgress = (items) =>
             items.map((item) => {
                 let progress = 0;
@@ -188,7 +172,6 @@ router.get("/:id", async (req, res) => {
                 }
                 return { ...item, progress: parseFloat(progress.toFixed(2)) };
             });
-        // await updateAchievements(id);
 
         res.json({
             profile: {
@@ -218,50 +201,16 @@ router.get("/:id", async (req, res) => {
     }
 });
 
-// 🔹 2. Update profile
-// router.put("/:id/profile", async (req, res) => {
-//     const userId = req.params.id;
-//     const { name, designation, bio, department, email } = req.body;
 
-//     try {
-//         // Build query dynamically
-//         const fields = [];
-//         const values = [];
-
-//         if (name !== undefined) { fields.push("name=?"); values.push(name); }
-//         if (designation !== undefined) { fields.push("designation=?"); values.push(designation); }
-//         if (bio !== undefined) { fields.push("bio=?"); values.push(bio); }
-//         if (department !== undefined) { fields.push("department=?"); values.push(department); }
-//         if (email !== undefined) { fields.push("email=?"); values.push(email); }
-
-//         if (fields.length === 0) return res.status(400).json({ error: "No fields to update" });
-
-//         values.push(userId);
-
-//         const query = `UPDATE users SET ${fields.join(", ")} WHERE id=?`;
-//         await pool.query(query, values);
-
-//         res.json({ message: "Profile updated successfully" });
-//     } catch (err) {
-//         console.error("Error updating profile:", err);
-//         res.status(500).json({ error: "Failed to update profile" });
-//     }
-// });
-
-
-// -----Changes make by Pranav Jawarkar on  3-0ct-2025 -----
-// :small_blue_diamond: 2. Updated profile Name on Profile also And Question Feild also
 router.put("/:id/profile", async (req, res) => {
     const userId = req.params.id;
     const { name, designation, bio, department, email } = req.body;
     try {
-        // Build query dynamically
         const fields = [];
         const values = [];
         if (name !== undefined) {
             fields.push("name=?");
             values.push(name);
-            // ONLY THIS MUCH ADDED ↓
             await pool.query("UPDATE questions SET author=? WHERE user_id=?", [name, userId]);
             await pool.query("UPDATE answers SET author=? WHERE user_id=?", [name, userId]);
             await pool.query("UPDATE comments SET author=? WHERE user_id=?", [name, userId]);
@@ -283,13 +232,12 @@ router.put("/:id/profile", async (req, res) => {
 
 
 
-// 🔹 3. Update account (password)
 router.put("/:id/account", async (req, res) => {
     const userId = req.params.id;
     const { currentPassword, newPassword } = req.body;
 
     try {
-        // 1️⃣ Fetch user hashed password
+        // Fetch user hashed password
         const [rows] = await pool.query("SELECT password FROM users WHERE id=?", [userId]);
         if (rows.length === 0) {
             return res.status(404).json({ error: "User not found" });
@@ -297,17 +245,17 @@ router.put("/:id/account", async (req, res) => {
 
         const storedHash = rows[0].password;
 
-        // 2️⃣ Compare current password with hash
+        // Compare current password with hash
         const isMatch = await bcrypt.compare(currentPassword, storedHash);
         if (!isMatch) {
             return res.status(400).json({ error: "Current password is incorrect" });
         }
 
-        // 3️⃣ Hash new password
+        // Hash new password
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(newPassword, salt);
 
-        // 4️⃣ Update password in DB
+        // Update password in DB
         await pool.query("UPDATE users SET password=? WHERE id=?", [hashedPassword, userId]);
 
         res.json({ message: "Password updated successfully" });
@@ -317,7 +265,6 @@ router.put("/:id/account", async (req, res) => {
     }
 });
 
-// 🔹 4. Delete user + associated data
 router.delete("/:id", async (req, res) => {
     const userId = req.params.id;
 
@@ -337,7 +284,6 @@ router.delete("/:id", async (req, res) => {
     }
 });
 
-// 5. Upload/Update Profile Photo
 router.put("/:id/profile-photo", upload.single("profile_photo"), async (req, res) => {
     const userId = req.params.id;
     const file = req.file;
@@ -355,7 +301,6 @@ router.put("/:id/profile-photo", upload.single("profile_photo"), async (req, res
     }
 });
 
-// 6. Serve Profile Photo
 router.get("/:id/profile-photo", async (req, res) => {
     const userId = req.params.id;
 

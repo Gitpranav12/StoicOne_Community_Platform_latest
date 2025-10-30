@@ -17,7 +17,6 @@ export default function SettingsTab() {
 
   const isProfileChanged = JSON.stringify(profileData) !== JSON.stringify(user?.profile || {});
 
-  // Load/save profile photo name
   useEffect(() => {
     if (!user?.id) return;
     const storedName = localStorage.getItem(`profilePhotoName_${user.id}`);
@@ -30,7 +29,6 @@ export default function SettingsTab() {
     }
   }, [fileName, user?.id]);
 
-  // Sync with context user
   useEffect(() => {
     if (user) {
       setProfileData(user.profile || {});
@@ -40,13 +38,11 @@ export default function SettingsTab() {
 
   const departmentOptions = user?.departmentOptions || {};
 
-  // Regex
   const nameRegex = /^[A-Za-z\s]+$/;
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   const passwordRegex =
     /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 
-  // -------- Handlers --------
   const handlePhotoChange = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -76,7 +72,7 @@ export default function SettingsTab() {
       if (user) {
         const updatedUser = { ...user, photoUpdatedAt: Date.now() };
         localStorage.setItem("currentUser", JSON.stringify(updatedUser));
-        window.dispatchEvent(new Event("storage")); // notify listeners
+        window.dispatchEvent(new Event("storage"));
       }
     } catch (err) {
       showToast("Failed to update profile photo", "danger");
@@ -165,13 +161,11 @@ export default function SettingsTab() {
     setTimeout(() => setToast({ show: false, message: "", bg: "success" }), 3000);
   };
 
-  // -------- Render --------
   if (loading) return <p>Loading settings...</p>;
   if (!user) return <p>No user data found.</p>;
 
   return (
     <div className="p-3">
-      {/* Toast */}
       <ToastContainer className="position-fixed top-0 end-0 p-3" style={{ zIndex: 9999 }}>
         <Toast
           show={toast.show}
@@ -184,7 +178,6 @@ export default function SettingsTab() {
         </Toast>
       </ToastContainer>
 
-      {/* -------- Profile Settings -------- */}
       <Card className="shadow-sm border-0 mb-4">
         <Card.Body>
           <h5 className="mb-3 heading-text">Profile Settings</h5>
@@ -193,7 +186,6 @@ export default function SettingsTab() {
               <Form.Label className="sub-heading-text d-block mb-2">Profile Photo</Form.Label>
               <div className="d-flex align-items-center gap-3">
 
-                {/* Hidden file input */}
                 <Form.Control
                   type="file"
                   accept=".jpg,.jpeg"
@@ -202,7 +194,6 @@ export default function SettingsTab() {
                   id="profilePhotoInput"
                 />
 
-                {/* Upload/Change Button */}
                 <div>
                   <Button
                     variant={"outline-primary"}
@@ -212,7 +203,6 @@ export default function SettingsTab() {
                     {fileName ? "Change Photo" : "Upload Photo"}
                   </Button>
                   <div>
-                    {/* Show selected file name */}
                     {fileName && (
                       <small className="text-success">
                         <i class="bi bi-check-square-fill"></i> {fileName} uploaded
@@ -251,7 +241,6 @@ export default function SettingsTab() {
               />
             </Form.Group>
 
-            {/* Department Dropdown */}
             <Form.Group className="mb-3">
               <Form.Label className="sub-heading-text">Department</Form.Label>
               <Form.Select
@@ -276,7 +265,6 @@ export default function SettingsTab() {
               </Form.Select>
             </Form.Group>
 
-            {/* Designation Dropdown */}
             {profileData.department && (
               <Form.Group className="mb-3">
                 <Form.Label className="sub-heading-text">Designation</Form.Label>
@@ -314,7 +302,6 @@ export default function SettingsTab() {
         </Card.Body>
       </Card>
 
-      {/* Delete Profile Modal */}
       <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)} centered>
         <Modal.Header closeButton>
           <Modal.Title>Confirm Deletion</Modal.Title>
@@ -336,7 +323,6 @@ export default function SettingsTab() {
         </Modal.Footer>
       </Modal>
 
-      {/* -------- Account Settings -------- */}
       <Card className="shadow-sm border-0">
         <Card.Body>
           <h5 className="mb-3 heading-text">Account Settings</h5>

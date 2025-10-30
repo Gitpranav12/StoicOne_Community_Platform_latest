@@ -38,7 +38,6 @@ export default function UserPublicProfile() {
       <div className="container-fluid p-3 my-2 body">
         <ProfileHeader user={user} />
 
-        {/* Tabs without Settings */}
         <ul className="nav nav-tabs mt-3 normal-text">
           <li className="nav-item">
             <NavLink

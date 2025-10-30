@@ -3,26 +3,20 @@ import { UserContext } from "../context/UserContext";
 import "../css/Profile.css";
 import { FaLock } from "react-icons/fa";
 
-// prop added by raj
 export default function AchievementsTab({ user: propUser, loading: propLoading }) {
-  // const { user, loading } = useContext(UserContext);
 
-  // Added by Raj.........
   const { user: contextUser, loading: contextLoading } = useContext(UserContext);
   const user = propUser || contextUser;
   const loading = propLoading ?? contextLoading;
-  //...............
 
   if (loading) return <p>Loading achievements...</p>;
   if (!user || !user.achievements) return <p>No achievements found.</p>;
 
-  // Achieved badges/milestones first
   const badges = (user.achievements.badges || []).sort((a, b) => b.achieved - a.achieved);
   const milestones = (user.achievements.milestones || []).sort((a, b) => b.achieved - a.achieved);
 
   return (
     <div className="container-fluid p-3">
-      {/* Badges Grid */}
       <h5 className="mb-3 heading-text">Badges</h5>
       <div className="row">
         {badges.map((b) => (
@@ -72,7 +66,6 @@ export default function AchievementsTab({ user: propUser, loading: propLoading }
         ))}
       </div>
 
-      {/* Milestones Grid */}
       <h5 className="mt-4 mb-3 heading-text">Milestones</h5>
       <div className="row">
         {milestones.map((m) => (
@@ -122,7 +115,6 @@ export default function AchievementsTab({ user: propUser, loading: propLoading }
         ))}
       </div>
 
-      {/* Reputation Section */}
       <h5 className="mt-4 mb-3 heading-text">Reputation</h5>
       <div className="card p-3 text-center shadow-sm">
         <span className="fs-2 mb-2 d-flex justify-content-center">

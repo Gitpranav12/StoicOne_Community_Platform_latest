@@ -64,7 +64,6 @@ function ProfileTab({ user: propUser, loading: propLoading }) {
   return (
     <div className="container-fluid p-4">
 
-      {/* Stats Section */}
       <div className="stats-section mb-5">
         <h4 className="fw-bold mb-4 text-gradient">
           <i className="bi bi-bar-chart-fill"></i> Stats
@@ -82,7 +81,6 @@ function ProfileTab({ user: propUser, loading: propLoading }) {
         </div>
       </div>
 
-      {/* Bio Section */}
       <div className="bio-section mb-5">
         <h4 className="fw-bold mb-3 text-gradient"><i class="bi bi-person-fill"></i> Bio</h4>
         <div className="card shadow-sm border-0 rounded-4 p-3 bg-light">
@@ -90,7 +88,6 @@ function ProfileTab({ user: propUser, loading: propLoading }) {
         </div>
       </div>
 
-      {/* Questions Section */}
       <div className="questions-section">
         <h4 className="fw-bold mb-4 text-gradient"><i class="bi bi-question-diamond-fill"></i> Questions</h4>
         {questions.length > 0 ? (
@@ -100,7 +97,6 @@ function ProfileTab({ user: propUser, loading: propLoading }) {
               key={post.id}
             >
               <div className="card-body d-flex flex-column flex-md-row justify-content-between align-items-start gap-3">
-                {/* Left side - Question info */}
                 <div className="flex-grow-1">
                   {editingId === post.id ? (
                     <>
@@ -141,7 +137,6 @@ function ProfileTab({ user: propUser, loading: propLoading }) {
                   )}
                 </div>
 
-                {/* Right side - Buttons */}
                 <div className="d-flex gap-2">
                   {(!propUser || propUser.id === contextUser?.id) &&
                     (editingId === post.id ? (

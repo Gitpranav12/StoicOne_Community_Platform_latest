@@ -5,7 +5,6 @@ import axios from "axios";
 export default function NotificationDropdown({ userId }) {
   const [notifications, setNotifications] = useState([]);
 
-  // ✅ Fetch notifications
   const fetchNotifications = async () => {
     if (!userId) return;
     try {
@@ -18,7 +17,6 @@ export default function NotificationDropdown({ userId }) {
     }
   };
 
-  // ✅ Mark all notifications as read
   const markAllNotificationsRead = async () => {
     try {
       await axios.put(
@@ -27,7 +25,7 @@ export default function NotificationDropdown({ userId }) {
       setNotifications((prev) =>
         prev.map((n) => ({ ...n, read_status: 1 }))
       );
-      setNotifications([]); // clear unread notifications after marking read
+      setNotifications([]);
 
     } catch (err) {
       console.error("Error marking notifications as read:", err);
@@ -40,7 +38,6 @@ export default function NotificationDropdown({ userId }) {
 
   return (
     <Dropdown align="end">
-      {/* Bell Icon */}
       <Dropdown.Toggle
         as="div"
         id="dropdown-notifications"
@@ -65,7 +62,6 @@ export default function NotificationDropdown({ userId }) {
         )}
       </Dropdown.Toggle>
 
-      {/* Popup */}
       <Dropdown.Menu
         style={{
           width: "360px",

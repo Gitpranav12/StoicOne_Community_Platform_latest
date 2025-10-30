@@ -2,7 +2,6 @@ const express = require("express");
 const pool = require("../db.js");
 const router = express.Router();
 
-// 🔹 Get all departments
 router.get("/", async (req, res) => {
   try {
     const [departments] = await pool.query("SELECT * FROM departments");
@@ -13,7 +12,6 @@ router.get("/", async (req, res) => {
   }
 });
 
-// 🔹 Get all departments + their designations
 router.get("/all", async (req, res) => {
   try {
     const [departments] = await pool.query("SELECT * FROM departments");

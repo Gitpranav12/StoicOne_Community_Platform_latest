@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { UserContext } from "../context/UserContext";
 import '../css/Profile.css';
 
-// Reusable list component
 function LoadMoreList({ items, visible, setVisible, renderItem, step = 5 }) {
   const { user } = useContext(UserContext);
 
@@ -34,7 +33,6 @@ function LoadMoreList({ items, visible, setVisible, renderItem, step = 5 }) {
   );
 }
 
-// prop added by raj
 export default function ActivityTab({ user: propUser, loading: propLoading }) {
   const { user: contextUser, loading: contextLoading } = useContext(UserContext);
   const user = propUser || contextUser;
@@ -51,7 +49,6 @@ export default function ActivityTab({ user: propUser, loading: propLoading }) {
   return (
     <div className="container-fluid p-3">
       <div className="row g-4">
-        {/* Questions */}
         <div className="col-12 col-sm-12 col-md-6 col-lg-6">
           <h5 className="fw-bold mb-1 text-gradient p-2">
             <i className="bi bi-question-diamond-fill"></i> Questions
@@ -77,7 +74,6 @@ export default function ActivityTab({ user: propUser, loading: propLoading }) {
           />
         </div>
 
-        {/* Answers */}
         <div className="col-12 col-sm-12 col-md-6 col-lg-6">
           <h5 className="fw-bold mb-1 text-gradient p-2">
             <i className="bi bi-lightbulb-fill"></i> Answers
@@ -93,13 +89,11 @@ export default function ActivityTab({ user: propUser, loading: propLoading }) {
                 style={{ cursor: "pointer" }}
                 onClick={() => navigate(`/questions/${a.question_id}`)}
               >
-                {/* Question title */}
                 <p className="mb-2 mb-sm-0">
                   <span className="text-muted">Answered:</span>{" "}
                   <span className="fw-semibold">{a.questionTitle}</span>
                 </p>
 
-                {/* Votes */}
                 <span className="text-muted">
                   <i className="bi bi-hand-thumbs-up-fill"></i> {a.votes}
                 </span>

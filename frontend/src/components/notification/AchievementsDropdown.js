@@ -5,12 +5,11 @@ import axios from "axios";
 export default function AchievementsDropdown({ userId }) {
   const [achievements, setAchievements] = useState([]);
 
-  // 🔹 Fetch unread notifications from backend
   const fetchAchievements = async () => {
     if (!userId) return;
     try {
       const res = await axios.get(`http://localhost:8080/api/notifications/${userId}`);
-      setAchievements(res.data); // only unread notifications
+      setAchievements(res.data);
     } catch (err) {
       console.error("Error fetching achievements:", err);
     }
@@ -20,18 +19,16 @@ export default function AchievementsDropdown({ userId }) {
     fetchAchievements();
   }, [userId]);
 
-  // 🔹 Mark all as read
   const markAllAsRead = async () => {
     if (!userId) return;
     try {
       await axios.put(`http://localhost:8080/api/notifications/mark-read/${userId}`);
-      setAchievements([]); // clear unread notifications after marking read
+      setAchievements([]);
     } catch (err) {
       console.error("Error marking achievements as read:", err);
     }
   };
 
-  // 🔹 Format date labels
   const formatDateLabel = (dateStr) => {
     const date = new Date(dateStr);
     const today = new Date();
@@ -43,9 +40,8 @@ export default function AchievementsDropdown({ userId }) {
     return date.toLocaleDateString("en-CA");
   };
 
-  // 🔹 Group achievements by day
   const grouped = achievements.reduce((acc, ach) => {
-    const day = new Date(ach.createdAt).toDateString(); // always use createdAt
+    const day = new Date(ach.createdAt).toDateString();
     acc[day] = acc[day] || [];
     acc[day].push(ach);
     return acc;
@@ -56,7 +52,6 @@ export default function AchievementsDropdown({ userId }) {
 
   return (
     <Dropdown align="end">
-      {/* Trophy Icon */}
       <Dropdown.Toggle
         as="div"
         id="dropdown-achievements"
@@ -77,7 +72,6 @@ export default function AchievementsDropdown({ userId }) {
       <Dropdown.Menu
         style={{ width: "420px", borderRadius: "8px", boxShadow: "0px 4px 12px rgba(0,0,0,0.15)", border: "none", padding: 0 }}
       >
-        {/* Header */}
         <div className="d-flex justify-content-between align-items-center px-3 py-2 bg-light small">
           <span className="fw-bold">ACHIEVEMENTS</span>
           <div className="d-flex align-items-center gap-3">
@@ -94,7 +88,6 @@ export default function AchievementsDropdown({ userId }) {
           </div>
         </div>
 
-        {/* Achievements List */}
         <div style={{ maxHeight: "320px", overflowY: "auto" }}>
           {Object.keys(grouped).length > 0 ? (
             Object.keys(grouped).map((day) => (
@@ -116,7 +109,6 @@ export default function AchievementsDropdown({ userId }) {
                    {a.points > 0 && (
                         <span className="text-success fw-bold me-2">{a.points}</span>
                       )} 
-                      {/* .......... */}
                       <span className="normal-text">You Earned New Achievement </span>
                       <span
                         dangerouslySetInnerHTML={{ __html: a.title || a.description || a.text }}

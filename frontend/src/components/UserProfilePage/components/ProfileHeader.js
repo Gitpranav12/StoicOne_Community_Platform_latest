@@ -30,7 +30,6 @@ function ProfileHeader({ user: propUser, loading: propLoading }) {
     <div className="container-fluid mb-4">
       <div className="card shadow border-0 rounded-4 p-4 profile-header-card">
         <div className="row align-items-center">
-          {/* Avatar + Info */}
           <div className="col-12 col-md-8 d-flex align-items-center mb-3 mb-md-0">
             <div className="profile-avatar-wrapper">
               <img
@@ -56,7 +55,6 @@ function ProfileHeader({ user: propUser, loading: propLoading }) {
             </div>
           </div>
 
-          {/* Edit Profile Button */}
           {(!propUser || propUser.id === contextUser?.id) && (
             <div className="col-12 col-md-4 text-md-end text-center">
               <button

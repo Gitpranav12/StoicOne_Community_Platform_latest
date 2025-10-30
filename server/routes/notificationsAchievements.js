@@ -2,7 +2,6 @@ const express = require("express");
 const pool = require("../db");
 const router = express.Router();
 
-// 🔹 Get unread notifications
 router.get("/:userId", async (req, res) => {
   const { userId } = req.params;
   try {
@@ -18,7 +17,6 @@ router.get("/:userId", async (req, res) => {
 });
 
 
-// 🔹 Mark all as read
 router.put("/mark-read/:userId", async (req, res) => {
   const { userId } = req.params;
   try {

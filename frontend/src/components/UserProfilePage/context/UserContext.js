@@ -13,7 +13,6 @@ export const UserProvider = ({ children }) => {
 
   const API_BASE = "http://localhost:8080/api";
 
-  // -------- Fetch User Data --------
   const fetchUserData = useCallback(
     async (retryCount = 0) => {
       const currentUserId = user?.id;
@@ -66,14 +65,12 @@ export const UserProvider = ({ children }) => {
     [API_BASE, user]
   );
 
-  // -------- Trigger fetch after login or user change --------
   useEffect(() => {
     if (!user) {
       setLoading(false);
       return;
     }
 
-    // If profile is missing, fetch full data
     if (!user.profile || !user.account) {
       fetchUserData();
     } else {
@@ -81,7 +78,6 @@ export const UserProvider = ({ children }) => {
     }
   }, [user, fetchUserData]);
 
-  // -------- Update Profile --------
   const updateProfile = async (updatedProfile) => {
     if (!user?.id) return;
     try {
@@ -102,7 +98,6 @@ export const UserProvider = ({ children }) => {
     }
   };
 
-  // -------- Update Account --------
   const updateAccount = async ({ currentPassword, newPassword }) => {
     if (!user?.id) return;
     try {
@@ -128,7 +123,6 @@ export const UserProvider = ({ children }) => {
     }
   };
 
-  // -------- Delete Account --------
   const deleteAccount = async () => {
     if (!user?.id) return;
     try {
@@ -151,7 +145,6 @@ export const UserProvider = ({ children }) => {
     }
   };
 
-  // -------- Update Profile Photo --------
   const updateProfilePhoto = async (file) => {
     if (!user?.id) return;
     try {
