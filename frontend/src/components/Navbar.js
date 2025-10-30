@@ -184,6 +184,11 @@ const Navbar = ({ toggleSidebar }) => {
           </ul>
         )}
       </div>
+<<<<<<< Updated upstream
+=======
+
+
+>>>>>>> Stashed changes
       <div className={styles.rightSection}>
         <NotificationDropdown userId={id} />
         <div className={`${styles.icon} d-none d-md-block`}><AchievementsDropdown userId={id} /></div>

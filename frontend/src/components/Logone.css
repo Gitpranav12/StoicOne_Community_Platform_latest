@@ -1,15 +1,15 @@
 .logone-container {
   display: flex;
   align-items: center;
-  gap: 10px;   /* StoicOne आणि Community मध्येच gap */
+  gap: 10px;   
 }
 
 .logone-subtext {
-  font-size: 0.8rem;   /* बारकं दिसेल */
+  font-size: 0.8rem;   
   font-weight: 500;
-  color: #666;         /* हलका रंग */
-  margin-top: -4px;    /* थोडं जवळ आणण्यासाठी */
-  letter-spacing: 1px; /* spaced look */
+  color: #666;
+  margin-top: -4px;
+  letter-spacing: 1px;
   text-transform: uppercase;
 }
 
@@ -28,10 +28,10 @@
 }
 
 .sub {
-  font-size: 0.9rem;   /* छोटं दिसेल */
+  font-size: 0.9rem;   
   font-weight: 500;
-  color: #686868;         /* हलका रंग */
-  margin-left: 8px;    /* थोडा space */
+  color: #686868;
+  margin-left: 8px;
   letter-spacing: 0.5px;
 }
 
@@ -47,7 +47,7 @@
   height: 24px;
   width: 24px;
   object-fit: contain;
-  margin: 0 2px;   /* लहान margin, extra gap नाही */
+  margin: 0 2px;
   position: relative;
   top: -1px;
 }

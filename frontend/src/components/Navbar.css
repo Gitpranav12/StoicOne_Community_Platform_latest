@@ -2,16 +2,16 @@
   font-weight: 600;
   cursor: pointer;
   color: #6B6969;
-  padding: 6px 14px;           /* :arrow_down_small: Smaller size */
-  font-size: 14px;             /* :arrow_down_small: Smaller text */
-  border-radius: 999px;        /* :repeat: Full oval */
+  padding: 6px 14px;           
+  font-size: 14px;           
+  border-radius: 999px;        
   background: transparent;
   border: none;
   transition: background 0.2s ease;
 }
 .products-btn:hover {
   background: #F2F2F2;
-  color:#6b6969 ; /* Keep text color same as normal */
+  color:#6b6969 ; 
 }
 .products-btn.active {
   background: #007BFF;
@@ -19,8 +19,8 @@
 }
 /* Popover styles */
 .products-popover {
-  width: 250px;                /* Set exact width */
-  max-height: 500px;           /* Optional: add scroll if it overflows */
+  width: 250px;              
+  max-height: 500px;          
   padding: 8px 0;
   border: 1px solid #ddd;
   border-radius: 6px;
@@ -30,7 +30,7 @@
 /* Popover arrow (centered) */
 .s-popover--arrow {
   position: absolute;
-  top: -11px; /* Slightly up to fit border */
+  top: -11px; 
   left: 50%;
   transform: translateX(-50%);
   width: 0;
@@ -38,7 +38,7 @@
   /* Outer arrow (border) */
   border-left: 11px solid transparent;
   border-right: 11px solid transparent;
-  border-bottom: 11px solid #ddd;  /* Border color */
+  border-bottom: 11px solid #ddd;  
   z-index: 1;
 }
 /* Inner arrow (white fill) - use a ::after pseudo-element */
@@ -51,7 +51,7 @@
   height: 0;
   border-left: 10px solid transparent;
   border-right: 10px solid transparent;
-  border-bottom: 10px solid #fff;  /* Background color of popover */
+  border-bottom: 10px solid #fff; 
   z-index: 2;
 }
 /* Remove numbers/bullets from popover list */

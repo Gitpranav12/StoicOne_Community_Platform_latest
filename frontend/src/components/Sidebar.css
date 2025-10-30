@@ -1,10 +1,10 @@
 /* Sidebar container */
 .sidebar {
   width: 220px;
-  background-color: #F8F9FA; /* हलका ग्रे bg, StackOverflow सारखा */
-  height: calc(100vh - 56px); /* navbar खाली sidebar पूर्ण */
+  background-color: #F8F9FA;
+  height: calc(100vh - 56px); 
   position: sticky;
-  top: 56px; /* navbar च्या खाली सुरू */
+  top: 56px; 
   padding: 10px 0;
   border-right: 1px solid #ddd;
 }
@@ -36,17 +36,7 @@
   margin-left: 8px;
   font-size: 13px;
 }
-/* .sidebar {
-  background: #fff;
-  border-right: 1px solid #D6D9DC;
-  width: 230px;
-  position: fixed;
-  top: 56px;
-  bottom: 0;
-  padding: 10px 0;
-  font-size: 15px;
-  overflow-y: auto;
-} */
+
 /* Each link */
 .sidebar-link {
   display: flex;
@@ -76,19 +66,17 @@
   display: flex;
   align-items: center;
   color: inherit;
-  /* font-size: 18px; /* big icon */
+  
 }
 /* Section heading */
 .sidebar-section {
-  /* font-size: 12px;
-  font-weight: bold; */
+
   color: #6A737C;
   margin: 18px 12px 8px;
   text-transform: uppercase;
 }
 /* Sub-links */
 .sidebar-sub .sidebar-link.small {
-  /* font-size: 13px; */
   padding-left: 32px;
   color: #525960;
 }
@@ -96,17 +84,7 @@
   background: transparent;
   color: #0A95FF;
 }
-/* .sidebar {
-  background: #fff;
-  border-right: 1px solid #d6d9dc;
-  width: 230px; 
-  position: fixed;
-  top: 56px;
-  bottom: 0;
-  padding: 10px 0;
-  font-size: 15px;  
-  overflow-y: auto;
-} */
+
 
 /* Each link */
 .sidebar-link {

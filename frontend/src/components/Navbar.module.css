@@ -146,13 +146,8 @@
 }
 
 
-/* ... (keep all your existing styles above this line) ... */
-
-
-/* --- Mobile & Tablet Responsive View --- */
-
 @media (max-width: 768px) {
-    /* ... (keep existing mobile styles) ... */
+
     .navbar {
         justify-content: space-between;
     }
