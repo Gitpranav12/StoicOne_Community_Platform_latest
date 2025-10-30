@@ -47,7 +47,6 @@ const ArticlesPage = () => {
   return (
      <Layout>
     <Container className="articles-page">
-      {/* Search */}
       <Form className="d-flex mb-4 search-bar" onSubmit={handleSearchSubmit}>
         <Form.Control
           type="search"
@@ -60,7 +59,6 @@ const ArticlesPage = () => {
           Search
         </Button>
       </Form>
-      {/* Filter by Category */}
       <div className="mb-4 filter-section">
         <div
           className="filter-title"
@@ -108,7 +106,6 @@ const ArticlesPage = () => {
           </div>
         )}
       </div>
-      {/* Articles */}
       {loading ? (
         <div className="text-center my-5">
           <Spinner animation="border" />

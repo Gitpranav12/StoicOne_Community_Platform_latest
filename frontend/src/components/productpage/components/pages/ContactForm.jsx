@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Container, Row, Col, Image, Form, Button, Alert, Card } from "react-bootstrap";
+import { Container, Row, Col, Image, Form, Button, Alert} from "react-bootstrap";
 
 export default function ContactForm() {
   const [formData, setFormData] = useState({
@@ -98,7 +98,6 @@ export default function ContactForm() {
   return (
     <Container fluid className="bg-light min-vh-100 d-flex align-items-center py-3">
         <Row className="align-items-center">
-          {/* Left Column - Form */}
           <Col md={6} className="ps-md-5">
                 <h3 className="text-primary mb-4 fw-semibold py-5 text-end">Connect with us</h3>
 
@@ -114,10 +113,8 @@ export default function ContactForm() {
                     contact us directly.
                   </Alert>
                 )}
-
                 {!isSubmitted && (
                   <Form id="contact-form" onSubmit={handleSubmit}>
-                    {/* Salutation */}
                     <Form.Group className="mb-3">
                       <Form.Label className="fw-semibold">Salutation *</Form.Label>
                       <div className="d-flex gap-3">
@@ -148,8 +145,6 @@ export default function ContactForm() {
                         </Form.Control.Feedback>
                       )}
                     </Form.Group>
-
-                    {/* First Name */}
                     <Form.Group className="mb-3">
                       <Form.Label className="fw-semibold">First name *</Form.Label>
                       <Form.Control
@@ -164,8 +159,6 @@ export default function ContactForm() {
                         {errors.first_name}
                       </Form.Control.Feedback>
                     </Form.Group>
-
-                    {/* Last Name */}
                     <Form.Group className="mb-3">
                       <Form.Label className="fw-semibold">Last name *</Form.Label>
                       <Form.Control
@@ -180,8 +173,6 @@ export default function ContactForm() {
                         {errors.last_name}
                       </Form.Control.Feedback>
                     </Form.Group>
-
-                    {/* Phone Fields */}
                     <Row className="mb-3">
                       <Col sm={6}>
                         <Form.Group>
@@ -220,8 +211,6 @@ export default function ContactForm() {
                         </Form.Group>
                       </Col>
                     </Row>
-
-                    {/* Email */}
                     <Form.Group className="mb-3">
                       <Form.Label className="fw-semibold">Email *</Form.Label>
                       <Form.Control
@@ -235,8 +224,6 @@ export default function ContactForm() {
                         {errors.email}
                       </Form.Control.Feedback>
                     </Form.Group>
-
-                    {/* Country */}
                     <Form.Group className="mb-3">
                       <Form.Label className="fw-semibold">Country/Region *</Form.Label>
                       <Form.Select
@@ -254,8 +241,6 @@ export default function ContactForm() {
                         {errors.country}
                       </Form.Control.Feedback>
                     </Form.Group>
-
-                    {/* Message */}
                     <Form.Group className="mb-3">
                       <Form.Label className="fw-semibold">Tell us more about your needs (Optional)</Form.Label>
                       <Form.Control
@@ -271,8 +256,6 @@ export default function ContactForm() {
                         {errors.message}
                       </Form.Control.Feedback>
                     </Form.Group>
-
-                    {/* Legal Consent */}
                     <Form.Group className="mb-4">
                       <Form.Check
                         type="checkbox"
@@ -293,7 +276,6 @@ export default function ContactForm() {
                         {errors.legal_consent}
                       </Form.Control.Feedback>
                     </Form.Group>
-
                     <Button 
                       type="submit" 
                       variant="primary" 
@@ -304,8 +286,6 @@ export default function ContactForm() {
                   </Form>
                 )}
           </Col>
-
-          {/* Right Column - Image */}
           <Col md={6} className="text-center">
             <Image
               src="https://devmagz.com/wp-content/uploads/2025/05/email-marketing.png"

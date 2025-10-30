@@ -1,7 +1,6 @@
 .articles-page {
   margin-top: 40px;
 }
-/* Search Bar */
 .search-bar input {
   border: 1px solid #D1D5DB;
   padding: 10px 14px;
@@ -14,7 +13,6 @@
 .search-bar button {
   padding: 8px 18px;
 }
-/* Filter Section */
 .filter-section {
   background: #F9FAFB;
   padding: 15px;
@@ -52,7 +50,6 @@
   background: #2563EB;
   color: white;
 }
-/* Article Card */
 .article-card {
   border: none;
   border-radius: 12px;

@@ -1,18 +1,15 @@
 import React, { useState, useRef, useContext, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Overlay, Popover, Button } from 'react-bootstrap';
+import { Overlay, Popover} from 'react-bootstrap';
 import styles from './Navbar.module.css';
-import { FaBars, FaTrophy, FaSignOutAlt } from 'react-icons/fa';
+import { FaBars } from 'react-icons/fa';
 import AchievementsDropdown from './../components/notification/AchievementsDropdown';
 import { UserContext } from "./UserProfilePage/context/UserContext";
 import './../components/Navbar.css';
-
-// Assuming these components exist in the same folder
 import Logone from './Logone';
 import NotificationDropdown from './notification/NotificationDropdown';
 
 const Navbar = ({ toggleSidebar }) => {
-  // --- Logic from your new component ---
   const [showProducts, setShowProducts] = useState(false);
   const productsRef = useRef(null);
 
@@ -28,11 +25,11 @@ const Navbar = ({ toggleSidebar }) => {
     : "https://i.pravatar.cc/112?img=1";
 
   const handleLogout = () => {
-    localStorage.removeItem("token");          // token clear
-    localStorage.removeItem("currentUser");    // currentUser clear
-    localStorage.clear();  // Clear all localStorage data
-    setUser(null);                              // context clear
-    window.location.href = "/login";           // login page redirect
+    localStorage.removeItem("token");         
+    localStorage.removeItem("currentUser");    
+    localStorage.clear();  
+    setUser(null);                             
+    window.location.href = "/login";         
   };
 
 
@@ -55,7 +52,6 @@ const Navbar = ({ toggleSidebar }) => {
   }, [query]);
   return (
     <header className={styles.navbar}>
-      {/* --- Left Section (with our mobile toggle) --- */}
       <div className={styles.leftSection}>
         <div className={styles.menuIcon} onClick={toggleSidebar}>
           <FaBars />
@@ -63,8 +59,6 @@ const Navbar = ({ toggleSidebar }) => {
         <Link to="/dashboard" className={styles.logo}>
           <Logone />
         </Link>
-
-        {/* Products Popover */}
         <div
           ref={productsRef}
           className={`products-btn  d-none d-md-block ${showProducts ? "active" : ""}`}
@@ -149,9 +143,6 @@ const Navbar = ({ toggleSidebar }) => {
           </Popover>
         </Overlay>
       </div>
-
-      {/* --- Search Container --- */}
-      {/* Search Container with Dropdown Suggestions */}
       <div className={styles.searchContainer} style={{ position: 'relative' }}>
         <input
           type="text"
@@ -193,25 +184,6 @@ const Navbar = ({ toggleSidebar }) => {
           </ul>
         )}
       </div>
-
-      {/* --- Right Section (with new functionality) --- */}
-      {/* <div className={styles.rightSection}>
-        <NotificationDropdown />
-        <div className={styles.icon}><AchievementsDropdown/></div>
-        <Link to="/profile" className={styles.icon}>
-     
-          <i className="bi bi-person-circle fs-4"></i>
-        </Link>
-        <Button 
-          variant="outline-primary" 
-          onClick={handleLogout}
-          className={styles.logoutButton}
-        >
-          <FaSignOutAlt />
-          <span>Logout</span>
-        </Button>
-      </div> */}
-
       <div className={styles.rightSection}>
         <NotificationDropdown userId={id} />
         <div className={`${styles.icon} d-none d-md-block`}><AchievementsDropdown userId={id} /></div>

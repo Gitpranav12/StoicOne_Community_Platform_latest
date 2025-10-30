@@ -101,7 +101,6 @@ export function SuitePage({ onNavigate }) {
 
   return (
     <div className="bg-white">
-      {/* Hero Section */}
       <section
         className="text-black py-5"
         style={{
@@ -191,8 +190,6 @@ export function SuitePage({ onNavigate }) {
           </div>
         </div>
       </section>
-
-      {/* Modules Section */}
       <section className="py-5 bg-light">
         <div className="container-fluid px-4 px-md-5 py-5">
           <div className="text-center mb-5">
@@ -235,8 +232,6 @@ export function SuitePage({ onNavigate }) {
           </div>
         </div>
       </section>
-
-      {/* Benefits Section */}
       <section className="py-5 bg-light">
         <div className="container-fluid px-4 px-md-5 py-5">
           <div className="row align-items-center">
@@ -264,8 +259,6 @@ export function SuitePage({ onNavigate }) {
           </div>
         </div>
       </section>
-
-      {/* Pricing Section */}
     <section className="py-5 bg-light">
                  <div className="container-fluid px-3 px-md-5 py-5">
                    <div className="text-center mb-5">
@@ -320,7 +313,6 @@ export function SuitePage({ onNavigate }) {
               </div>
             </div>
           </section>
-      {/* CTA Section */}
       <section className="py-5 text-white" style={{ background: "#a47cedff" }}>
         <div className="container-fluid px-4 px-md-5 py-5 text-center">
           <div className="col-lg-8 mx-auto">

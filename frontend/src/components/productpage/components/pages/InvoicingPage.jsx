@@ -67,7 +67,6 @@ export function InvoicingPage({ onNavigate }) {
 
   return (
     <div className="bg-white">
-      {/* Hero Section */}
       <section
         className="text-dark py-5"
         style={{
@@ -157,8 +156,6 @@ export function InvoicingPage({ onNavigate }) {
           </div>
         </div>
       </section>
-
-      {/* Features Section */}
       <section className="py-5 bg-light">
         <div className="container-fluid px-3 px-md-4 px-lg-5 py-5">
           <div className="text-center mb-5">
@@ -196,8 +193,6 @@ export function InvoicingPage({ onNavigate }) {
           </div>
         </div>
       </section>
-
-      {/* Benefits Section */}
       <section className="py-5">
         <div className="container-fluid px-3 px-md-4 px-lg-5 py-5">
           <div className="row align-items-center">
@@ -227,8 +222,6 @@ export function InvoicingPage({ onNavigate }) {
           </div>
         </div>
       </section>
-
-      {/* Pricing Section */}
       <section className="py-5 bg-light">
              <div className="container-fluid px-3 px-md-5 py-5">
                <div className="text-center mb-5">
@@ -282,8 +275,6 @@ export function InvoicingPage({ onNavigate }) {
           </div>
         </div>
       </section>
-
-      {/* CTA Section */}
       <section className="py-5 text-white" style={{ background: '#f9c968ff' }}>
         <div className="container-fluid px-3 px-md-4 px-lg-5 py-5 text-center">
           <h2 className="display-5 fw-bold mb-4">
