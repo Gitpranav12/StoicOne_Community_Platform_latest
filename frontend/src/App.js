@@ -104,7 +104,7 @@ export default function App() {
               <Route path="/forgot-password" element={<ForgotPassword />} />
               {/* home */}
               <Route path="/dashboard" element={<ProtectedRoute><DashboardHome /></ProtectedRoute>} />
-              <Route path="/admin-dashboard" element={<ProtectedRoute><DashboardHome /></ProtectedRoute>} />
+              <Route path="/admin-dashboard" element={<ProtectedRoute><DashboardHomeAdmin /></ProtectedRoute>} />
               {/* Admin Dashboard with nested tabs
 =======
             <Routes>
@@ -112,8 +112,8 @@ export default function App() {
               <Route path="/Signup" element={<Signup />} />
               <Route path="/forgot-password" element={<ForgotPassword />} />
               {/* home */}
-              {/* <Route path="/dashboard" element={<ProtectedRoute><DashboardHome /></ProtectedRoute>} /> */}
-              {/* <Route path="/admin-dashboard" element={<ProtectedRoute><DashboardHomeAdmin /></ProtectedRoute>} /> */}
+              <Route path="/dashboard" element={<ProtectedRoute><DashboardHome /></ProtectedRoute>} />
+              <Route path="/admin-dashboard" element={<ProtectedRoute><DashboardHomeAdmin /></ProtectedRoute>} />
               {/* Admin Dashboard with nested tabs
 >>>>>>> 54ce30f07109cb86fd79ca48e0f605540d4ea4da
               <Route path="/admin/*" element={<AdminDashboardPage />} /> */}
