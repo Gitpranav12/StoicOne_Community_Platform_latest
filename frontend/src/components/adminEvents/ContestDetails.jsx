@@ -405,18 +405,6 @@ export default function ContestDetails() {
                     </div>
                   </div>
 
-                  {/* <div className="d-flex align-items-center mb-3">
-                    <div className="stats-icon bg-success bg-opacity-10 text-success rounded-3 me-3">
-                      <BarChart3 size={24} />
-                    </div>
-                    <div>
-                      <div className="fw-bold">
-                        {Math.floor(contest.participants * 0.7)}
-                      </div>
-                      <div className="small text-muted">Completed</div>
-                    </div>
-                  </div> */}
-
                   <div className="d-flex align-items-center mb-3">
                     <div className="stats-icon bg-warning bg-opacity-10 text-warning rounded-3 me-3">
                       <Clock size={24} />
@@ -434,22 +422,6 @@ export default function ContestDetails() {
                   </div>
 
                   <hr />
-
-                  {/* <div className="small text-muted mb-2">Completion Rate</div>
-                  <div className="progress mb-3" style={{ height: "8px" }}>
-                    <div
-                      className="progress-bar bg-success"
-                      style={{ width: "70%" }}
-                    ></div>
-                  </div>
-
-                  <div className="small text-muted mb-2">Average Score</div>
-                  <div className="progress mb-3" style={{ height: "8px" }}>
-                    <div
-                      className="progress-bar bg-primary"
-                      style={{ width: "85%" }}
-                    ></div>
-                  </div> */}
                 </div>
               </div>
 
@@ -471,96 +443,6 @@ export default function ContestDetails() {
                 >
                   {participants.length > 0 ? (
                     participants.map((p, idx) => (
-                      // <div
-                      //   key={idx}
-                      //   className="d-flex align-items-center justify-content-between border-bottom py-2"
-                      // >
-                      //   <div className="d-flex align-items-center">
-                      //     {p.avatar ? (
-                      //       <img
-                      //         src={p.avatar}
-                      //         alt={p.name || "User"}
-                      //         title={
-                      //           p.submitted_at
-                      //             ? "Submitted"
-                      //             : "Not submitted yet"
-                      //         }
-                      //         className="rounded-circle me-2"
-                      //         style={{
-                      //           width: 32,
-                      //           height: 32,
-                      //           objectFit: "cover",
-                      //           border: "2px solid",
-                      //           borderColor: p.submitted_at
-                      //             ? "#0bf10bff"
-                      //             : "#f90b0bff",
-                      //         }}
-                      //       />
-                      //     ) : (
-                      //       <div
-                      //         className="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center me-2"
-                      //         title={
-                      //           p.submitted_at
-                      //             ? "Submitted"
-                      //             : "Not submitted yet"
-                      //         }
-                      //         style={{
-                      //           width: 32,
-                      //           height: 32,
-                      //           fontSize: "0.9rem",
-                      //           border: "2px solid",
-                      //           borderColor: p.submitted_at
-                      //             ? "#0bf10bff"
-                      //             : "#f90b0bff",
-                      //         }}
-                      //       >
-                      //         {p.name ? p.name[0].toUpperCase() : "U"}
-                      //       </div>
-                      //     )}
-
-                      //     <div>
-                      //       <div className="fw-semibold">
-                      //         {p.name || "Unknown User"}
-                      //       </div>
-                      //       <div className="text-muted small">
-                      //         {p.email || p.user_id}
-                      //       </div>
-                      //     </div>
-                      //   </div>
-                      //   <div className="text-muted small">
-                      //     {p.submitted_at ? (
-                      //       <div>
-                      //         Submitted{" "}
-                      //         {new Date(p.submitted_at)
-                      //           .toLocaleString("en-GB", {
-                      //             day: "2-digit",
-                      //             month: "short",
-                      //             year: "2-digit",
-                      //             hour: "numeric",
-                      //             minute: "2-digit",
-                      //             hour12: true,
-                      //           })
-                      //           .replace(",", ", at")}
-                      //       </div>
-                      //     ) : p.joined_at ? (
-                      //       <div>
-                      //         Joined{" "}
-                      //         {new Date(p.joined_at)
-                      //           .toLocaleString("en-GB", {
-                      //             day: "2-digit",
-                      //             month: "short",
-                      //             year: "2-digit",
-                      //             hour: "numeric",
-                      //             minute: "2-digit",
-                      //             hour12: true,
-                      //           })
-                      //           .replace(",", ", at")}
-                      //       </div>
-                      //     ) : (
-                      //       <div>-</div>
-                      //     )}
-                      //   </div>
-                      // </div>
                       <div
                         key={idx}
                         className="d-flex align-items-start justify-content-between border-bottom py-2 flex-wrap"

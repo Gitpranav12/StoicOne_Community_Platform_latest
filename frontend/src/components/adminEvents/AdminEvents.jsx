@@ -1,19 +1,14 @@
 import { useState } from "react";
 import { Plus, BarChart3, Users, Trophy, Clock } from "lucide-react";
 import ContestTable from "./ContestTable";
-import CreateContestForm from "./CreateContestForm";
-import ContestDetails from "./ContestDetails";
 import SubmissionReview from "./SubmissionReview";
 import { useNavigate } from "react-router-dom";
 
 export default function AdminEvents({
   contests,
-  onCreateContest,
-  onUpdateContest,
   onDeleteContest,
 }) {
   const [activeTab, setActiveTab] = useState("contests");
-  const [selectedContest, setSelectedContest] = useState(null);
   const navigate = useNavigate();
 
   const stats = {
@@ -58,12 +53,6 @@ export default function AdminEvents({
       </div>
 
       {/* ✅ RESPONSIVE Stats Cards */}
-      {/* 
-        - col-12: 1 card per row on extra-small screens (phones)
-        - col-md-6: 2 cards per row on medium screens (tablets)
-        - col-lg-3: 4 cards per row on large screens (desktops)
-        - g-4: Adds a responsive gutter (spacing) between cards
-      */}
       <div className="row g-4 mb-4">
         <div className="col-12 col-md-6 col-lg-3">
           <div className="card border shadow-sm h-100 stats-card">

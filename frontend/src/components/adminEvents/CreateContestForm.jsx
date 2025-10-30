@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { ArrowLeft, Plus, Trash2, Upload, Edit2 } from "lucide-react";
+import { ArrowLeft, Plus, Trash2, Edit2 } from "lucide-react";
 import Layout from "../../Layout/Layout";
 import { useNavigate, useLocation } from "react-router-dom";
 import toast from "react-hot-toast";
@@ -95,10 +95,6 @@ export default function CreateContestForm({ onSuccess }) {
     return now.toISOString().slice(0, 16);
   };
 
-  // const handleBannerChange = (e) => {
-  //   const file = e.target.files[0];
-  //   setFormData((prev) => ({ ...prev, banner: file }));
-  // };
 
   const handleRoundChange = (e) => {
     const { name, value } = e.target;
@@ -448,31 +444,6 @@ export default function CreateContestForm({ onSuccess }) {
                         </div>
                       </div>
 
-                      {/* banner image  */}
-                      {/* <div className="col-12">
-                      <label className="form-label">
-                        Contest Banner (optional)
-                      </label>
-                      <div className="input-group">
-                        <input
-                          type="file"
-                          accept="image/*"
-                          className="form-control"
-                          onChange={handleBannerChange}
-                        />
-                        <span className="input-group-text">
-                          <Upload size={18} />
-                        </span>
-                      </div>
-                      {formData.banner && (
-                        <img
-                          src={URL.createObjectURL(formData.banner)}
-                          alt="preview"
-                          className="img-fluid mt-3 rounded"
-                          style={{ maxHeight: "200px", objectFit: "cover" }}
-                        />
-                      )}
-                    </div> */}
                     </div>
                   </div>
                 </div>
@@ -656,7 +627,6 @@ export default function CreateContestForm({ onSuccess }) {
                       <button
                         type="button"
                         className="btn btn-outline-secondary"
-                        // onClick={onCancel}
                         onClick={handleCancel}
                         disabled={loading}
                       >
@@ -707,7 +677,7 @@ function QuizQuestionEditor({
     if (questions.length === 0) {
       resetQuestion();
     }
-  }, [questions]);
+  }, [questions, editIndex]);
 
   const handleOptionChange = (i, value) => {
     const newOptions = [...question.options];
@@ -856,7 +826,7 @@ function CodingQuestionEditor({
     if (questions.length === 0) {
       resetQuestion();
     }
-  }, [questions]);
+  }, [questions, editIndex]);
 
   const handleSave = () => {
     // if (!question.title.trim()) return;
@@ -925,24 +895,7 @@ function CodingQuestionEditor({
           setQuestion({ ...question, outputFormat: e.target.value })
         }
       />
-      {/* <textarea
-        className="form-control mb-2"
-        placeholder="Sample Input"
-        rows="2"
-        value={question.sampleInput}
-        onChange={(e) =>
-          setQuestion({ ...question, sampleInput: e.target.value })
-        }
-      />
-      <textarea
-        className="form-control mb-2"
-        placeholder="Sample Output"
-        rows="2"
-        value={question.sampleOutput}
-        onChange={(e) =>
-          setQuestion({ ...question, sampleOutput: e.target.value })
-        }
-      /> */}
+
 
       {/* ✅ Sample Test Case 1 */}
       <textarea

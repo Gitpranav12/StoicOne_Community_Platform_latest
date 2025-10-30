@@ -71,18 +71,6 @@ export default function UsersContent() {
         </InputGroup>
       </Form>
 
-
-      {/* User List
-      <Row Row className="g-3 row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xxl-5">
-        {currentUsers.map((user) => (
-          <Col key={user.id}>
-            <div className="h-100">
-              <UserCard user={user} />
-            </div>
-          </Col>
-        ))}
-      </Row> */}
-
       {/* User List or Empty State */}
       {filteredUsers.length === 0 ? (
         <div className="text-center my-5">
@@ -102,38 +90,6 @@ export default function UsersContent() {
           ))}
         </Row>
       )}
-
-
-
-
-      {/* Pagination */}
-      {/* <div className="d-flex justify-content-center mt-4">
-        <Pagination>
-          <Pagination.Prev
-            onClick={() => handlePageChange(currentPage - 1)}
-            disabled={currentPage === 1}
-          />
-          {[...Array(totalPages)].slice(0, 5).map((_, i) => (
-            <Pagination.Item
-              key={i + 1}
-              active={currentPage === i + 1}
-              onClick={() => handlePageChange(i + 1)}
-            >
-              {i + 1}
-            </Pagination.Item>
-          ))}
-          {totalPages > 5 && <Pagination.Ellipsis disabled />}
-          {totalPages > 5 && (
-            <Pagination.Item onClick={() => handlePageChange(totalPages)}>
-              {totalPages}
-            </Pagination.Item>
-          )}
-          <Pagination.Next
-            onClick={() => handlePageChange(currentPage + 1)}
-            disabled={currentPage === totalPages}
-          />
-        </Pagination>
-      </div> */}
 
       {/* Pagination */}
       {filteredUsers.length > 0 && totalPages > 1 && (

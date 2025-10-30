@@ -1,5 +1,3 @@
-// src/components/ui/CustomAlert.jsx
-import { useEffect } from "react";
 import { Button } from "../adminDashboard/ui/button";
 
 export default function CustomAlert({ open, title, message, onConfirm, onCancel }) {

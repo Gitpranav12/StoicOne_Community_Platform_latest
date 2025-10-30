@@ -1,13 +1,5 @@
 import { useState, useEffect } from "react";
-import {
-  Eye,
-  Download,
-  Filter,
-  Search,
-  CheckCircle,
-  XCircle,
-  Clock,
-} from "lucide-react";
+import { Eye, Filter, Search, CheckCircle, XCircle, Clock } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
@@ -43,19 +35,10 @@ export default function SubmissionReview({ contests }) {
     const matchesContest =
       selectedContest === "all" ||
       submission.contest_id.toString() === selectedContest;
-    // const matchesStatus =
-    //   filterStatus === "all" || submission.status === filterStatus;
+
     const matchesSearch =
       submission.username?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       submission.contestTitle?.toLowerCase().includes(searchTerm.toLowerCase());
-
-    // // ✅ Hide if participant is completed AND already reviewed
-    // const isVisible = !(
-    //   submission.participantStatus === "completed" &&
-    //   submission.reviewStatus === "reviewed"
-    // );
-
-    // return matchesContest && matchesStatus && matchesSearch && isVisible;
 
     let matchesStatus = true;
 
@@ -108,10 +91,6 @@ export default function SubmissionReview({ contests }) {
             Review and evaluate participant submissions
           </p>
         </div>
-        {/* <button className="btn btn-outline-primary">
-          <Download size={18} className="me-2" />
-          Export Results
-        </button> */}
       </div>
 
       {/* Summary Stats */}

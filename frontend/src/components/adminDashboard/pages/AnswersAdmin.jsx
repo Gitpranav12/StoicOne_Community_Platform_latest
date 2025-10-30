@@ -13,10 +13,7 @@ import { Badge } from "../ui/badge";
 import {
   ChevronDown,
   ChevronRight,
-  Flag,
   Trash2,
-  Check,
-  X,
 } from "lucide-react";
 
 import {
@@ -27,7 +24,6 @@ import {
   CartesianGrid,
   ResponsiveContainer,
   Tooltip,
-  Legend,
   Cell,
 } from "recharts";
 import Layout from "../../../Layout/Layout";
@@ -80,27 +76,6 @@ export default function AnswersAdmin() {
     chartData.sort((a, b) => b.answers - a.answers);
     setTopUsers(chartData.slice(0, 5));
   }, [answers]);
-
-  // useEffect(() => {
-  //   const fetchAllAnswers = async () => {
-  //     try {
-  //       const res = await fetch("http://localhost:8080/api/answers"); // create backend endpoint
-  //       const data = await res.json(); // should return all answers
-  //       // group by question
-  //       const grouped = data.reduce((acc, a) => {
-  //         if (!acc[a.question_id]) acc[a.question_id] = [];
-  //         acc[a.question_id].push(a);
-  //         return acc;
-  //       }, {});
-  //       setAnswers(grouped);
-  //     } catch (err) {
-  //       console.error(err);
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
-  //   fetchAllAnswers();
-  // }, []);
 
   // 2. Toggle expand → fetch answers if not already loaded
   const toggleQuestion = async (questionId) => {
@@ -171,7 +146,7 @@ export default function AnswersAdmin() {
             a.id === answerId ? { ...a, approved: status } : a
           ),
         }));
-        if(status==1){
+        if(status===1){
            toast.success("Answer is Approved.");
         }else{
          toast.success("Answer is Rejected.");
@@ -313,20 +288,6 @@ export default function AnswersAdmin() {
                                         answer.createdAt
                                       ).toLocaleDateString()}
                                     </TableCell>
-                                    {/* <TableCell data-label="Actions">
-                                    <div className="flex gap-1">
-                                      <Button
-                                        variant="outline"
-                                        size="sm"
-                                        className="p-2 bg-red-50 text-red-700 border-red-200 hover:bg-red-100"
-                                        onClick={() =>
-                                          deleteAnswer(answer.id, question.id)
-                                        }
-                                      >
-                                        <Trash2 className="h-3 w-3" />
-                                      </Button>
-                                    </div>
-                                  </TableCell> */}
                                     <TableCell data-label="Actions">
                                       <div className="flex gap-1">
                                         <Dropdown>
@@ -430,7 +391,7 @@ export default function AnswersAdmin() {
               )}
             </div>
           )}
-          {AlertComponent} {/* <-- Add this here */}
+          {AlertComponent}
         </div>
       </Layout>
     </>

@@ -198,7 +198,7 @@ export default function DashboardHome() {
                 </div>
               </Col>
             </Row>
-            <Chatbot />
+            {/* <Chatbot /> */}
           </div>
         </div>
       </>

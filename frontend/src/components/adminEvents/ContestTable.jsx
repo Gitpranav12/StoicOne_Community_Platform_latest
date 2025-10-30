@@ -220,9 +220,7 @@ export default function ContestTable({
                         </div>
                       </td>
                       <td>
-                        {/* <span className={`badge ${contest.type === 'quiz' ? 'bg-info' : 'bg-primary'}`}>
-                      {contest.type === 'quiz' ? 'Quiz' : 'Coding'}
-                    </span> */}
+
                         <span
                           className={`badge ${
                             type === "quiz"

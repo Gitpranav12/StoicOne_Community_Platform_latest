@@ -265,63 +265,6 @@ export default function TagsAdmin() {
             </div>
 
             {/* Tags Table */}
-            {/* <div className="bg-white rounded-lg border">
-              {loading ? (
-                <p className="p-4">Loading tags...</p>
-              ) : (
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Tag Name</TableHead>
-                      <TableHead>Description</TableHead>
-                      <TableHead>Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {tags.map((tag) => (
-                      <TableRow key={tag.id}>
-                        <TableCell data-label="Tag Name">
-                          <Badge>{tag.name}</Badge>
-                        </TableCell>
-                        <TableCell
-                          data-label="Description"
-                          className="text-gray-600"
-                        >
-                          {tag.description}
-                        </TableCell>
-                       
-                        <TableCell data-label="Actions">
-                          <div className="flex gap-2">
-                            <Button
-                              variant="outline"
-                             
-                              className="p-2"
-                              onClick={() => {
-                                setEditTag(tag);
-                                setEditName(tag.name);
-                                setEditDescription(tag.description);
-                              }}
-                            >
-                              <Edit className="h-3 w-3" />
-                            </Button>
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              className="p-2 bg-red-50 text-red-700 border-red-200 hover:bg-red-100"
-                              onClick={() => handleDeleteTag(tag.id)}
-                            >
-                              <Trash2 className="h-3 w-3" />
-                            </Button>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              )}
-            </div> */}
-
-            {/* Tags Table */}
             <div
               className="overflow-x-auto sm:overflow-x-visible"
               style={{ width: "100%" }} // full width by default

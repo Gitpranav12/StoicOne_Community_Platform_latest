@@ -38,13 +38,11 @@ router.post("/", upload.single("icon"), async (req, res) => {
   }
 });
 
+
 /**
  * GET /api/collectives
  * List all collectives (convert icon blob -> base64, parse tags JSON)
  */
-
-
-// GET /api/collectives
 router.get("/", async (req, res) => {
   try {
     const [rows] = await db.query(`
@@ -78,7 +76,6 @@ router.get("/", async (req, res) => {
     res.status(500).json({ error: "Server error" });
   }
 });
-
 
 
 // **
@@ -167,8 +164,6 @@ router.delete("/:id", async (req, res) => {
 /**
  * GET /api/collectives/:id/questions
  * Get questions related to collective tags
- * 
- *............changes query to show flagged and reason 23 sep
  */
 router.get("/:id/questions", async (req, res) => {
   try {
@@ -203,7 +198,7 @@ router.get("/:id/questions", async (req, res) => {
 
     const collectiveTagsJson = JSON.stringify(collectiveTags);
 
-    console.log("Final JSON string being queried:", collectiveTagsJson);
+    //console.log("Final JSON string being queried:", collectiveTagsJson);
 
     // Use JSON_OVERLAPS to find questions that share at least one tag
     const [questions] = await db.query(
@@ -240,8 +235,6 @@ router.get("/:id/questions", async (req, res) => {
     res.status(500).json({ error: "Server error" });
   }
 });
-
-
 
 
 /**
@@ -339,7 +332,6 @@ router.post("/:id/toggle-member", async (req, res) => {
 
 
 // GET /api/collectives/user/:userId
-// GET /api/collectives/user/:userId
 router.get("/user/:userId", async (req, res) => {
   const { userId } = req.params;
 
@@ -364,8 +356,6 @@ router.get("/user/:userId", async (req, res) => {
     res.status(500).json({ error: "Server error" });
   }
 });
-
-
 
 
 

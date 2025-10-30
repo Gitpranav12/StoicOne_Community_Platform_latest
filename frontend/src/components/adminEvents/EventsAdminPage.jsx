@@ -12,7 +12,7 @@ export default function EventsAdminPage() {
   const fetchContests = async () => {
     try {
       setLoading(true);
-      const response = await axios.get("http://localhost:8080/api/contests"); // new endpoint to get all contests
+      const response = await axios.get("http://localhost:8080/api/contests"); 
       const data = response.data;
 
       // Map data to match frontend structure

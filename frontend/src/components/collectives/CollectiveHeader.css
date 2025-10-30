@@ -1,23 +1,4 @@
-/* .collective-header {
-  background: #fff;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-} */
 
-
-/* .collective-header .banner {
-  background-image: url('https://cdn.sstatic.net/Sites/stackoverflow/Img/subcommunities/aws-header.png?v=e5b6dcbd0a37');
-  background-size: cover;
-  background-position: center;
-  height: 150px;
-  border-radius: 8px;
-}
-
-.card:hover {
-  box-shadow: none !important;
-  transform: none !important;
-  cursor: default !important;
-} */
 
 .collective-header {
   background: #fff;

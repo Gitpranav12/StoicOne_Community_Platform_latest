@@ -13,13 +13,6 @@ const ExploreCollectives = () => {
     const userId = currentUser.id; // 🔹 replace with logged-in user id
 
     const navigate = useNavigate();
-    // Load all collectives with joined flag
-    //  useEffect(() => {
-    //     fetch(`http://localhost:8080/api/collectives`)
-    //         .then((res) => res.json())
-    //         .then((data) => setCollectives(data.data)) // ✅ pick the array
-    //         .catch((err) => console.error("Error fetching collectives:", err));
-    // }, [userId, joinedCollectives]);
 
     useEffect(() => {
         fetch(`http://localhost:8080/api/collectives`)
@@ -27,7 +20,7 @@ const ExploreCollectives = () => {
             .then((data) => {
                 const updatedCollectives = data.data.map((c) => ({
                     ...c,
-                    joined: joinedCollectives.some((j) => j.id === c.id), // mark if already joined
+                    joined: joinedCollectives.some((j) => j.id === c.id),
                 }));
                 setCollectives(updatedCollectives);
             })

@@ -1,6 +1,6 @@
 // src/components/Contests/ContestsUserPage.js
 
-import React, { useEffect, useState, useContext } from "react";
+import React, { useEffect, useState, useContext, useCallback } from "react";
 import { Row, Col, Card, Button, Spinner } from "react-bootstrap";
 import ContestCard from "./ContestCard";
 import { UserContext } from "../../UserProfilePage/context/UserContext";
@@ -54,9 +54,6 @@ export default function ContestsUserPage() {
       else if (now >= start && now <= end) status = "Ongoing";
       else status = "Past"; // always keep time-based status
 
-      // user_status comes from API (from participants table)
-      const user_status = contest.user_status || null;
-
       return {
         id: contest.id,
         title: contest.title,
@@ -77,9 +74,8 @@ export default function ContestsUserPage() {
     });
   };
 
-  const fetchContests = async () => {
+  const fetchContests = useCallback(async () => {
     try {
-      // const res = await fetch("http://localhost:8080/api/contests");
       // ✅ Pass userId to backend to get participation info
       const res = await fetch(
         `http://localhost:8080/api/contests?userId=${currentUserId}`
@@ -94,15 +90,13 @@ export default function ContestsUserPage() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [currentUserId]);
 
   useEffect(() => {
     fetchContests();
     const interval = setInterval(fetchContests, 60000); // Refresh every minute
     return () => clearInterval(interval);
-  }, []);
-
-  // const filteredContests = contests.filter((c) => c.status === activeTab);
+  }, [fetchContests]);
 
   const filteredContests = contests.filter((c) => {
     if (activeTab === "Ongoing") {
@@ -206,12 +200,6 @@ export default function ContestsUserPage() {
       </Row>
 
       {/* ✅ RESPONSIVE Contest Cards Grid */}
-      {/* 
-        xs={1}: 1 card per row on extra-small screens (phones)
-        md={2}: 2 cards per row on medium screens (tablets)
-        lg={3}: 3 cards per row on large screens (desktops)
-        g-4:  Adds a responsive gutter (spacing) between cards
-      */}
       <Row xs={1} md={2} lg={3} className="g-4 mt-2">
         {filteredContests.length > 0 ? (
           filteredContests.map((contest) => (

@@ -174,12 +174,6 @@ export default function QuestionsAdmin() {
               flag_reason: null,
             }));
           }
-
-          // showAlert({
-          //   title: "Success",
-          //   message: "Question unflagged successfully",
-          //   onConfirm: () => {},
-          // });
            toast.success("Question unflagged successfully");
         } catch (err) {
           console.error(err);
@@ -300,14 +294,6 @@ export default function QuestionsAdmin() {
                               >
                                 <Eye className="h-3 w-3" />
                               </Button>
-
-                              {/* <Button
-                              variant="outline"
-                              size="sm"
-                              className="p-2 bg-orange-50 text-orange-700 border-orange-200 hover:bg-orange-100"
-                            >
-                              <Flag className="h-3 w-3" />
-                            </Button> */}
 
                               {q.flagged === 1 ? (
                                 <Button

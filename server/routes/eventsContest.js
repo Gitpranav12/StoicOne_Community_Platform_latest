@@ -173,6 +173,7 @@ router.get('/', async (req, res) => {
   }
 });
 
+
 //update contest
 router.put('/:id', async (req, res) => {
   const contestId = req.params.id;
@@ -285,7 +286,6 @@ router.delete('/:id', async (req, res) => {
 });
 
 
-
 // Get quiz questions for a specific round
 router.get('/:contestId/round/:roundId/quiz', async (req, res) => {
   const { contestId, roundId } = req.params;
@@ -322,7 +322,6 @@ router.get('/:contestId/round/:roundId/quiz', async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
-
 
 
 // ✅ Get coding questions for a specific round
@@ -367,8 +366,6 @@ router.get('/:contestId/round/:roundId/coding', async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
-
-
 
 
 // ✅ Add participant when starting contest
@@ -474,7 +471,6 @@ router.post('/quiz_submissions', async (req, res) => {
 });
 
 
-
 // POST /api/coding_submissions
 router.post('/coding_submissions', async (req, res) => {
   const {
@@ -574,10 +570,7 @@ router.get('/coding_submissions/byUserAndContest', async (req, res) => {
 
   try {
     // 1️⃣ Fetch user details
-    // const [userRows] = await db.query(
-    //   "SELECT id, name, email, profile_photo FROM users WHERE id = ?",
-    //   [userId]
-    // );
+   
     const [userRows] = await db.query(
       "SELECT id, name, email, profile_photo FROM users WHERE id = ?",
       [userId]
@@ -706,7 +699,6 @@ router.put("/coding_submissions/:id", async (req, res) => {
 });
 
 
-
 // Mark contest as completed for a user
 router.post('/participants/complete', async (req, res) => {
   const { contestId, userId } = req.body;
@@ -733,8 +725,6 @@ router.post('/participants/complete', async (req, res) => {
     res.status(500).json({ message: 'Server error' });
   }
 });
-
-
 
 
 

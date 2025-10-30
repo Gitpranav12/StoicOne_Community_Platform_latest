@@ -5,7 +5,7 @@ export default function UserCard({ user }) {
   const navigate = useNavigate();
 
   const handleClick = () => {
-    navigate(`/users/${user.id}`); // 👈 go to new profile page
+    navigate(`/users/${user.id}`); 
   };
 
   return (
@@ -14,13 +14,6 @@ export default function UserCard({ user }) {
       className="d-flex flex-row align-items-center p-3 mb-3 user-card-hover"
       style={{ borderRadius: "12px" }}
     >
-      {/* profile photo */}
-      {/* <img
-        src={user.avatar}
-        alt={user.name}
-        className="rounded-circle me-3"
-        style={{ width: "60px", height: "60px", objectFit: "cover" }}
-      /> */}
 
       <img
         src={user.avatar || "/images/default-avatar.png"}

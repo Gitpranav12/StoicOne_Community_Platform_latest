@@ -30,21 +30,7 @@ export default function UsersAdmin() {
   const [loading, setLoading] = useState(true);
   const [showAlert, AlertComponent] = useCustomAlert();
 
-  // useEffect(() => {
-  //   const fetchUsers = async () => {
-  //     try {
-  //       const res = await axios.get("http://localhost:8080/api/users"); // adjust base URL if needed
-  //       setUsers(res.data);
-  //     } catch (err) {
-  //       console.error("Error fetching users:", err);
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
-  //   fetchUsers();
-  // }, []);
 
-  //..new
   useEffect(() => {
     const fetchUsers = async () => {
       try {

@@ -1,16 +1,13 @@
 import { createContext, useContext, useState, useEffect } from "react";
-import { UserContext } from "../UserProfilePage/context/UserContext";  //added this...
+import { UserContext } from "../UserProfilePage/context/UserContext";  
 
 const CollectivesContext = createContext();
 
 export const CollectivesProvider = ({ children }) => {
 
- const { user } = useContext(UserContext); //added this...
+ const { user } = useContext(UserContext); 
 
   const [joinedCollectives, setJoinedCollectives] = useState([]);
-
-  // const currentUser = JSON.parse(localStorage.getItem("currentUser"));
-  // const userId = currentUser.id; // :small_blue_diamond: replace with logged-in user id
 
   useEffect(() => {
      if (!user?.id) {

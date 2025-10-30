@@ -11,7 +11,7 @@ import {
 import Layout from "../../Layout/Layout";
 import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
-import { Badge, Button, Card, Spinner } from "react-bootstrap";
+import { Badge, Button, Card } from "react-bootstrap";
 import toast from "react-hot-toast";
 
 export default function SubmissionDetail() {
