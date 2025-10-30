@@ -5,6 +5,19 @@ import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import { UserContext } from "../UserProfilePage/context/UserContext";
 
+// ✅ Helper to enable fullscreen (added)
+const enableFullScreen = async () => {
+  const docEl = document.documentElement;
+  if (docEl.requestFullscreen && !document.fullscreenElement) {
+    try {
+      await docEl.requestFullscreen();
+      console.log("✅ Contest started: entered fullscreen mode");
+    } catch (err) {
+      console.warn("⚠️ Fullscreen request failed:", err);
+    }
+  }
+};
+
 export default function ContestPage() {
   const navigate = useNavigate();
   const { id } = useParams();
@@ -13,16 +26,22 @@ export default function ContestPage() {
   const { user: contextUser } = useContext(UserContext);
   const currentUserId = contextUser?.profile?.id;
 
+  // ✅ Updated function with fullscreen before navigation
   const handleStartContest = async () => {
     try {
       await axios.post(
         `http://localhost:8080/api/contests/${contest.id}/join`,
         { userId: currentUserId }
       );
+
+      // ✅ Enter fullscreen once contest begins
+      await enableFullScreen();
+
       const totalDuration = contest.rounds.reduce(
         (sum, r) => sum + parseInt(r.duration || 0),
         0
       );
+
       navigate(`/events/progress/${contest.id}`, {
         state: { duration: totalDuration },
       });
@@ -54,6 +73,7 @@ export default function ContestPage() {
         </div>
       </Layout>
     );
+
   if (!contest)
     return (
       <Layout>
@@ -359,7 +379,6 @@ export default function ContestPage() {
             Cancel
           </Button>
 
-          
           <Button
             onClick={handleStartContest}
             className="fw-semibold px-4 py-2 text-white border-0 d-flex align-items-center justify-content-center gap-2"

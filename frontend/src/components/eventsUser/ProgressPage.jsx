@@ -11,20 +11,18 @@ import {
 } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
-// import Layout from "../../Layout/Layout"; // Layout ko yahan se remove kar sakte hain, kyunki ab yeh conditionally render hoga
 import { UserContext } from "../UserProfilePage/context/UserContext";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import toast from "react-hot-toast";
-import { useLayout } from "../../context/LayoutContext"; // <<<<<< 1. CONTEXT IMPORT KAREIN
+import { useLayout } from "../../context/LayoutContext";
 
 export default function ProgressPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const { id } = useParams(); // contest id
-  const { setIsLayoutVisible } = useLayout(); // <<<<<< 2. CONTEXT SE FUNCTION LEIN
+  const { setIsLayoutVisible } = useLayout();
 
-  // States for contest data and UI behavior
   const [contest, setContest] = useState(null);
   const [activeCategory, setActiveCategory] = useState("All");
   const [loading, setLoading] = useState(true);
@@ -32,69 +30,23 @@ export default function ProgressPage() {
   const [showToast, setShowToast] = useState(false);
   const { user: contextUser } = useContext(UserContext);
   const currentUserId = contextUser?.profile?.id;
-
-  // State to track completed rounds
   const [roundStatus, setRoundStatus] = useState([]);
 
-  // <<<<<< 3. FULLSCREEN AUR LAYOUT HIDE KARNE WALA useEffect >>>>>>
+  // ✅ Just hide layout (no fullscreen here)
   useEffect(() => {
-    // Layout ko hide karein
     setIsLayoutVisible(false);
+    return () => setIsLayoutVisible(true);
+  }, [setIsLayoutVisible]);
 
-    // Fullscreen Mode Logic
-    const enterFullScreen = () => {
-      const element = document.documentElement;
-      if (element.requestFullscreen) {
-        element.requestFullscreen().catch((err) => {
-          console.warn(`Fullscreen request failed: ${err.message}`);
-        });
-      } else if (element.mozRequestFullScreen) { /* Firefox */
-        element.mozRequestFullScreen();
-      } else if (element.webkitRequestFullscreen) { /* Chrome, Safari & Opera */
-        element.webkitRequestFullscreen();
-      } else if (element.msRequestFullscreen) { /* IE/Edge */
-        element.msRequestFullscreen();
-      }
-    };
-
-    // Disable Browser Back Button Logic
-    const preventBackNavigation = () => {
-      window.history.pushState(null, null, window.location.href);
-      window.onpopstate = () => {
-        window.history.pushState(null, null, window.location.href);
-      };
-    };
-
-    enterFullScreen();
-    preventBackNavigation();
-
-    // Cleanup Logic
-    return () => {
-      // Layout ko wapas show karein
-      setIsLayoutVisible(true);
-
-      // Back button ko re-enable karein
-      window.onpopstate = null;
-
-      // Fullscreen se exit karein
-      if (document.exitFullscreen && document.fullscreenElement) {
-        document.exitFullscreen();
-      }
-    };
-  }, [setIsLayoutVisible]); // Dependency array mein setIsLayoutVisible add karein
-
-
-  // Utility to check if a round is completed
   const isRoundCompleted = (roundId) =>
     roundStatus && roundStatus.includes(roundId);
 
-  // ===== Progress bar aur Rounds completed calculation =====
   const totalRounds = contest?.rounds?.length || 0;
   const completedRounds = roundStatus.length;
   const progressPercent =
     totalRounds === 0 ? 0 : Math.round((completedRounds / totalRounds) * 100);
 
-  // Fetch contest details from API
+  // ✅ Fetch Contest Data
   useEffect(() => {
     const fetchContest = async () => {
       try {
@@ -103,36 +55,33 @@ export default function ProgressPage() {
         );
         setContest(response.data);
 
-        let key = `contest_${id}_rounds_complete`;
-        let completed = JSON.parse(localStorage.getItem(key) || "[]");
+        const key = `contest_${id}_rounds_complete`;
+        const completed = JSON.parse(localStorage.getItem(key) || "[]");
         setRoundStatus(completed);
 
         const durationInMinutes = location.state?.duration || 0;
         const storageKey = `contest_end_time_${id}_${currentUserId}`;
         let endTime = localStorage.getItem(storageKey);
 
-        if (!endTime && durationInMinutes > 0) { // Ensure duration is positive before setting
+        if (!endTime && durationInMinutes > 0) {
           endTime = Date.now() + durationInMinutes * 60 * 1000;
           localStorage.setItem(storageKey, endTime);
         }
 
         if (endTime) {
-            startTimer(parseInt(endTime, 10), storageKey);
+          startTimer(parseInt(endTime, 10), storageKey);
         }
-        
       } catch (error) {
         console.error("Error fetching contest:", error);
       } finally {
         setLoading(false);
       }
     };
+
     fetchContest();
-    // Eslint warning ko aaram se handle karne ke liye, startTimer ko useEffect ke andar move kar sakte hain
-    // ya useCallback use kar sakte hain, but for now this is fine.
   }, [id, location.state, currentUserId]);
 
-
-  // Timer management
+  // ✅ Timer Logic
   const startTimer = (endTime, storageKey) => {
     const timerId = setInterval(() => {
       const remainingSeconds = Math.floor((endTime - Date.now()) / 1000);
@@ -149,7 +98,7 @@ export default function ProgressPage() {
     return () => clearInterval(timerId);
   };
 
-  // Format remaining time for display
+  // ✅ Time Formatter
   const formatTime = (seconds) => {
     const h = Math.floor(seconds / 3600);
     const m = Math.floor((seconds % 3600) / 60);
@@ -159,8 +108,18 @@ export default function ProgressPage() {
       .padStart(2, "0")}:${s.toString().padStart(2, "0")}`;
   };
 
+  // ✅ Exit Fullscreen + Complete Contest
   const handleSubmitAndExit = async () => {
     const allRoundsCompleted = roundStatus.length === totalRounds;
+
+    // ✅ Exit fullscreen when all rounds done
+    if (allRoundsCompleted && document.fullscreenElement) {
+      try {
+        await document.exitFullscreen();
+      } catch (err) {
+        console.warn("Error exiting fullscreen:", err);
+      }
+    }
 
     if (allRoundsCompleted) {
       try {
@@ -179,16 +138,14 @@ export default function ProgressPage() {
 
     localStorage.removeItem(`contest_${id}_rounds_complete`);
     localStorage.removeItem(`contest_end_time_${id}_${currentUserId}`);
-
     navigate("/events");
   };
 
-  // <<<<<< 4. LOADING AUR ERROR STATES SE LAYOUT HATAYEIN >>>>>>
   if (loading) {
     return (
       <div
         className="d-flex justify-content-center align-items-center"
-        style={{ height: "100vh" }} // Use 100vh for full-page centering
+        style={{ height: "100vh" }}
       >
         <Spinner animation="border" variant="primary" />
       </div>
@@ -203,7 +160,6 @@ export default function ProgressPage() {
     );
   }
 
-  // Dynamically determine categories from rounds
   const categories = Array.from(
     new Set(
       contest.rounds.map((r) => (r.type === "quiz" ? "Aptitude" : "Coding"))
@@ -213,20 +169,34 @@ export default function ProgressPage() {
     icon: type === "Aptitude" ? "bi-lightbulb" : "bi-code-slash",
   }));
 
-  // Filter rounds based on active category
   const filteredRounds =
     activeCategory === "All"
       ? contest.rounds
       : contest.rounds.filter((r) =>
-        activeCategory === "Aptitude"
-          ? r.type === "quiz"
-          : r.type === "coding"
-      );
+          activeCategory === "Aptitude"
+            ? r.type === "quiz"
+            : r.type === "coding"
+        );
 
-  // <<<<<< 5. RETURN SE LAYOUT WRAPPER HATAYEIN >>>>>>
+  // ✅ Added fullscreen trigger when starting quiz/coding round
+  const handleStartRound = (round) => {
+    const element = document.documentElement;
+    if (element.requestFullscreen) {
+      element.requestFullscreen().catch((err) =>
+        console.warn("Fullscreen request failed:", err)
+      );
+    }
+
+    if (round.type === "quiz") {
+      navigate(`/events/quiz/${contest.id}/${round.id}`);
+    } else if (round.type === "coding") {
+      navigate(`/events/code/${contest.id}/${round.id}`);
+    }
+  };
+
   return (
     <div className="container-fluid vh-100 d-flex flex-column p-4 bg-white">
-      {/* Header Section */}
+      {/* Header */}
       <div className="d-flex justify-content-between align-items-center mb-4 flex-wrap">
         <div>
           <div className="d-flex align-items-center mb-1">
@@ -247,6 +217,7 @@ export default function ProgressPage() {
           </div>
           <p className="text-muted small mb-0">{contest.description}</p>
         </div>
+
         <div className="d-flex align-items-center gap-2 mt-3 mt-md-0">
           <Button
             size="sm"
@@ -307,11 +278,11 @@ export default function ProgressPage() {
         />
       </div>
 
-      {/* Categories and Rounds Section */}
+      {/* Categories + Rounds */}
       <Row className="justify-content-center flex-grow-1">
         <Col md={12}>
           <Row className="g-0 h-100">
-            {/* Categories List */}
+            {/* Category Sidebar */}
             <Col md={3} className="border-end d-flex flex-column">
               <div className="p-3 border-bottom bg-light">
                 <h6 className="fw-semibold mb-0">Categories</h6>
@@ -381,6 +352,7 @@ export default function ProgressPage() {
                 </div>
               </div>
             </Col>
+
             {/* Rounds List */}
             <Col md={9} className="d-flex flex-column">
               <div className="p-3 border-bottom bg-light">
@@ -422,11 +394,7 @@ export default function ProgressPage() {
                               disabled={isRoundCompleted(round.id)}
                               onClick={() => {
                                 if (!isRoundCompleted(round.id)) {
-                                  navigate(
-                                    round.type === "quiz"
-                                      ? `/events/quiz/${contest.id}/${round.id}`
-                                      : `/events/code/${contest.id}/${round.id}`
-                                  );
+                                  handleStartRound(round);
                                 }
                               }}
                             >
