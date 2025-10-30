@@ -1,6 +1,9 @@
 import React, { useState, useRef, useContext, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+
 import { Overlay, Popover} from 'react-bootstrap';
+
+import { useNavigate } from "react-router-dom"; 
 import styles from './Navbar.module.css';
 import { FaBars } from 'react-icons/fa';
 import AchievementsDropdown from './../components/notification/AchievementsDropdown';
@@ -19,6 +22,10 @@ const Navbar = ({ toggleSidebar }) => {
   const searchRef = useRef(null);
 
   const id = user?.id || null;
+
+
+    const navigate = useNavigate();
+
 
   const profilePhotoUrl = id
     ? `http://localhost:8080/api/user/${id}/profile-photo?${user?.photoUpdatedAt || Date.now()}`
@@ -79,7 +86,7 @@ const Navbar = ({ toggleSidebar }) => {
               <li>
                 <button
                   className="product-link"
-                  onClick={() => window.location.href = '/product'}
+                  onClick={() =>navigate('/product')}
                 >
                   <span className="item-title">Stoic CRM</span>
                   <span className="item-desc">
@@ -90,7 +97,7 @@ const Navbar = ({ toggleSidebar }) => {
               <li>
                 <button
                   className="product-link"
-                  onClick={() => window.location.href = "https://stoicsalamander.com/#"}
+                  onClick={() => navigate('/product/HRMPage')}
                 >
                   <span className="item-title">stoic HRMS</span>
                   <span className="item-desc">
@@ -101,7 +108,7 @@ const Navbar = ({ toggleSidebar }) => {
               <li>
                 <button
                   className="product-link"
-                  onClick={() => window.location.href = "https://stoicsalamander.com/#"}
+                  onClick={() => navigate('/product/InvoicingPage')}
                 >
                   <span className="item-title">Stoic Invoicing</span>
                   <span className="item-desc">
@@ -112,7 +119,7 @@ const Navbar = ({ toggleSidebar }) => {
               <li>
                 <button
                   className="product-link"
-                  onClick={() => window.location.href = "https://stoicsalamander.com/#"}
+                  onClick={() => navigate('/product/SuitePage')}
                 >
                   <span className="item-title">StoicOne Business Suite</span>
                   <span className="item-desc">
@@ -120,7 +127,7 @@ const Navbar = ({ toggleSidebar }) => {
                   </span>
                 </button>
               </li>
-              <li>
+              {/* <li>
                 <button
                   className="product-link"
                   onClick={() => window.location.href = "https://stoicsalamander.com/#"}
@@ -130,7 +137,7 @@ const Navbar = ({ toggleSidebar }) => {
                     It's a professional growth ecosystem
                   </span>
                 </button>
-              </li>
+              </li> */}
               <li className="border-top mt-2 pt-2">
                 <button
                   className="plain-link"

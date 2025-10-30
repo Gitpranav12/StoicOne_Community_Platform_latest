@@ -58,6 +58,16 @@ import ResultWrapper from "./components/eventsUser/Result/ResultWrapper";
 import DataPage from "./components/adminDashboard/datapages/DataPage"; // adjust path as needed
 
 
+import { CRMPage } from './components/productpage/components/pages/CRMPage';
+import { HRMPage } from './components/productpage/components/pages/HRMPage';
+
+
+import { InvoicingPage } from './components/productpage/components/pages/InvoicingPage'
+import { ScheduleDemoPage } from'./components/productpage/components/pages/ScheduleDemoPage'
+import { SuitePage } from'./components/productpage/components/pages/SuitePage'
+// import { InvoicingPage } from'./components/productpage/components/pages/ContactForm'
+
+
 export default function App() {
 
 
@@ -149,6 +159,13 @@ export default function App() {
 
               {/* Product Page */}
               <Route path="/product" element={<Productpage />} />
+              
+              {/* <Route path="/product/CRMPage" element={<CRMPage />} /> */}
+              <Route path="/product/HRMPage" element={<HRMPage />} />
+              <Route path="/product/InvoicingPage" element={<InvoicingPage />} />
+              <Route path="/product/SuitePage" element={<SuitePage />} />
+
+
               <Route path="/contact" element={<ContactForm />} />
               {/* admin events pages routes */}
               <Route path="/admin/events" element={<ProtectedRoute><EventsAdminPage /></ProtectedRoute>} />
