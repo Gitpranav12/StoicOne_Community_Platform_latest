@@ -7,15 +7,18 @@ const upload = multer({ storage: multer.memoryStorage() }); // store file in mem
 
 //  create contest
 router.post('/', async (req, res) => {
-  const { title, description, startDate, endDate, status, rounds } = req.body;
+  const { title, description, startDate, endDate, status, rounds, maxParticipants } = req.body;
 
   const conn = await db.getConnection();
   await conn.beginTransaction();
 
   try {
+    // Use fallback
+    const max_participants = maxParticipants || 500;
+
     const [contestResult] = await conn.query(
-      'INSERT INTO contests (title, description, start_date, end_date, status) VALUES (?, ?, ?, ?, ?)',
-      [title, description, startDate, endDate, status]
+      'INSERT INTO contests (title, description, start_date, end_date, status , max_participants) VALUES (?, ?, ?, ?, ?, ?)',
+      [title, description, startDate, endDate, status, max_participants]
     );
 
     const contestId = contestResult.insertId;
@@ -37,9 +40,9 @@ router.post('/', async (req, res) => {
         }
       } else if (round.type === 'coding') {
         for (const q of round.questions) {
-          
+
           await conn.query(
-           // ✅ Added sample_input_2, sample_output_2
+            // ✅ Added sample_input_2, sample_output_2
             `INSERT INTO coding_questions 
               (round_id, title, description, input_format, output_format, 
               sample_input, sample_output, sample_input_2, sample_output_2) 
@@ -177,15 +180,16 @@ router.get('/', async (req, res) => {
 //update contest
 router.put('/:id', async (req, res) => {
   const contestId = req.params.id;
-  const { title, description, startDate, endDate, status, rounds } = req.body;
+  const { title, description, startDate, endDate, status, rounds, maxParticipants } = req.body;
 
   const conn = await db.getConnection();
   await conn.beginTransaction();
 
   try {
+    const max_participants = maxParticipants || 100;
     await conn.query(
-      'UPDATE contests SET title=?, description=?, start_date=?, end_date=?, status=? WHERE id=?',
-      [title, description, startDate, endDate, status, contestId]
+      'UPDATE contests SET title=?, description=?, start_date=?, end_date=?, status=? , max_participants=? WHERE id=?',
+      [title, description, startDate, endDate, status, max_participants, contestId]
     );
 
     // Remove old rounds & questions
@@ -215,8 +219,8 @@ router.put('/:id', async (req, res) => {
         }
       } else if (round.type === 'coding') {
         for (const q of round.questions) {
-                    await conn.query(
-              // ✅ Updated to include test case 2
+          await conn.query(
+            // ✅ Updated to include test case 2
             `INSERT INTO coding_questions 
               (round_id, title, description, input_format, output_format, 
               sample_input, sample_output, sample_input_2, sample_output_2) 
@@ -374,11 +378,41 @@ router.post('/:contestId/join', async (req, res) => {
   const { userId } = req.body;
 
   try {
+
+    // ✅ Step 1: Get current and max participants
+    const [[contest]] = await db.query(
+      `SELECT max_participants,
+        (SELECT COUNT(*) FROM participants WHERE contest_id = ?) AS current_count
+       FROM contests WHERE id = ?`,
+      [contestId, contestId]
+    );
+
+    if (!contest) {
+      return res.status(404).json({ success: false, message: "Contest not found" });
+    }
+
+    if (contest.current_count >= contest.max_participants) {
+      return res.status(400).json({ success: false, message: "Contest is full" });
+    }
+
     await db.query(
       'INSERT INTO participants (contest_id, user_id) VALUES (?, ?) ON DUPLICATE KEY UPDATE joined_at=joined_at',
       [contestId, userId]
     );
-    res.json({ success: true });
+
+
+    // ✅ Step 3: Return latest counts for instant UI refresh
+    const [[updated]] = await db.query(
+      `SELECT COUNT(*) AS participants FROM participants WHERE contest_id = ?`,
+      [contestId]
+    );
+
+    res.json({
+      success: true,
+      participants: updated.participants,
+      maxParticipants: contest.max_participants,
+    });
+
   } catch (err) {
     console.error(err);
     res.status(500).json({ success: false, error: err.message });
@@ -570,7 +604,7 @@ router.get('/coding_submissions/byUserAndContest', async (req, res) => {
 
   try {
     // 1️⃣ Fetch user details
-   
+
     const [userRows] = await db.query(
       "SELECT id, name, email, profile_photo FROM users WHERE id = ?",
       [userId]

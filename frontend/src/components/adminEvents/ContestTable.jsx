@@ -277,7 +277,7 @@ export default function ContestTable({
                       <td>
                         <div className="d-flex align-items-center">
                           <Users size={16} className="text-muted me-2" />
-                          <span className="small">{contest.participants}</span>
+                          <span className="small">{contest.participants}/{contest.max_participants}</span>
                         </div>
                       </td>
                       <td>

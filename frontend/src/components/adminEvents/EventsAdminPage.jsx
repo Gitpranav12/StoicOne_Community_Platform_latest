@@ -25,6 +25,7 @@ export default function EventsAdminPage() {
         status: contest.status,
         rounds: contest.rounds,
         participants: contest.participants || 0, // default to 0 if not present
+        max_participants: contest.max_participants || 0, // default to 0 if not present
       }));
 
       setContests(formattedContests);

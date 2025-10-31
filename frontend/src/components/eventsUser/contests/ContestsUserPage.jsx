@@ -62,7 +62,7 @@ export default function ContestsUserPage() {
         time,
         duration: durationText,
         participants: contest.participants || 0,
-        maxParticipants: contest.max_participants || 100,
+        maxParticipants: contest.max_participants || 500, // 100 participants Max
         questions,
         status,
         type: type.charAt(0).toUpperCase() + type.slice(1),
@@ -94,7 +94,7 @@ export default function ContestsUserPage() {
 
   useEffect(() => {
     fetchContests();
-    const interval = setInterval(fetchContests, 60000); // Refresh every minute
+    const interval = setInterval(fetchContests, 5000); // Refresh every minute
     return () => clearInterval(interval);
   }, [fetchContests]);
 

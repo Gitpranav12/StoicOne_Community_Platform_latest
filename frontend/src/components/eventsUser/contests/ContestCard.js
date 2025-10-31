@@ -26,12 +26,6 @@ export default function ContestCard({ contest }) {
     Number(contest.all_completed_and_reviewed) === 1 &&
     isContestEnded;
 
-  // 🔹 Debug log
-  console.log(`Contest: ${contest.title}`);
-  console.log('user_status:', contest.user_status);
-  console.log('all_completed_and_reviewed:', contest.all_completed_and_reviewed);
-  console.log('end_date:', contest.end_date, 'isContestEnded:', isContestEnded);
-  console.log('canViewResults:', canViewResults);
 
   const getStatusBadge = () => {
     switch (contest.status) {
@@ -99,14 +93,26 @@ export default function ContestCard({ contest }) {
 
           {/* Join/Upcoming button fallback */}
           {contest.user_status !== "completed" && contest.status === "Ongoing" && (
-            <Button
-              variant="primary"
-              className="w-100 d-flex align-items-center justify-content-center gap-2"
-              onClick={() => navigate(`/events/contest/${contest.id}`)}
-            >
-              <Play size={16} /> Join Contest
-            </Button>
+            contest.participants >= contest.maxParticipants ? (
+              <Button
+                variant="outline-danger"
+                className="w-100 d-flex align-items-center justify-content-center gap-2"
+                disabled
+              >
+                🚫 Contest is Full — Try Next Time!
+              </Button>
+            ) : (
+              <Button
+                variant="primary"
+                className="w-100 d-flex align-items-center justify-content-center gap-2"
+                onClick={() => navigate(`/events/contest/${contest.id}`)}
+              >
+                <Play size={16} /> Join Contest
+              </Button>
+            )
           )}
+
+
           {contest.user_status !== "completed" && contest.status === "Upcoming" && (
             <Button variant="outline-secondary" className="w-100" disabled>
               Starts Soon

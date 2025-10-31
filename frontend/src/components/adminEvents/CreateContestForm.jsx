@@ -31,6 +31,7 @@ export default function CreateContestForm({ onSuccess }) {
       ? formatForDateTimeLocal(editingContest.endDate)
       : "",
     status: editingContest?.status || "draft",
+    maxParticipants: editingContest?.max_participants || 100,  // 🆕
   });
 
   const [rounds, setRounds] = useState(
@@ -94,7 +95,6 @@ export default function CreateContestForm({ onSuccess }) {
     now.setMinutes(now.getMinutes() - now.getTimezoneOffset()); // Adjust for local timezone
     return now.toISOString().slice(0, 16);
   };
-
 
   const handleRoundChange = (e) => {
     const { name, value } = e.target;
@@ -202,6 +202,7 @@ export default function CreateContestForm({ onSuccess }) {
         startDate: formData.startDate,
         endDate: formData.endDate,
         status: formData.status,
+        maxParticipants: formData.maxParticipants || 100, 
         rounds: rounds.map((r) => ({
           round_name: r.roundName,
           type: r.type,
@@ -443,7 +444,6 @@ export default function CreateContestForm({ onSuccess }) {
                           </button>
                         </div>
                       </div>
-
                     </div>
                   </div>
                 </div>
@@ -597,7 +597,24 @@ export default function CreateContestForm({ onSuccess }) {
                   <div className="card-header bg-white">
                     <h5 className="card-title mb-0">Contest Settings</h5>
                   </div>
+
                   <div className="card-body">
+                    <div className="mb-3">
+                      <label className="form-label">Max Participants</label>
+                      <input
+                        type="number"
+                        className="form-control"
+                        name="maxParticipants"
+                        min="1"
+                        max="10000"
+                        value={formData.maxParticipants || 100}
+                        onChange={handleInputChange}
+                      />
+                      <small className="text-muted d-block mt-1 px-2">
+                        Limit how many users can join this contest.
+                      </small>
+                    </div>
+
                     <div className="mb-3">
                       <label className="form-label">Visibility</label>
                       <select
@@ -895,7 +912,6 @@ function CodingQuestionEditor({
           setQuestion({ ...question, outputFormat: e.target.value })
         }
       />
-
 
       {/* ✅ Sample Test Case 1 */}
       <textarea
