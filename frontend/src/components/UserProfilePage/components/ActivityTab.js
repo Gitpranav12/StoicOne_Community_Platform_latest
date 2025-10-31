@@ -50,7 +50,7 @@ export default function ActivityTab({ user: propUser, loading: propLoading }) {
     <div className="container-fluid p-3">
       <div className="row g-4">
         <div className="col-12 col-sm-12 col-md-6 col-lg-6">
-          <h5 className="fw-bold mb-1 text-gradient p-2">
+          <h5 className="heading-text mb-1 text-gradient p-2">
             <i className="bi bi-question-diamond-fill"></i> Questions
           </h5>
           <LoadMoreList
@@ -75,7 +75,7 @@ export default function ActivityTab({ user: propUser, loading: propLoading }) {
         </div>
 
         <div className="col-12 col-sm-12 col-md-6 col-lg-6">
-          <h5 className="fw-bold mb-1 text-gradient p-2">
+          <h5 className="heading-text mb-1 text-gradient p-2">
             <i className="bi bi-lightbulb-fill"></i> Answers
           </h5>
           <LoadMoreList

@@ -14,11 +14,14 @@ function ProfileTab({ user: propUser, loading: propLoading }) {
   const [editTitle, setEditTitle] = useState("");
   const [editBody, setEditBody] = useState("");
 
+    const { fetchUserData } = useContext(UserContext);
+
   const handleDelete = async (id) => {
     if (!window.confirm("Are you sure you want to delete this question?")) return;
     try {
       await axios.delete(`http://localhost:8080/api/questions/${id}`);
       setQuestions((prev) => prev.filter((q) => q.id !== id));
+      await fetchUserData();
     } catch {
       alert("Delete failed.");
     }
@@ -27,7 +30,7 @@ function ProfileTab({ user: propUser, loading: propLoading }) {
   const startEditing = (q) => {
     setEditingId(q.id);
     setEditTitle(q.title);
-    setEditBody(q.bodyText || "");
+    setEditBody(q.bodyHtml || "");
   };
   const cancelEditing = () => {
     setEditingId(null);
@@ -39,13 +42,16 @@ function ProfileTab({ user: propUser, loading: propLoading }) {
     try {
       await axios.put(`http://localhost:8080/api/questions/${editingId}`, {
         title: editTitle,
-        bodyText: editBody,
+        bodyHtml: editBody,
       });
       setQuestions((prev) =>
         prev.map((q) =>
-          q.id === editingId ? { ...q, title: editTitle, bodyText: editBody } : q
+          q.id === editingId ? { ...q, title: editTitle, bodyHtml: editBody } : q
         )
       );
+
+      await fetchUserData();
+      
       cancelEditing();
     } catch {
       alert("Update failed.");
@@ -65,7 +71,7 @@ function ProfileTab({ user: propUser, loading: propLoading }) {
     <div className="container-fluid p-4">
 
       <div className="stats-section mb-5">
-        <h4 className="fw-bold mb-4 text-gradient">
+        <h4 className="heading-text mb-4 text-gradient">
           <i className="bi bi-bar-chart-fill"></i> Stats
         </h4>
         <div className="row g-4 justify-content-center">
@@ -82,14 +88,14 @@ function ProfileTab({ user: propUser, loading: propLoading }) {
       </div>
 
       <div className="bio-section mb-5">
-        <h4 className="fw-bold mb-3 text-gradient"><i class="bi bi-person-fill"></i> Bio</h4>
+        <h4 className="heading-text mb-3 text-gradient"><i class="bi bi-person-fill"></i> Bio</h4>
         <div className="card shadow-sm border-0 rounded-4 p-3 bg-light">
           <p className="mb-0">{user?.profile?.bio || "No bio available yet."}</p>
         </div>
       </div>
 
       <div className="questions-section">
-        <h4 className="fw-bold mb-4 text-gradient"><i class="bi bi-question-diamond-fill"></i> Questions</h4>
+        <h4 className="heading-text mb-4 text-gradient"><i class="bi bi-question-diamond-fill"></i> Questions</h4>
         {questions.length > 0 ? (
           questions.map((post) => (
             <div

@@ -17,7 +17,7 @@ export default function AchievementsTab({ user: propUser, loading: propLoading }
 
   return (
     <div className="container-fluid p-3">
-      <h5 className="mb-3 heading-text">Badges</h5>
+      <h5 className="mb-3 heading-text"><i class="bi bi-award-fill"></i> Badges</h5>
       <div className="row">
         {badges.map((b) => (
           <div key={b.id} className="col-md-4 col-sm-6 mb-3">
@@ -66,7 +66,7 @@ export default function AchievementsTab({ user: propUser, loading: propLoading }
         ))}
       </div>
 
-      <h5 className="mt-4 mb-3 heading-text">Milestones</h5>
+      <h5 className="mt-4 mb-3 heading-text"><i class="bi bi-trophy-fill"></i> Milestones</h5>
       <div className="row">
         {milestones.map((m) => (
           <div key={m.id} className="col-md-6 mb-3">
@@ -115,7 +115,7 @@ export default function AchievementsTab({ user: propUser, loading: propLoading }
         ))}
       </div>
 
-      <h5 className="mt-4 mb-3 heading-text">Reputation</h5>
+      <h5 className="mt-4 mb-3 heading-text"><i class="bi bi-claude"></i> Reputation</h5>
       <div className="card p-3 text-center shadow-sm">
         <span className="fs-2 mb-2 d-flex justify-content-center">
           <img

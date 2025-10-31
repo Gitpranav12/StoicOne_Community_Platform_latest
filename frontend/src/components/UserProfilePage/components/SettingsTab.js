@@ -180,7 +180,7 @@ export default function SettingsTab() {
 
       <Card className="shadow-sm border-0 mb-4">
         <Card.Body>
-          <h5 className="mb-3 heading-text">Profile Settings</h5>
+          <h5 className="mb-3 heading-text"><i class="bi bi-person-fill"></i> Profile Settings</h5>
           <Form>
             <Form.Group className="mb-4">
               <Form.Label className="sub-heading-text d-block mb-2">Profile Photo</Form.Label>
@@ -325,7 +325,7 @@ export default function SettingsTab() {
 
       <Card className="shadow-sm border-0">
         <Card.Body>
-          <h5 className="mb-3 heading-text">Account Settings</h5>
+          <h5 className="mb-3 heading-text"><i class="bi bi-person-circle"></i> Account Settings</h5>
           <Form>
             <Form.Group className="mb-3">
               <Form.Label className="sub-heading-text">Email</Form.Label>

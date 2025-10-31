@@ -2,13 +2,14 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Card, Badge } from "react-bootstrap";
 import {
-  Users,
-  HelpCircle,
-  MessageSquare,
-  ThumbsUp,
-  MessageSquareText,
-  RefreshCw,
+  RefreshCw
 } from "lucide-react";
+
+import usersIcon from "../assets/users.png";
+import questionsIcon from "../assets/questions.png";
+import answersIcon from "../assets/answers.png";
+import commentsIcon from "../assets/comments.png";
+import upvotesIcon from "../assets/upvotes.png";
 
 export default function CommunityActivity() {
   const [stats, setStats] = useState([]);
@@ -18,11 +19,11 @@ export default function CommunityActivity() {
 
   // Map keys to icons for rendering
   const iconsMap = {
-    users: <Users size={16} />,
-    questions: <HelpCircle size={16} />,
-    answers: <MessageSquare size={16} />,
-    comments: <MessageSquareText size={16} />,
-    upvotes: <ThumbsUp size={16} />,
+    users: <img src={usersIcon} alt="Users" width={20} height={20} />,
+    questions: <img src={questionsIcon} alt="Questions" width={20} height={20} />,
+    answers: <img src={answersIcon} alt="Answers" width={20} height={20} />,
+    comments: <img src={commentsIcon} alt="Comments" width={20} height={20} />,
+    upvotes: <img src={upvotesIcon} alt="Upvotes" width={20} height={20} />,
   };
 
   // Fetch data from API and update state + localStorage
@@ -122,7 +123,7 @@ export default function CommunityActivity() {
         <div className="pb-3 border-bottom">
           <ul className="list-unstyled mb-0">
             {stats.map((s, idx) => (
-              <li key={idx} className="d-flex align-items-center mb-2">
+              <li key={idx} className="d-flex align-items-center mb-3">
                 <span className={`me-2 text-${s.color}`}>{iconsMap[s.key]}</span>
                 <span className="normal-text me-1">{s.value}</span>
                 <span className="normal-text small">{s.label}</span>
@@ -133,7 +134,7 @@ export default function CommunityActivity() {
 
         {/* Tags */}
         <div className="py-3 border-bottom">
-          <div className="mb-2 text-danger sub-heading-text fw-bold">🔥 Popular tags</div>
+          <div className="mb-2 text-danger sub-heading-text fw-bold"><i className="bi bi-fire" style={{ color: 'orange' }}></i> Popular tags</div>
           {tags.map((tag, i) => (
             <Badge bg="light" text="dark" pill key={i} className="me-1 mb-1">{tag}</Badge>
           ))}
@@ -142,7 +143,7 @@ export default function CommunityActivity() {
         {/* Unanswered */}
         {unanswered && (
           <div className="pt-3">
-            <div className="mb-2 text-danger sub-heading-text fw-bold">🔥 Popular unanswered question</div>
+            <div className="mb-2 text-danger sub-heading-text fw-bold"><i className="bi bi-fire" style={{ color: 'orange' }}></i> Popular unanswered question</div>
             <a
               href={`/questions/${unanswered.id}`}
               className="d-block text-primary normal-text mb-2 text-decoration-none"
