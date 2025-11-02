@@ -181,3 +181,11 @@ exports.updateAnswer = (id, fields) => {
   const sql = `UPDATE answers SET ${setString} WHERE id = ?`;
   return db.execute(sql, [...values, id]);
 };
+
+// NEW: Get comment by ID
+exports.getCommentById = (id) =>
+  db.execute('SELECT question_id, user_id FROM comments WHERE id = ?', [id]);
+
+// NEW: Delete a comment .............Added by Pranav Jawarkar 2 November ..........
+exports.deleteComment = (id) =>
+  db.execute('DELETE FROM comments WHERE id = ?', [id]);

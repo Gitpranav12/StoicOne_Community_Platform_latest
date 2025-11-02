@@ -45,5 +45,8 @@ router.get('/:id/uservote', questionController.getUserVote);
 // .............Added by Pranav Jawarkar 27 sep..........
 // Update answer
 router.put('/answers/:id', questionController.updateAnswer);
+// NEW: Delete a comment .............Added by Pranav Jawarkar 2 November ..........
+router.delete('/comments/:id', questionController.deleteComment);
+
 
 module.exports = router;

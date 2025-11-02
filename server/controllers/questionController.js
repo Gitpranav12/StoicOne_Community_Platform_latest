@@ -377,3 +377,31 @@ exports.updateAnswer = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+
+// NEW: Delete a comment .............Added by Pranav Jawarkar 2 November ..........
+exports.deleteComment = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { user_id } = req.body; // Passed from frontend for ownership check
+
+    // First fetch the comment to verify ownership
+    const [rows] = await Question.getCommentById(id);
+    if (rows.length === 0) {
+      return res.status(404).json({ error: "Comment not found" });
+    }
+
+    // Ownership check: only allow if user_id matches
+    if (rows[0].user_id !== user_id) {
+      return res.status(403).json({ error: "Unauthorized to delete this comment" });
+    }
+
+    const questionId = rows[0].question_id;
+
+    // Delete the comment
+    await Question.deleteComment(id);
+
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
