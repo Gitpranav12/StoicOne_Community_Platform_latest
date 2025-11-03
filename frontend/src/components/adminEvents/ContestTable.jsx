@@ -317,7 +317,7 @@ export default function ContestTable({
                               </button>
 
                               {/* ✅ View Results Button (visible only when contest has ended) */}
-                              {end < now && (
+                              {end < now && (contest.participants || 0) > 0 && (
                                 <button
                                   className="btn btn-outline-success btn-sm"
                                   onClick={() => handleViewResults(contest)}

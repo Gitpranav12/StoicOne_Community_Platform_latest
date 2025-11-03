@@ -43,7 +43,7 @@ const adminItems = [
   { to: "/admin/collectives", label: "Collectives", icon: <UserCog size={18} /> },
    { to: "/admin/events", label: "Contests", icon: <Trophy size={18} /> },
      // ✅ Add this new menu item for DataPage
-  { to: "/admin/data", label: "Data", icon: <Database size={18} /> },
+  // { to: "/admin/data", label: "Data", icon: <Database size={18} /> },
 
 ];  //<----added this.........
 

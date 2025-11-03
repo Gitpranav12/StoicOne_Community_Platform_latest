@@ -86,6 +86,9 @@ export default function CreateContestForm({ onSuccess }) {
   // Input handlers
   const handleInputChange = (e) => {
     const { name, value } = e.target;
+    if (name === "maxParticipants") {
+    if (value > 500) return; // stop updating if above 500
+  }
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
@@ -600,14 +603,13 @@ export default function CreateContestForm({ onSuccess }) {
 
                   <div className="card-body">
                     <div className="mb-3">
-                      <label className="form-label">Max Participants</label>
+                      <label className="form-label">Max Participants (Upto 500)</label>
                       <input
                         type="number"
                         className="form-control"
                         name="maxParticipants"
-                        min="1"
-                        max="10000"
-                        value={formData.maxParticipants || 100}
+                        max="500"
+                        value={formData.maxParticipants || 0}
                         onChange={handleInputChange}
                       />
                       <small className="text-muted d-block mt-1 px-2">

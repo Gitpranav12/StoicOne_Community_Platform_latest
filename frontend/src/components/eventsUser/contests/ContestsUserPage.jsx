@@ -108,7 +108,8 @@ export default function ContestsUserPage() {
     }
     if (activeTab === "Past" || activeTab === "Completed") {
       // show either time-based completed or user-based completed
-      return c.status === "Past" || c.user_status === "completed";
+      return c.user_status === "completed";
+     // return c.status === "Past" || c.user_status === "completed";
     }
     return false;
   });
@@ -119,9 +120,12 @@ export default function ContestsUserPage() {
       (c) => c.status === "Ongoing" && c.user_status !== "completed"
     ).length,
     upcoming: contests.filter((c) => c.status === "Upcoming").length,
-    completed: contests.filter(
-      (c) => c.status === "Past" || c.user_status === "completed"
+     completed: contests.filter(
+      (c) =>c.user_status === "completed"
     ).length,
+    // completed: contests.filter(
+    //   (c) => c.status === "Past" || c.user_status === "completed"
+    // ).length,
   };
 
   if (isLoading) {
