@@ -170,7 +170,7 @@ export default function App() {
               {/* admin events pages routes */}
               <Route path="/admin/events" element={<ProtectedRoute><EventsAdminPage /></ProtectedRoute>} />
               <Route path="/admin/events/createContest" element={<ProtectedRoute><CreateContestForm /></ProtectedRoute>} />
-              <Route path="/admin/events/contestDetails" element={<ProtectedRoute><ContestDetails /></ProtectedRoute>} />
+              <Route path="/admin/events/contestDetails/:id" element={<ProtectedRoute><ContestDetails /></ProtectedRoute>} />
               <Route path="/admin/events/submissionDetails" element={<ProtectedRoute><SubmissionDetail /></ProtectedRoute>} />
               {/* Result Page */}
               <Route path="/events/result" element={<ProtectedRoute><ResultWrapper /></ProtectedRoute>} />

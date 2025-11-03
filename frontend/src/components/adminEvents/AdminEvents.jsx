@@ -23,7 +23,9 @@ export default function AdminEvents({
   };
 
   const handleSelectContest = (contest) => {
-    navigate("/admin/events/contestDetails", { state: { contest } });
+    //navigate("/admin/events/contestDetails", { state: { contest } });
+    navigate(`/admin/events/contestDetails/${contest.id}`);
+
   };
 
   return (

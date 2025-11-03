@@ -8,6 +8,7 @@ import {
   Clock,
   Trophy,
   BarChart2,
+  Search,
 } from "lucide-react";
 import { useCustomAlert } from "../customAlert/useCustomAlert";
 import { useNavigate } from "react-router-dom";
@@ -21,6 +22,10 @@ export default function ContestTable({
   const [sortField, setSortField] = useState("startDate");
   const [sortDirection, setSortDirection] = useState("desc");
   const [showAlert, AlertComponent] = useCustomAlert();
+
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filterStatus, setFilterStatus] = useState("active");
+  const [filterType, setFilterType] = useState("all");
 
   const navigate = useNavigate();
 
@@ -84,7 +89,7 @@ export default function ContestTable({
       ? "coding"
       : "both";
 
-    let typeParam =  derivedType.toLowerCase();
+    let typeParam = derivedType.toLowerCase();
 
     if (typeParam.includes("quiz") && typeParam.includes("coding")) {
       typeParam = "both";
@@ -93,12 +98,99 @@ export default function ContestTable({
     navigate(`/events/result?contest=${contest.id}&type=${typeParam}`);
   };
 
+  // -------------------------------
+  // 🔹 Filter + Search Logic
+  // -------------------------------
+  const filteredContests = sortedContests.filter((contest) => {
+    // Compute derived status
+    const start = new Date(contest.startDate || contest.start_date);
+    const end = new Date(contest.endDate || contest.end_date);
+    const now = new Date();
+
+    let dynamicStatus = "upcoming";
+    if (now < start) dynamicStatus = "upcoming";
+    else if (now >= start && now <= end) dynamicStatus = "active";
+    else dynamicStatus = "completed";
+
+    const finalStatus = contest.status === "draft" ? "draft" : dynamicStatus;
+
+    // Compute contest type
+    const type = contest.rounds?.every((r) => r.type === "quiz")
+      ? "quiz"
+      : contest.rounds?.every((r) => r.type === "coding")
+      ? "coding"
+      : "mixed";
+
+    // ✅ Apply filters
+    const matchesSearch = contest.title
+      ?.toLowerCase()
+      .includes(searchTerm.toLowerCase());
+
+    const matchesStatus =
+      filterStatus === "all" || finalStatus === filterStatus;
+
+    const matchesType = filterType === "all" || type === filterType;
+
+    return matchesSearch && matchesStatus && matchesType;
+  });
+
   return (
     <div className="card border-0 shadow-sm">
       <div className="card-header bg-white border-bottom">
         <h5 className="card-title mb-0">Contest Management</h5>
       </div>
 
+      {/* 🔍 Search + Filters */}
+      <div className="card-body border-bottom">
+        <div className="row g-3 align-items-center">
+          {/* Search by Contest Title */}
+          <div className="col-md-4">
+            <div className="input-group">
+              <span className="input-group-text">
+                <Search size={18} />
+              </span>
+              <input
+                type="text"
+                className="form-control"
+                placeholder="Search by contest title"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </div>
+          </div>
+
+          {/* Filter by Status */}
+          <div className="col-md-4">
+            <select
+              className="form-select"
+              value={filterStatus}
+              onChange={(e) => setFilterStatus(e.target.value)}
+            >
+              <option value="all">All Status</option>
+              <option value="upcoming">Upcoming</option>
+              <option value="active">Ongoing</option>
+              <option value="completed">Completed</option>
+              <option value="draft">Draft</option>
+            </select>
+          </div>
+
+          {/* Filter by Type */}
+          <div className="col-md-4">
+            <select
+              className="form-select"
+              value={filterType}
+              onChange={(e) => setFilterType(e.target.value)}
+            >
+              <option value="all">All Types</option>
+              <option value="quiz">Quiz</option>
+              <option value="coding">Coding</option>
+              <option value="mixed">Quiz + Coding</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      {/* 🧾 Table Section */}
       <div className="card-body p-0">
         <div
           className="overflow-x-auto sm:overflow-x-visible"
@@ -190,7 +282,7 @@ export default function ContestTable({
               </thead>
 
               <tbody>
-                {sortedContests.map((contest) => {
+                {filteredContests.map((contest) => {
                   const totalDuration =
                     contest.rounds?.reduce((sum, r) => sum + r.duration, 0) ||
                     0;
@@ -220,7 +312,6 @@ export default function ContestTable({
                         </div>
                       </td>
                       <td>
-
                         <span
                           className={`badge ${
                             type === "quiz"
@@ -277,7 +368,9 @@ export default function ContestTable({
                       <td>
                         <div className="d-flex align-items-center">
                           <Users size={16} className="text-muted me-2" />
-                          <span className="small">{contest.participants}/{contest.max_participants}</span>
+                          <span className="small">
+                            {contest.participants}/{contest.max_participants}
+                          </span>
                         </div>
                       </td>
                       <td>
@@ -366,7 +459,7 @@ export default function ContestTable({
           </div>
         </div>
 
-        {sortedContests.length === 0 && (
+        {filteredContests.length === 0 && (
           <div className="text-center py-5">
             <div className="text-muted">
               <Trophy size={48} className="mb-3 opacity-50 mx-auto" />

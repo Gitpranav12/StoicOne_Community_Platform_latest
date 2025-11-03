@@ -7,7 +7,7 @@ import {
   Clock,
   BarChart3,
 } from "lucide-react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, useParams } from "react-router-dom";
 import Layout from "../../Layout/Layout";
 import axios from "axios"; // ✅ Make sure axios is imported
 import { useCustomAlert } from "../customAlert/useCustomAlert";
@@ -17,26 +17,36 @@ import { useEffect, useState } from "react";
 export default function ContestDetails() {
   const navigate = useNavigate(); // ✅ Use navigation hook
   const location = useLocation();
-  const contest = location.state?.contest;
+  // const contest = location.state?.contest;
+  const { id } = useParams();
+  const [contest, setContest] = useState(null);
   // Inside your component
   const [showAlert, AlertComponent] = useCustomAlert();
 
   const [participants, setParticipants] = useState([]);
+
+  useEffect(() => {
+    const fetchContest = async () => {
+      const res = await axios.get(`http://localhost:8080/api/contests/${id}`);
+      setContest(res.data  || []);
+    };
+    fetchContest();
+  }, [id]);
 
   // ✅ Fetch participants when page loads
   useEffect(() => {
     const fetchParticipants = async () => {
       try {
         const res = await axios.get(
-          `http://localhost:8080/api/contests/${contest.id}/participants`
+          `http://localhost:8080/api/contests/${id}/participants`
         );
         setParticipants(res.data || []);
       } catch (err) {
         console.error("Error fetching participants:", err);
       }
     };
-    if (contest?.id) fetchParticipants();
-  }, [contest?.id]);
+    if (id) fetchParticipants();
+  }, [id]);
 
   const formatDate = (date) =>
     new Date(date).toLocaleDateString("en-US", {
@@ -83,6 +93,24 @@ export default function ContestDetails() {
       },
     });
   };
+
+  if (!contest) {
+    return (
+      <Layout>
+        <div
+          className="d-flex justify-content-center align-items-center"
+          style={{ height: "80vh" }}
+        >
+          <div className="text-center">
+            <div className="spinner-border text-primary mb-3" role="status">
+              <span className="visually-hidden">Loading...</span>
+            </div>
+            <h5>Loading contest details...</h5>
+          </div>
+        </div>
+      </Layout>
+    );
+  }
 
   return (
     <Layout>
@@ -162,7 +190,7 @@ export default function ContestDetails() {
                     const end = new Date(contest.endDate || contest.end_date);
                     const now = new Date();
 
-                    if (end < now) {
+                    if (end < now && (contest.participants || 0) > 0 ) {
                       const derivedType = contest.rounds?.every(
                         (r) => r.type === "quiz"
                       )
@@ -242,7 +270,7 @@ export default function ContestDetails() {
                           <div className="small text-muted">Start Date</div>
                           <div className="fw-semibold">
                             {" "}
-                            {formatDate(contest.startDate)}
+                            {formatDate(contest.startDate || contest.start_date)}
                           </div>
                         </div>
                       </div>
@@ -254,7 +282,7 @@ export default function ContestDetails() {
                           <div className="small text-muted">End Date</div>
                           <div className="fw-semibold">
                             {" "}
-                            {formatDate(contest.endDate)}
+                            {formatDate(contest.endDate || contest.end_date)}
                           </div>
                         </div>
                       </div>
