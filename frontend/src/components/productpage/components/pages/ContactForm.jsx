@@ -17,15 +17,12 @@ export default function SecureContactForm() {
   const [errors, setErrors] = useState({});
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [submitError, setSubmitError] = useState(false);
-
-  // ✅ Prevent Clickjacking
   useEffect(() => {
     if (window.top !== window.self) {
       window.top.location = window.location;
     }
   }, []);
 
-  // ✅ Simple XSS Sanitizer
   const sanitizeInput = (input) => input.replace(/[<>]/g, "");
 
   const handleChange = (e) => {
@@ -96,19 +93,19 @@ export default function SecureContactForm() {
     <Container fluid className="bg-light min-vh-100 d-flex align-items-center py-3 position-relative">
       <Row className="align-items-center w-100">
         <Col md={6} className="ps-md-5 pe-md-4 mt-5">
-          <h3 className="text-primary mb-4 fw-semibold py-4 text-end">Connect with us</h3>
-
-          {submitError && (
-            <Alert variant="danger" className="mb-4">
-              There was an error sending your message. Please try again or contact us directly.
-            </Alert>
-          )}
-
           {isSubmitted ? (
             <Alert variant="success" className="p-4 fw-semibold">
-              🎉 Thank you for contacting us! We’ll reach out to you within 24 hours.
+              🎉 Thank you for contacting us! We'll reach out to you within 24 hours.
             </Alert>
           ) : (
+            <> {/* Added fragment wrapper */}
+              <h3 className="text-primary mb-4 fw-semibold py-4 text-end">Connect with us</h3>
+
+              {submitError && (
+                <Alert variant="danger" className="mb-4">
+                  There was an error sending your message. Please try again or contact us directly.
+                </Alert>
+              )}
             <Form id="contact-form" onSubmit={handleSubmit}>
               {/* === Salutation === */}
               <Form.Group className="mb-3">
@@ -297,10 +294,9 @@ export default function SecureContactForm() {
                 Submit
               </Button>
             </Form>
+              </> 
           )}
         </Col>
-
-        {/* === Right: Illustration === */}
         <Col md={6} className="position-relative text-center">
           <Image
             src="https://cdn.dribbble.com/users/1162077/screenshots/3848914/programmer.gif"
