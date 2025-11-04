@@ -95,8 +95,8 @@ export default function SubmissionReview({ contests }) {
 
       {/* Summary Stats */}
       <div className="row g-4 mt-4">
-        <div className="col-md-3">
-          <div className="card border shadow-sm text-center">
+         <div className="col-12 col-md-6 col-lg-3">
+          <div className="card border  shadow-sm text-center">
             <div className="card-body">
               <div className="fw-bold h4 text-primary">
                 {statsSubmissions.length}
@@ -106,7 +106,7 @@ export default function SubmissionReview({ contests }) {
           </div>
         </div>
 
-        <div className="col-md-3">
+       <div className="col-12 col-md-6 col-lg-3">
           <div className="card border shadow-sm text-center">
             <div className="card-body">
               <div className="fw-bold h4 text-success">
@@ -120,7 +120,7 @@ export default function SubmissionReview({ contests }) {
           </div>
         </div>
 
-        <div className="col-md-3">
+       <div className="col-12 col-md-6 col-lg-3">
           <div className="card border shadow-sm text-center">
             <div className="card-body">
               <div className="fw-bold h4 text-warning">
@@ -134,7 +134,7 @@ export default function SubmissionReview({ contests }) {
           </div>
         </div>
 
-        <div className="col-md-3">
+        <div className="col-12 col-md-6 col-lg-3">
           <div className="card border shadow-sm text-center">
             <div className="card-body">
               <div className="fw-bold h4 text-info">
