@@ -92,7 +92,7 @@ export default function AdminEvents({
               </div>
               <div>
                 <h5 className="card-title mb-1">{stats.totalParticipants}</h5>
-                <p className="card-text text-muted small mb-0">Total Participants</p>
+                <p className="card-text text-muted small mb-0">Total Users Joined</p>
               </div>
             </div>
           </div>
@@ -106,7 +106,7 @@ export default function AdminEvents({
               </div>
               <div>
                 <h5 className="card-title mb-1">{stats.completedContests}</h5>
-                <p className="card-text text-muted small mb-0">Completed</p>
+                <p className="card-text text-muted small mb-0">Past Contests</p>
               </div>
             </div>
           </div>
