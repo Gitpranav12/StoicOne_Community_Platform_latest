@@ -95,7 +95,6 @@ export default function SecureContactForm() {
   return (
     <Container fluid className="bg-light min-vh-100 d-flex align-items-center py-3 position-relative">
       <Row className="align-items-center w-100">
-        {/* === Left: Contact Form === */}
         <Col md={6} className="ps-md-5 pe-md-4 mt-5">
           <h3 className="text-primary mb-4 fw-semibold py-4 text-end">Connect with us</h3>
 
